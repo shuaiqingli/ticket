@@ -981,8 +981,8 @@ public class APIShiftStartControl {
 			d.put("shiftcode", request.getParameter("shiftcode"));
 			d.put("ticketdate", DateUtil.getCurrentDateString());
 			d.put("stid", o.getCurrstationid());
-			long salequantity = saleorderService.getSoldQuantity(d);
-			ss.put("salequantity", saleorderService.getSoldQuantity(d));
+			long salequantity = saleorderticketService.getSoldQuantity(d);
+			ss.put("salequantity", salequantity);
 			ss.put("isstart", o.getIsstart());
 			ss.put("isstartname", o.getIsstartname());
 			ss.put("iscancel", o.getIscancel());

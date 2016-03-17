@@ -42,6 +42,20 @@ public class WebHTMLFilter implements Filter {
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
 		HttpServletRequest req = (HttpServletRequest) request;
 		String uri = req.getRequestURI();
+
+		HttpServletResponse resp = (HttpServletResponse) response;
+		if(req.getSession().getAttribute(Const.LOGIN_CUSTOMER)!=null){
+			Cookie isLogin = new Cookie("customer_login","1");
+			isLogin.setMaxAge(60*28);
+			isLogin.setPath("/");
+			resp.addCookie(isLogin);
+		}else{
+			Cookie isLogin = new Cookie("customer_login","0");
+			isLogin.setMaxAge(-1000);
+			isLogin.setPath("/");
+			resp.addCookie(isLogin);
+		}
+
 		if(urls!=null){
 			boolean ischeck = true;
 			for (String url : urls) {
@@ -60,7 +74,6 @@ public class WebHTMLFilter implements Filter {
 					if(cus==null){
 						cus = cs.getCustomerLogin(null, m, p);
 						if(cus==null){
-							HttpServletResponse resp = (HttpServletResponse) response;
 							Cookie href = new Cookie("location_href",uri);
 							href.setPath("/");
 							resp.addCookie(href);
@@ -98,7 +111,6 @@ public class WebHTMLFilter implements Filter {
 						Cookie user = new Cookie("user", URLEncoder.encode(JSON.toJSONString(cus),"UTF-8"));
 						user.setPath(path);
 //						user.setMaxAge(age);
-						HttpServletResponse resp = (HttpServletResponse)response;
 						resp.addCookie(cookie);
 						resp.addCookie(cid);
 						resp.addCookie(user);

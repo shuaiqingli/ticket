@@ -80,11 +80,15 @@ public class SaleOrderService {
 					//	BigDecimal  coupon = order.getCouponsSum().divide(new BigDecimal(tickets.size()));
 					BigDecimal total = new BigDecimal(0);
 					int refundcount = 0;
+					Integer mileage = 0;
 					for (SaleOrderTicket t : tickets) {
 						if (t.getStatus() != 0) {
 							refundcount++;
 							continue;
+						}else{
+							mileage += order.getMileage();
 						}
+
 						if (t.getIsdiscount() != null && t.getIsdiscount() == 1) {
 							total = total.add(t.getVprice());
 						} else {
@@ -92,6 +96,7 @@ public class SaleOrderService {
 						}
 					}
 					Customer customer = customerDao.find(order.getCID());
+					customer.setMileage(customer.getMileage()==null?mileage:customer.getMileage()+mileage);
 					if(order.getCouponsSum()!=null&&!order.getCouponsSum().equals(new BigDecimal(0))){
 						total = total.subtract(order.getCouponsSum());
 					}
