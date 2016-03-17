@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hengyu.ticket.dao.CompanyDao">
+  <insert id="save" parameterType="Company">
+	insert
+	into
+		company
+		(<include refid="columns"/>)
+	values
+		(<include refid="propertys"/>)
+  </insert>
+  <delete id="delete" parameterType="java.lang.Integer">
+	delete
+	from
+		company
+	where
+		ID=#{id}
+  </delete>
+  <update id="update" parameterType="Company">
+	update
+		company
+	set
+		`CompanyName`=#{companyname},
+		`ShortName`=#{shortname},
+		`PYName`=#{pyname}
+	where
+		ID=#{id}
+  </update>
+  <select id="find" parameterType="java.lang.Integer" resultMap="result_map">
+	select
+		*
+	from
+		company
+	where
+		ID=#{id}
+  </select>
+  <select id="count" resultType="long">
+	select
+		count(1)
+	from
+		company
+	<include refid="list_where"></include>
+  </select>
+  <select id="findlist" resultMap="result_map" parameterType="Page">
+	select
+		*
+	from
+		company
+	<include refid="list_where"></include>
+  </select>
+  
+  <sql id="list_where">
+  	where 1=1
+  	<if test="param!=null and param.companyname != null">
+  		and CompanyName like '%${param.companyname}%' or  PYName like '%${param.companyname}%'
+  	</if>
+  </sql>
+  
+  <sql id="columns">
+	`CompanyName`,
+	`ShortName`,
+	`PYName`
+  </sql>
+  <sql id="propertys">
+	#{companyname},
+	#{shortname},
+	#{pyname}
+  </sql>
+  <resultMap id="result_map" type="Company">
+    <id column="ID" property="id" javaType="java.lang.Integer"/>
+    <result column="CompanyName" property="companyname" javaType="java.lang.String"/>
+    <result column="ShortName" property="shortname" javaType="java.lang.String"/>
+    <result column="PYName" property="pyname" javaType="java.lang.String"/>
+  </resultMap>
+</mapper>

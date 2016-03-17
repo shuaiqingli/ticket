@@ -1,0 +1,112 @@
+<!doctype html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>联系人</title>
+<meta name="keywords" content="关键词,后台添加" />
+<meta name="description" content="描述,后台添加" />
+<meta name="viewport" content="width=device-width, initial-scale=0.5, maximum-scale=1.0, user-scalable=0" />
+<meta name="format-detection" content="telephone=no" />
+<meta name="apple-touch-fullscreen" content="YES" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="MobileOptimized" content="320" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black" />
+<link type="text/css" rel="stylesheet" href="css/css.css">
+<script type="text/javascript" src="js/jquery-1.4.2.js?jsversion=3"></script>
+
+<script type="text/javascript" src="js/wx.js?jsversion=3"></script>
+<script type="text/javascript" src="js/linkman_list.js?jsversion=3"></script>
+<!--<script type="text/javascript">-->
+<!--$(function(){-->
+	<!--importjs(['linkman_list.js'])-->
+<!--})-->
+<!--</script>-->
+</head>
+
+<body>
+	<ul>
+		<h1 class="o_contact1 h" style="height: 80px;padding-top: 30px;position: relative;">
+			<p class="i_red_pot1" ></p>
+			<span>常用联系人</span>
+			<div style="position: absolute;right:30px;top:23px;" onclick="send('link_edit.html');">
+				<img src="../images/add001.png" style="width: 64px;height: 64px;">
+			</div>
+		</h1>
+		<li  class="f_option link" style="display: none;position: relative;padding-left: 0px;overflow: hidden;">
+			<input type="hidden" class="id"/>
+<!-- 			<div class="touche" style="position: absolute;width: 100%;height: 100%;border: 0px solid;z-index: 888;"></div> -->
+			<span class="lname" style="padding-left: 30px;"></span>
+			<span style="float: right;padding-right: 20px;" class="lmobile"></span>
+			<span style="display: none;" class="json"></span>
+			<div class="edit" style="top:0px;right:-202px;position: absolute;width: 200px;height: 100%;border: 0px solid;z-index: 999;">
+				<div class="delete" style="text-align:center;background: #FF6861;height:83px;width: 100px;float: left;" >
+					<img src="images/delete.png" style="height:83px;">
+				</div>
+				<div class="view" style="background: #B5B5B5;height:83px;width: 100px;float: left;" >
+					<img src="images/pen.png" style="height:83px;">
+				</div>
+			</div>
+		</li>
+	</ul>
+</body>
+<script type="text/javascript">
+	$(function(e){
+		
+		$('.link').click(function(){
+			var type = $(this).attr('type');
+			if(type==0||type== undefined ){
+				$(this).attr('type',1)
+				toucheinit($('.link').not(this));
+				toucheafter($(this));
+			}else{
+				$(this).attr('type',0)
+				toucheinit($(this))
+			}
+		});
+		
+	});
+	
+	var touchex = 0;
+	var touchey = 0;
+	
+	function touchstart(e){
+		var t = e.touches[0];
+		var x = t.clientX;
+		touchex = x;
+		touchey = t.clientY;
+	}
+	function touchend(e){
+		var t = e.changedTouches[0];
+		var x = t.clientX;
+		touchex = x-touche;
+	}
+	function touchmove(e){
+		var t = e.changedTouches[0];
+		var x = t.clientX;
+		var y = touchey - t.clientY;
+		var temp = (x-touchex);
+		if(temp<=-3){
+			toucheinit($('.link').not($(e.target).parent()));
+			toucheafter($(e.target).parent());
+		}else{
+			toucheinit($(e.target).parent());
+		}
+		if(y<0&&$(window).scrollTop()==0){
+		}
+	}
+	
+	function toucheinit(obj){
+		obj.find('.edit').animate({'right':-202}, 300)
+		obj.animate({'margin-left':'0'}, 300);
+		obj.find('.lmobile').animate({'padding-right':'20'}, 300);
+	}
+	
+	function toucheafter(obj){
+		obj.find('.edit').animate({'right':0}, 300)
+		obj.animate({'margin-left':'-15%'}, 300);
+		obj.find('.lmobile').animate({'padding-right':'30%'}, 300);
+	}
+	
+	
+</script>
+</html>

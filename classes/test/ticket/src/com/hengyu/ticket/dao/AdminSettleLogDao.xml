@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hengyu.ticket.dao.AdminSettleLogDao">
+
+    <select id="findAdminSettleLogList" resultMap="result_map">
+        select *
+        <include refid="findAdminSettleLogList_where"/>
+        order by MakeDate desc
+        limit #{page.startOfPage},#{page.pageSize}
+    </select>
+
+    <select id="findAdminSettleLogTotal" resultType="long">
+        select count(1)
+        <include refid="findAdminSettleLogList_where"/>
+    </select>
+
+    <sql id="findAdminSettleLogList_where">
+        from admin_settle_log where 1=1
+        <if test="keyword != null">
+            and ( `UserID` like concat('%',#{keyword},'%') or `UserName` like concat('%',#{keyword},'%') or `OperatorID`
+            like concat('%',#{keyword},'%') or `OperatorName` like concat('%',#{keyword},'%') )
+        </if>
+    </sql>
+
+    <insert id="saveAdminSettleLog" parameterType="AdminSettleLog">
+        INSERT INTO admin_settle_log (
+            UserID, UserName, SaleOrders, QuantityTotal, PriceTotal, OperatorID, OperatorName, MakeDate
+        ) VALUES (
+            #{userid}, #{username}, #{saleorders}, #{quantitytotal}, #{pricetotal}, #{operatorid}, #{operatorname},
+            #{makedate}
+        )
+    </insert>
+
+    <resultMap id="result_map" type="AdminSettleLog">
+        <id column="ID" property="id"/>
+        <result column="UserID" property="userid"/>
+        <result column="UserName" property="username"/>
+        <result column="SaleOrders" property="saleorders"/>
+        <result column="QuantityTotal" property="quantitytotal"/>
+        <result column="PriceTotal" property="pricetotal"/>
+        <result column="OperatorID" property="operatorid"/>
+        <result column="OperatorName" property="operatorname"/>
+        <result column="MakeDate" property="makedate"/>
+    </resultMap>
+</mapper>
+

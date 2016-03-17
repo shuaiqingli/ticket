@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hengyu.ticket.dao.LinkmanDao">
+  <insert id="save" parameterType="Linkman">
+	insert
+	into
+		linkman
+		(<include refid="columns"/>)
+	values
+		(<include refid="propertys"/>)
+  </insert>
+  <update id="update" parameterType="Linkman">
+	update
+		linkman
+	set
+		<if test="cid !=null and cid !='' ">
+			`CID`=#{cid},
+		</if>
+		<if test="lname !=null and lname !='' ">
+			`LName`=#{lname},
+		</if>
+		<if test="lmobile !=null and lmobile !='' ">
+			`LMobile`=#{lmobile},
+		</if>
+		<if test="idcode !=null and idcode !='' ">
+			`IDCode`=#{idcode},
+		</if>
+		<if test="synchrono !=null">
+			`synchrono`=#{synchrono},
+		</if>
+	    `ID`=#{id}
+	where
+		`ID`=#{id}
+  </update>
+  <select id="find" parameterType="java.lang.String" resultMap="result_map">
+	select
+		*
+	from
+		linkman
+	where
+		ID=#{id}
+  </select>
+  <delete id="delete" parameterType="java.lang.String">
+	delete
+	from
+		linkman
+	where
+		ID=#{id}
+  </delete>
+  <select id="findByMobile" parameterType="Linkman" resultMap="result_map">
+	select
+		*
+	from
+		linkman
+	where
+		cid = #{cid}
+	and
+		lmobile=#{lmobile}
+  </select>
+  <select id="findLinks"  resultMap="result_map" parameterType="Page">
+	select
+		`id`,
+		`cid`,
+		`lname`,
+		`lmobile`,
+		`idcode`,
+		`makedate`
+	from
+		linkman
+	<include refid="findLinks_where"></include>
+	order by synchrono desc
+	limit #{startOfPage},#{pageSize}
+  </select>
+  <select id="findLinksCount"  resultType="long" parameterType="Page">
+	select
+		count(1)
+	from
+		linkman
+	<include refid="findLinks_where"></include>
+  </select>
+  <sql id="findLinks_where">
+  	where cid = #{param.cid}
+  </sql>
+  <sql id="columns">
+	`ID`,
+	`CID`,
+	`LName`,
+	`LMobile`,
+	`IDCode`,
+	`MakeDate`
+  </sql>
+  <sql id="propertys">
+	#{id},
+	#{cid},
+	#{lname},
+	#{lmobile},
+	#{idcode},
+	#{makedate}
+  </sql>
+  <resultMap id="result_map" type="Linkman">
+    <id column="ID" property="id" javaType="java.lang.String"/>
+    <result column="CID" property="cid" javaType="java.lang.String"/>
+    <result column="LName" property="lname" javaType="java.lang.String"/>
+    <result column="LMobile" property="lmobile" javaType="java.lang.String"/>
+    <result column="IDCode" property="idcode" javaType="java.lang.String"/>
+    <result column="MakeDate" property="makedate" javaType="java.lang.String"/>
+    <result column="SynchroNO" property="synchrono"/>
+  </resultMap>
+</mapper>

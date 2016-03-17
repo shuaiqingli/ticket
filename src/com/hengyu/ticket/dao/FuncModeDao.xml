@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hengyu.ticket.dao.FuncModeDao">
+  <insert id="save" parameterType="FuncMode">
+	insert
+	into
+		func_mode
+		(<include refid="columns"/>)
+	values
+		(<include refid="propertys"/>)
+  </insert>
+  <update id="update" parameterType="FuncMode">
+	update
+		func_mode
+	set
+		`MenuName`=#{menuName},
+		`MenuClass`=#{menuClass},
+		`MenuUrl`=#{menuUrl},
+		`ParentID`=#{parentID},
+		`Rank`=#{rank}
+	where
+		ID=#{iD}
+  </update>
+  <select id="find" parameterType="java.lang.Integer" resultMap="result_map">
+	select
+		*
+	from
+		func_mode
+	where
+		ID=#{iD}
+  </select>
+  <select id="findMenuByRole" parameterType="Role" resultMap="result_map2" >
+	select
+		<include refid="columns_children"></include>
+		p.*
+	from
+		func_mode AS p
+	left join func_mode c ON c.ParentID = p.ID
+	where p.ParentID is null
+	<!-- 如果是-1或空该用户拥有所有操作菜单 -->
+	<if test=" roleid != null and roleid != -1">
+		and p.id IN (
+			select
+				rp.fmid
+			from
+				role_power rp 
+					where rp.RoleID = #{roleid}
+		)
+		and c.id IN (
+			select
+				rp.fmid
+			from
+				role_power rp 
+					where rp.RoleID = #{roleid}
+		)
+	</if>
+	order by
+		 p.`Rank`,c.`Rank` DESC
+  </select>
+  <sql id="columns">
+	`MenuName`,
+	`MenuClass`,
+	`MenuUrl`,
+	`ParentID`,
+	`Rank`
+  </sql>
+  <sql id="columns_children">
+	c.`ID` AS _id,
+	c.`MenuName` AS _MenuName,
+	c.`MenuClass` AS _MenuClass,
+	c.`MenuUrl` AS _MenuUrl,
+	c.`ParentID` AS _ParentID,
+	c.`Rank` AS _Rank,
+  </sql>
+  <sql id="propertys">
+	#{menuName},
+	#{menuClass},
+	#{menuUrl},
+	#{parentID},
+	#{rank}
+  </sql>
+  <resultMap id="result_map" type="FuncMode">
+    <id column="ID" property="iD" javaType="java.lang.Integer"/>
+    <result column="MenuName" property="menuName" javaType="java.lang.String"/>
+    <result column="MenuClass" property="menuClass" javaType="java.lang.String"/>
+    <result column="MenuUrl" property="menuUrl" javaType="java.lang.String"/>
+    <result column="ParentID" property="parentID" javaType="java.lang.Integer"/>
+    <result column="Rank" property="rank" javaType="java.lang.Integer"/>
+  </resultMap>
+  <resultMap id="result_map2" type="FuncMode" extends="result_map">
+    <collection property="children" ofType="FuncMode" resultMap="result_map" columnPrefix="_"/>
+  </resultMap>
+</mapper>

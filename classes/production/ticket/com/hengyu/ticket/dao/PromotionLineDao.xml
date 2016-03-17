@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hengyu.ticket.dao.PromotionLineDao">
+  <insert id="save" parameterType="PromotionLine">
+	insert
+	into
+		promotion_line
+		(<include refid="columns"/>)
+	values
+		(<include refid="propertys"/>)
+  </insert>
+  <delete id="delete" parameterType="java.lang.Integer">
+	delete
+	from
+		promotion_line
+	where
+		ID=#{id}
+  </delete>
+  <update id="update" parameterType="PromotionLine">
+	update
+		promotion_line
+	set
+		`PID`=#{pid},
+		`LMID`=#{lmid}
+	where
+		ID=#{id}
+  </update>
+  <select id="find" parameterType="java.lang.Integer" resultMap="result_map">
+	select
+		*
+	from
+		promotion_line
+	where
+		ID=#{id}
+  </select>
+  <select id="count" resultType="java.lang.Integer">
+	select
+		count(1)
+	from
+		promotion_line
+  </select>
+  <select id="getPromotionLineByPID" parameterType="java.lang.Integer" resultMap="result_map">
+	select
+		*
+	from
+		promotion_line
+	where
+		PID=#{pid}
+  </select>
+  <sql id="columns">
+	`PID`,
+	`LMID`
+  </sql>
+  <sql id="propertys">
+	#{pid},
+	#{lmid}
+  </sql>
+  <resultMap id="result_map" type="PromotionLine">
+    <id column="ID" property="id" javaType="java.lang.Integer"/>
+    <result column="PID" property="pid" javaType="java.lang.String"/>
+    <result column="LMID" property="lmid" javaType="java.lang.Integer"/>
+  </resultMap>
+</mapper>

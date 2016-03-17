@@ -1,0 +1,50 @@
+
+<html>  
+<head><title>Simple jsp page</title>  
+    <script type="text/javascript" src="jquery.min.js?jsversion=1"></script>
+    <script>
+    $(function() {  
+    $("#select").click(function() {  
+        if ($(this).attr("checked")) {  
+            $("input[name=items]").each(function() {  
+                $(this).attr("checked", true);  
+            });  
+        } else {  
+            $("input[name=items]").each(function() {  
+                $(this).attr("checked", false);  
+            });  
+        }  
+    });  
+    //得到选中的值，ajax操作使用  
+    $("#submit").click(function() {  
+        var text="";  
+        $("input[name=items]").each(function() {  
+            if ($(this).attr("checked")) {  
+                text += ","+$(this).val();  
+            }  
+        });  
+         alert(text);  
+    	});  
+		});
+    </script>  
+  
+</head>  
+<body>  
+<form action="#" method="post">  
+    <input type="checkbox" id="select"/> 全选<br/>  
+    <input type="checkbox" value="1" name="items"><br/>  
+    <input type="checkbox" value="2" name="items"><br/>  
+    <input type="checkbox" value="3" name="items"> <br/>  
+    <input type="checkbox" value="4" name="items"> <br/>  
+    <input type="checkbox" value="5" name="items"> <br/>  
+    <input type="checkbox" value="6" name="items"> <br/>  
+    <input type="checkbox" value="7" name="items"> <br/>  
+    <input type="checkbox" value="8" name="items"> <br/>  
+    <input type="checkbox" value="9" name="items"> <br/>  
+    <input type="checkbox" value="10" name="items"> <br/>  
+    <input type="checkbox" value="11" name="items"> <br/>  
+  
+    <input type="submit" id="submit" value="提交">  
+</form>  
+</body>  
+</html>

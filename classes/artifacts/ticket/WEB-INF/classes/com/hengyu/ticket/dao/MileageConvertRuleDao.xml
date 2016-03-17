@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hengyu.ticket.dao.MileageConvertRuleDao">
+	<insert id="save" parameterType="MileageConvertRule">
+		insert
+		into
+		mileage_convert_rule
+		(
+		<include refid="columns" />
+		)
+		values
+		(
+		<include refid="propertys" />
+		)
+	</insert>
+	<delete id="delete" parameterType="java.lang.Integer">
+		delete
+		from
+		mileage_convert_rule
+		where
+		ID=#{id}
+	</delete>
+	<update id="update" parameterType="MileageConvertRule">
+		update
+		mileage_convert_rule
+		set
+		`MileageCVT`=#{mileagecvt},
+		`VPrice`=#{vprice},
+		`IsEnable`=#{isenable},
+		`IsEnableName`=#{isenablename},
+		`MakeDate`=#{makedate}
+		where
+		ID=#{id}
+	</update>
+	<select id="find" parameterType="java.lang.Integer" resultMap="result_map">
+		select
+		*
+		from
+		mileage_convert_rule
+		where
+		ID=#{id}
+	</select>
+	<select id="count" resultType="java.lang.Integer">
+		select
+		count(1)
+		from
+		mileage_convert_rule
+	</select>
+	<select id="findList" parameterType="Page" resultMap="result_map">
+		select
+		*
+		from
+		mileage_convert_rule
+		order by
+		MakeDate
+		desc
+		limit
+		#{startOfPage},#{pageSize}
+	</select>
+	<select id="totalCount" parameterType="Page" resultType="long">
+		select
+		count(1)
+		from
+		mileage_convert_rule
+	</select>
+	<sql id="columns">
+		`MileageCVT`,
+		`VPrice`,
+		`IsEnable`,
+		`IsEnableName`,
+		`MakeDate`
+	</sql>
+	<sql id="propertys">
+		#{mileagecvt},
+		#{vprice},
+		#{isenable},
+		#{isenablename},
+		#{makedate}
+	</sql>
+	<resultMap id="result_map" type="MileageConvertRule">
+		<id column="ID" property="id" javaType="java.lang.Integer" />
+		<result column="MileageCVT" property="mileagecvt" javaType="java.lang.Integer" />
+		<result column="VPrice" property="vprice" javaType="java.lang.String" />
+		<result column="IsEnable" property="isenable" javaType="java.lang.Integer" />
+		<result column="IsEnableName" property="isenablename" javaType="java.lang.String" />
+		<result column="MakeDate" property="makedate" javaType="java.lang.String" />
+	</resultMap>
+</mapper>

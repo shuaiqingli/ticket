@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hengyu.ticket.dao.RolePowerDao">
+  <insert id="save" parameterType="RolePower">
+	insert
+	into
+		role_power
+		(<include refid="columns"/>)
+	values
+		(<include refid="propertys"/>)
+  </insert>
+  <update id="update" parameterType="RolePower">
+	update
+		role_power
+	set
+		`RoleID`=#{roleID},
+		`FMID`=#{fMID}
+	where
+		ID=#{iD}
+  </update>
+  <select id="find" parameterType="java.lang.Integer" resultMap="result_map">
+	select
+		*
+	from
+		role_power
+	where
+		ID=#{iD}
+  </select>
+  <select id="findByRoleFuncModel" parameterType="RolePower" resultMap="result_map">
+	select
+		*
+	from
+		role_power
+	where
+		`RoleID`=#{roleID}
+	and
+		`FMID`=#{fMID}
+  </select>
+  <delete id="deleteByRoleFuncModel"  parameterType="RolePower">
+  	delete from
+  		role_power
+  	where 
+  		`RoleID`=#{roleID}
+	and
+		`FMID`=#{fMID}
+  </delete>
+  <delete id="deleteByRoleId"  parameterType="java.lang.Integer">
+  	delete from
+  		role_power
+  	where 
+  		`RoleID`=#{roleId}
+  </delete>
+  <sql id="columns">
+	`RoleID`,
+	`FMID`
+  </sql>
+  <sql id="propertys">
+	#{roleID},
+	#{fMID}
+  </sql>
+  <resultMap id="result_map" type="RolePower">
+    <id column="ID" property="iD" javaType="java.lang.Integer"/>
+    <result column="RoleID" property="roleID" javaType="java.lang.Integer"/>
+    <result column="FMID" property="fMID" javaType="java.lang.Integer"/>
+  </resultMap>
+</mapper>

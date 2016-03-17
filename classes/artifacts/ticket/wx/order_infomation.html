@@ -1,0 +1,261 @@
+<!doctype html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<title>订单信息</title>
+		<meta name="keywords" content="关键词,后台添加" />
+		<meta name="description" content="描述,后台添加" />
+		<meta name="viewport" content="width=device-width, initial-scale=0.5, maximum-scale=1.0, user-scalable=0" />
+		<meta name="format-detection" content="telephone=no" />
+		<meta name="apple-touch-fullscreen" content="YES" />
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<meta name="MobileOptimized" content="320" />
+		<meta name="apple-mobile-web-app-status-bar-style" content="black" />
+		<link type="text/css" rel="stylesheet" href="css/css.css">
+		<script src="js/jquery-1.11.1.min.js?jsversion=3"></script>
+		<script type="text/javascript" src="js/wx.js?jsversion=3"></script>
+		<script type="text/javascript" src="js/order_infomation.js?jsversion=3"></script>
+		<script>
+			 window.onload=function(){
+				 var payWay=document.getElementById("payWay");
+				 var allWay=document.getElementById("allWay");
+				         payWay.onclick=function(){
+						 if(allWay.style.display=='none'){
+						 allWay.style.display='block';
+						 this.className="pay_way p_arrow2"}
+						 else if(allWay.style.display=='block'){
+							 allWay.style.display='none';
+							 this.className="pay_way p_arrow1"
+							 }
+					   else{
+						 allWay.style.display='block';
+						 this.className="pay_way p_arrow2"
+						 }
+					 }
+				var ticket_num = $(".ticket_num").text();
+			    var total = $(".total").text();
+			    var start_st = $(".ststartname").text();
+			   	var end_st = $(".starrivename").text();
+			   	var start_date = $(".start_date").text();
+			   	var starttime = $(".starttime").text();
+				var price = $(".ticketprice").text();
+				var lines = $(".linename").text();
+				var items = lines.split("-");
+				var startCity = items[0];
+				var endCity = items[1];
+				var pageData = {
+					start_st:start_st,
+					end_st:end_st,
+					start_date:start_date,
+					starttime:starttime,
+					price:price,
+					startCity:startCity,
+					endCity:endCity
+				}
+				$("._ar_city").text(endCity);
+				$("._st_city").text(startCity);
+				//alert(ticket_num+'+'+total+'+'+start_st+'+'+end_st+'+'+start_date+'+'+starttime+'+'+price+'+'+startCity+'+'+endCity);
+				$('.hb_tip').click(function(){
+					$('#hb_div').fadeIn(500);
+					setTimeout(1000);
+					$("#hb_div").fadeOut(800);
+				});
+			 }
+		</script>
+	</head>
+	<body style="background-color:#e9e9e9;display: none;">
+		<div id="hb_div" style="display:none;position:fixed;top:400px;width:100%;text-align:center;z-index:999;">
+			<div style="width:80%;border-radius:5px;background:#555;color:#fff;line-height:50px;font-size:26px;margin:0 auto;">活动期间，每位用户限一次</div>
+		</div>
+		<form action="order_detail.html" method="javascript:void(0)" id="myOrder">
+			<div class="see_link" style="font-size:22px;background-color:#e9e9e9;color:#808080;font-size:24px;height: 50px;line-height: 50px;">
+				<p>
+					<img src="images/clock.png">
+					请在10分钟内完成支付
+				</p>
+			</div>
+			<div style="background-color:#fff;margin-bottom:10px;padding: 0 24px;">
+				<div style="border-bottom:1px solid #ccc;">
+					<span class="ticketdate" style="display:inline-block;width:40%;height:70px;line-height:70px;font-size:34px;">2011-11-11</span>
+					<span class="starttime" style="display:inline-block;width:20%;text-align:center;height:70px;line-height:70px;font-size:34px;">11:11</span>
+					<span style="display:inline-block;font-size:20px;line-height:24px;height:24px;height:70px;line-height:70px;float:right;display:none;" class="carmodelname">商务大巴</span>
+				</div>
+				<div style="border-bottom:1px solid #ccc;text-align:center;overflow:hidden;height:140px;">
+					<div style="display:inline-block;width:42%;height:140px;float:left;">
+						<div class="_st_city" style="font-size:40px;margin-top:25px;">-</div>
+						<div class="ststartname" style="font-size:28px;color:#6f6f6f;padding-bottom:40px;line-height:40px;">-</div>
+					</div>
+					<div style="display:inline-block;width:16%;height:140px;float:left;text-align:center;text-indent:25px;">
+						<img src="images/to_icon3.png" style="position:relative;top:60px;"/>
+					</div>
+					<div style="display:inline-block;width:42%;height:140px;float:right;">	
+						<div class="_ar_city" style="font-size:40px;margin-top:25px;">-</div>
+						<div class="starrivename" style="font-size:28px;color:#6f6f6f;padding-bottom:40px;line-height:40px;">-</div>
+					</div>
+				</div>
+				<div style="font-size:30px;overflow:hidden;border-bottom:1px solid #ccc;color:#ff6861;display: none;" class="coupon_ticket">
+					<div style="display:inline-block;width:60%;text-align:left;height:80px;line-height:80px;">
+						<span style="font-size:24px;">优惠价</span><span style="font-size:25px;">&yen;</span><span class="favprice"></span>/张
+					</div>
+					<div style="float:right;display:inline-block;width:34%;text-align:right;height:80px;line-height:80px;">
+						×<span class="cnum">1</span>张
+					</div>
+				</div>
+				<div class="ticket_price" style="font-size:30px;overflow:hidden;border-bottom:1px solid #ccc;">
+					<div style="display:inline-block;width:60%;text-align:left;height:70px;line-height:70px;">
+						<span style="font-size:24px;">原价</span><span style="font-size:25px;">&yen;</span><span class="ticketprice"></span>/张
+					</div>
+					<div style="float:right;display:inline-block;width:34%;text-align:right;height:70px;line-height:70px;">
+						×<span class="tnum">0</span>张
+					</div>
+				</div>
+				<div style="font-size:30px;">
+					
+				</div>
+				<div style="font-size:30px;overflow:hidden;">
+					<div style="float:right;display:inline-block;width:30%;text-align:right;height:70px;line-height:70px;">
+						小计:<span style="font-size:20px;">&yen;</span><span class="total"></span>
+					</div>
+				</div>
+			</div>
+			
+			<div style="background-color:#fff;margin-bottom:10px;padding: 0 24px;font-size:28px;">
+				<div class="option" style="height:80px;font-size:30px;line-height:80px;border-bottom:1px solid #ccc;">联系人<span style="display: none;">（使用身份证取票）</span><div style="float:right;"><img src="images/i_pen.png"></div></div>
+				<div style="padding:10px 0px 10px 28px;">
+					<div style="height:50px;line-height:50px;"><img style="float:left;margin-top:10px;margin-right:34px;" src="images/i_name.png" width="28" height="30" title="姓名" alt="姓名："/><span class="lname" style="margin-top: 5px;"></span></div>
+					<div style="height:50px;line-height:50px;"><img style="float:left;margin-top:10px;margin-right:34px;" src="images/i_tell.png" width="30" height="30" title="电话" alt="联系电话："/><span class="lmobile fonthy"></span></div>
+					<div style="height:50px;line-height:50px;"><img style="float:left;margin-top:10px;margin-right:34px;" src="images/id.png" width="31" height="23" title="身份证" alt="身份证：" /><span class="idcode fonthy"></span></div>
+				</div>
+			</div>
+			
+			<div style="background-color:#fff;margin-bottom:10px;padding: 0 24px;font-size:28px;">
+				<div style="font-size:30px;height:86px;line-height:86px;display:inline-block;width:50%;">
+					优惠券
+				</div>
+				<a class="_coupon" href="javascript:;;" style="color:#585858;font-size:30px;height:86px;line-height:86px;display:inline-block;width:47%;text-align:right;">
+					<span style="display: none;"><img src="images/coupon-.png" style="display: none;"/>&nbsp;<span class="vprice">0</span>元优惠劵</span>&nbsp;&gt;
+				</a>
+			</div>
+			<div style="background-color:#fff;margin-bottom:10px;padding: 0 24px;font-size:28px;display:none;">
+				<div class="hb_tip" style="font-size:30px;height:86px;line-height:86px;display:inline-block;width:50%;">
+					<img src="images/hongbao.png" style="position:relative;top:10px;"/><span style="font-size:28px;display:inline-block;margin-left:10px;">下单即送红包</span><span style="font-size:18px;color:#eb655f;display:inline-block;position:relative;bottom:15px;">hot</span>
+				</div>
+				<a href="javascript:;;" style="color:#585858;font-size:30px;height:86px;line-height:86px;display:inline-block;width:47%;text-align:right;">
+					<img src="images/surpri3.png" style="position:relative;top:5px;"/>
+				</a>
+			</div>
+			<h1 class="o_contact" style="background-color:#e9e9e9;margin-top:-10px;overflow:hidden;font-size:28px;">
+				<p class="i_red_pot"></p>
+				支付方式
+				<p class="real_pay" style="padding-right:28px;">实付：<span style="font-size:20px;">&yen;</span><span class="pay_price fonthy" style="font-size:34px;">0.00</span></p>
+			</h1>
+			<div id="allWay" style="display: block;">
+				<div class="wechat" style="padding-left:20px;margin-left:0;border-bottom:0px;">
+					<img src="images/wechat.png" width="61" height="54" title="微信支付" alt="微信支付" style="position:relative;bottom:2px;"/>
+					<span class="i_chose1" style="height:99px;line-height:99px;">
+						<input type="checkbox" name="pay" id="checkbox-1-2" disabled="disabled" class="regular_checkbox" checked="checked" /><label for="checkbox-1-2" style=""><img src='images/choose_light.png' style="position:relative;bottom:20px;left:10px;"/></label>
+					</span>
+				</div>
+				<div class="zhifubao" style="margin-left:20px;display:none;">
+					<img src="images/zhifubao.png" width="88" height="77" title="支付宝支付" alt="支付宝支付" />
+					<span class="i_chose1" style="height:99px;line-height:99px;">
+						<input type="checkbox" name="pay" id="checkbox-1-3" class="regular_checkbox" /><label for="checkbox-1-3" style="margin-top:30px;"></label>
+					</span>
+				</div>
+			</div>
+			<div class="o_detail" style="display:none;">
+				<ul>
+					<li class="o_info1">
+					<!-- <h1 class="o_contact1"><p class="i_red_pot1"></p>订单详细</h1> -->
+					<h1 class="i_h1"><span class="ticketdate fonthy">-</span><a class="starttime" style="display:inline-block;width:33%;">00:00</a><span class="o_date linename" style="float:initial;display:inline-block;width:33%;">-</span></h1>
+					
+					<!-- <table style="width: 100%;"> -->
+					<!-- 	<tr> -->
+					<!-- 		<td width="35%" class="ststartname" style="text-align: right;"></td> -->
+					<!-- 		<td width="25%" style="text-align: center;"><span class="o_circle1"></span><span class="o_line o_width"></span><span class="o_circle2"></span></td> -->
+					<!-- 		<td width="35%" class="starrivename" style="text-align: left;"></td> -->
+					<!-- 	</tr> -->
+					<!-- </table> -->
+					<!-- <p class="o_from_to"> -->
+						<div style="width: 100%;">
+							<div style="width: 33%;float: left;text-align: right;">
+								<span class="ststartname" style="width: 150; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">-</span>
+							</div>
+							<div  style="width: 33%;float: left;position: relative;text-align: center;">
+								<p class="o_depart_time">商务大巴</p>
+								<img src="images/to_icon.png"/>
+							</div>
+							<div style="width: 33%;float: left">
+								<span class="starrivename" style="width: 150; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">-</span>
+							</div>
+						</div>
+						<div style="clear: both;"></div>
+						<p class="o_fame1">
+							<span class="fonthy">&yen;<a class="ticketprice">0</a>/张</span>
+							<span class="o_mid fonthy">×<a class="ticket_num fonthy" >0</a>张</span>
+							<span class="fonthy">&yen;<a class="total fonthy">0.00</a></span>
+						</p>
+					<!-- </p> -->
+					</li>
+					<li class="o_info1 i_con">
+						<p class="i_contect i_pen option">联系人<span style="display: none;">（使用身份证取票）</span></p>
+						<p class="i_contect"><img src="images/i_name.png" width="28" height="30" title="姓名" alt="姓名："/><span class="lname" style="margin-top: 5px;"></span></p>
+						<p class="i_contect"><img src="images/i_tell.png" width="30" height="30" title="电话" alt="联系电话："/><span class="lmobile fonthy"></span></p>
+						<p class="i_contect"><img src="images/id.png" width="31" height="23" title="身份证" alt="身份证：" /><span class="idcode fonthy"></span></p>
+					</li>
+					
+					
+					<li class="o_info1" style="display: none;">
+						<h1 class="o_contact2"><p class="i_red_pot2"></p>优惠券</h1>
+						<!--<p class="o_fame1">
+						<span>乘车券</span>
+						<span>×1张</span>
+						<span>-&yen;122</span>
+						</p>-->
+						<div class="o_info2">
+							<img src="images/i_quan.png" width="49" height="30" alt="乘车券：" />
+							<img src="images/i_dai.png" width="49" height="30" alt="代金券：" />
+						</div>
+					</li>
+					<li class="o_info1 o_bottom">
+						<h1 class="o_contact">
+							<p class="i_red_pot"></p>
+							支付方式
+							<p class="real_pay">实付：&yen;<span class="pay_price fonthy">0.00</span></p>
+						</h1>
+						<p class="pay_way" style="display: none;">
+							<span class="r_pay">余额支付<a class="r_rmb fonthy" style="font-size:34px;">&yen;40</a></span>
+							<span class="i_chose">
+								<input type="checkbox" name="restpay" id="checkbox-1-1" class="regular_checkbox" /><label for="checkbox-1-1"></label>
+							</span>
+						</p>
+						
+						<p class="pay_way p_arrow2" id="payWay" >
+							<span class="r_pay">在线支付&yen;<a class="r_rmb pay_price fonthy" style="font-size:34px;">0.00</a></span>
+						</p>
+						<div class="i_blank"></div>
+						<div id="allWay" style="display: block;">
+							<div class="wechat" style="padding-left:20px;">
+								<img src="images/wechat.png" width="61" height="54" title="微信支付" alt="微信支付" />
+								<span class="i_chose1">
+									<input type="checkbox" name="pay" id="checkbox-1-2" disabled="disabled" class="regular_checkbox" checked="checked" /><label for="checkbox-1-2"></label>
+								</span>
+							</div>
+							<div class="zhifubao" style="display: none;">
+								<img src="images/zhifubao.png" width="88" height="77" title="支付宝支付" alt="支付宝支付" />
+								<span class="i_chose1">
+									<input type="checkbox" name="pay" id="checkbox-1-3" class="regular_checkbox" /><label for="checkbox-1-3"></label>
+								</span>
+							</div>
+						</div>
+					</li>
+				</ul>
+			</div>
+			<div class="u_blank"></div>
+			<div class="layout_footer">
+				<input type="button" value="" class="take_order order" name="" />
+			</div>
+		</form>
+	</body>
+</html>
+

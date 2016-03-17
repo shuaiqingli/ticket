@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hengyu.ticket.dao.AdminLineDao">
+  <insert id="save" parameterType="AdminLine">
+	insert
+	into
+		admin_line
+		(<include refid="columns"/>)
+	values
+		(<include refid="propertys"/>)
+  </insert>
+  <delete id="delete" parameterType="java.lang.Integer">
+	delete
+	from
+		admin_line
+	where
+		ID=#{id}
+  </delete>
+  <update id="update" parameterType="AdminLine">
+	update
+		admin_line
+	set
+		`UserID`=#{userid},
+		`LMID`=#{lmid}
+	where
+		ID=#{id}
+  </update>
+  <select id="find" parameterType="java.lang.Integer" resultMap="result_map">
+	select
+		*
+	from
+		admin_line
+	where
+		ID=#{id}
+  </select>
+  <select id="getAdminLine" parameterType="java.lang.String" resultMap="result_map">
+		select
+		*
+		from
+		admin_line
+		where
+		UserID=#{userID}
+	</select>
+  <select id="count" resultType="java.lang.Integer">
+	select
+		count(1)
+	from
+		admin_line
+  </select>
+  <sql id="columns">
+	`UserID`,
+	`LMID`
+  </sql>
+  <sql id="propertys">
+	#{userid},
+	#{lmid}
+  </sql>
+  <resultMap id="result_map" type="AdminLine">
+    <id column="ID" property="id" javaType="java.lang.Integer"/>
+    <result column="UserID" property="userid" javaType="java.lang.String"/>
+    <result column="LMID" property="lmid" javaType="java.lang.Integer"/>
+  </resultMap>
+</mapper>

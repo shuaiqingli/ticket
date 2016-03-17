@@ -1,0 +1,33 @@
+<!doctype html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title></title>
+<meta name="viewport" content="width=device-width, initial-scale=0.5, maximum-scale=1.0, user-scalable=0" />
+<meta name="format-detection" content="telephone=no" />
+<meta name="apple-touch-fullscreen" content="YES" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="MobileOptimized" content="320" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black" />
+<link type="text/css" rel="stylesheet" href="css/css.css">
+<script type="text/javascript" src="js/jquery-1.4.2.js"></script>
+
+<script type="text/javascript" src="js/wx.js"></script>
+</head>
+<body>
+</body>
+<script type="text/javascript">
+$(function(){
+	var id = $.cookie('staticpage');
+	if(!isempty(id)){
+		ajax({id:id}, "public/api/getStaticPage",function(json){
+			if(!isempty(json.datas[0])){
+				json = json.datas[0];
+				$('title').html(json.showtitle);
+				$('body').html(json.showcontent);
+			}
+		});
+	}
+})
+</script>
+</html>

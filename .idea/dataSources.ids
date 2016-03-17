@@ -1,0 +1,2443 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component name="dataSourceStorage">
+  <data-source name="mysql" uuid="379bd9da-4b53-4a01-9d37-3b7db9296cf0">
+    <database-info product="MySQL" version="5.5.44-0ubuntu0.12.04.1-log" jdbc-version="4.0" driver-name="MySQL Connector Java" driver-version="mysql-connector-java-5.1.35 ( Revision: 5fb9c5849535c13917c2cf9baaece6ef9693ef27 )">
+      <extra-name-characters>#@</extra-name-characters>
+      <identifier-quote-string>`</identifier-quote-string>
+    </database-info>
+    <case-sensitivity plain-identifiers="exact" quoted-identifiers="exact"/>
+    <database-model serializer="dbm" rdbms="MYSQL" format-version="2.2">
+      <schema id="1" name="jcticket"/>
+      <table id="2" parent="1" name="activity_msg"/>
+      <table id="3" parent="1" name="admin"/>
+      <table id="4" parent="1" name="admin_line"/>
+      <table id="5" parent="1" name="admin_settle_log"/>
+      <table id="6" parent="1" name="base_resource"/>
+      <table id="7" parent="1" name="city_station"/>
+      <table id="8" parent="1" name="company"/>
+      <table id="9" parent="1" name="coupon_line"/>
+      <table id="10" parent="1" name="coupons"/>
+      <table id="11" parent="1" name="coupons_rule"/>
+      <table id="12" parent="1" name="customer"/>
+      <table id="13" parent="1" name="driver"/>
+      <table id="14" parent="1" name="driver_holiday"/>
+      <table id="15" parent="1" name="feedback"/>
+      <table id="16" parent="1" name="feedback_detail"/>
+      <table id="17" parent="1" name="func_mode"/>
+      <table id="18" parent="1" name="integral_line"/>
+      <table id="19" parent="1" name="integral_product"/>
+      <table id="20" parent="1" name="integral_rule"/>
+      <table id="21" parent="1" name="integral_rule_line"/>
+      <table id="22" parent="1" name="line_driver"/>
+      <table id="23" parent="1" name="line_manage"/>
+      <table id="24" parent="1" name="line_manage_station"/>
+      <table id="25" parent="1" name="line_plate"/>
+      <table id="26" parent="1" name="line_schedu_detail"/>
+      <table id="27" parent="1" name="line_schedue"/>
+      <table id="28" parent="1" name="linkman"/>
+      <table id="29" parent="1" name="lock_ticket_log"/>
+      <table id="30" parent="1" name="make_conf"/>
+      <table id="31" parent="1" name="plate"/>
+      <table id="32" parent="1" name="prohibit_line"/>
+      <table id="33" parent="1" name="prohibit_ticket"/>
+      <table id="34" parent="1" name="prohibit_time"/>
+      <table id="35" parent="1" name="promotion"/>
+      <table id="36" parent="1" name="promotion_time"/>
+      <table id="37" parent="1" name="refund_rule"/>
+      <table id="38" parent="1" name="refund_rule_line"/>
+      <table id="39" parent="1" name="refund_rule_time"/>
+      <table id="40" parent="1" name="refund_ticket"/>
+      <table id="41" parent="1" name="refund_ticket_detail"/>
+      <table id="42" parent="1" name="relation_station"/>
+      <table id="43" parent="1" name="role"/>
+      <table id="44" parent="1" name="role_power"/>
+      <table id="45" parent="1" name="sale_order"/>
+      <table id="46" parent="1" name="sale_order_ticket"/>
+      <table id="47" parent="1" name="seat"/>
+      <table id="48" parent="1" name="shift"/>
+      <table id="49" parent="1" name="shift_start"/>
+      <table id="50" parent="1" name="show_time"/>
+      <table id="51" parent="1" name="show_time_line"/>
+      <table id="52" parent="1" name="sms_history"/>
+      <table id="53" parent="1" name="soft_upgrade"/>
+      <table id="54" parent="1" name="static_show"/>
+      <table id="55" parent="1" name="station_time_rule"/>
+      <table id="56" parent="1" name="ticket_line"/>
+      <table id="57" parent="1" name="ticket_store"/>
+      <table id="58" parent="1" name="trip_price_list"/>
+      <table id="59" parent="1" name="trip_price_sub"/>
+      <table id="60" parent="1" name="weixin_follow"/>
+      <table id="61" parent="1" name="wx_subscribe_msg"/>
+      <column id="62" parent="2" name="ID">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="63" parent="2" name="AMSort">
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="64" parent="2" name="AMTitle">
+        <data-type>varchar(256)</data-type>
+      </column>
+      <column id="65" parent="2" name="AMPictureUrl">
+        <data-type>varchar(256)</data-type>
+      </column>
+      <column id="66" parent="2" name="AMContent">
+        <data-type>text</data-type>
+      </column>
+      <column id="67" parent="2" name="BeginDate">
+        <data-type>varchar(32)</data-type>
+      </column>
+      <column id="68" parent="2" name="EndDate">
+        <data-type>varchar(32)</data-type>
+      </column>
+      <column id="69" parent="2" name="MakeID">
+        <data-type>varchar(32)</data-type>
+      </column>
+      <column id="70" parent="2" name="MakeName">
+        <data-type>varchar(32)</data-type>
+      </column>
+      <column id="71" parent="2" name="MakeDate">
+        <data-type>varchar(32)</data-type>
+      </column>
+      <key id="72" parent="2" name="PRIMARY">
+        <columns>ID</columns>
+        <primary>1</primary>
+      </key>
+      <column id="73" parent="3" name="UserID">
+        <comment>用户编号</comment>
+        <mandatory>1</mandatory>
+        <data-type>varchar(32)</data-type>
+        <default-expression>&apos;&apos;</default-expression>
+      </column>
+      <column id="74" parent="3" name="RealName">
+        <comment>名字</comment>
+        <data-type>varchar(32)</data-type>
+      </column>
+      <column id="75" parent="3" name="Mobile">
+        <comment>手机号码</comment>
+        <data-type>varchar(32)</data-type>
+      </column>
+      <column id="76" parent="3" name="Email">
+        <comment>Email</comment>
+        <data-type>varchar(64)</data-type>
+      </column>
+      <column id="77" parent="3" name="Password">
+        <comment>密码</comment>
+        <data-type>varchar(256)</data-type>
+      </column>
+      <column id="78" parent="3" name="Token">
+        <comment>Token</comment>
+        <data-type>varchar(256)</data-type>
+      </column>
+      <column id="79" parent="3" name="IsDel">
+        <comment>是否删除 1 或 0</comment>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="80" parent="3" name="IsAdmin">
+        <comment>是否超级管理员</comment>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="81" parent="3" name="ParentID">
+        <data-type>varchar(32)</data-type>
+      </column>
+      <column id="82" parent="3" name="RoleID">
+        <comment>角色编号id</comment>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="83" parent="3" name="MakeDate">
+        <comment>注册日期</comment>
+        <data-type>varchar(32)</data-type>
+      </column>
+      <column id="84" parent="3" name="CityID">
+        <data-type>varchar(12)</data-type>
+      </column>
+      <column id="85" parent="3" name="CityName">
+        <data-type>varchar(64)</data-type>
+      </column>
+      <column id="86" parent="3" name="TCID">
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="87" parent="3" name="CompanyName">
+        <data-type>varchar(64)</data-type>
+      </column>
+      <column id="88" parent="3" name="IsChange">
+        <data-type>int(11)</data-type>
+        <default-expression>&apos;0&apos;</default-expression>
+      </column>
+      <column id="89" parent="3" name="IsDriver">
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="90" parent="3" name="IsAutoBindLine">
+        <data-type>varchar(2)</data-type>
+      </column>
+      <key id="91" parent="3" name="PRIMARY">
+        <columns>UserID</columns>
+        <primary>1</primary>
+      </key>
+      <column id="92" parent="4" name="ID">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="93" parent="4" name="UserID">
+        <data-type>varchar(45)</data-type>
+      </column>
+      <column id="94" parent="4" name="LMID">
+        <data-type>int(11)</data-type>
+      </column>
+      <key id="95" parent="4" name="PRIMARY">
+        <columns>ID</columns>
+        <primary>1</primary>
+      </key>
+      <column id="96" parent="5" name="ID">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="97" parent="5" name="UserID">
+        <data-type>varchar(32)</data-type>
+      </column>
+      <column id="98" parent="5" name="UserName">
+        <data-type>varchar(128)</data-type>
+      </column>
+      <column id="99" parent="5" name="SaleOrders">
+        <data-type>varchar(4096)</data-type>
+      </column>
+      <column id="100" parent="5" name="QuantityTotal">
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="101" parent="5" name="PriceTotal">
+        <data-type>decimal(16,2)</data-type>
+      </column>
+      <column id="102" parent="5" name="OperatorID">
+        <data-type>varchar(32)</data-type>
+      </column>
+      <column id="103" parent="5" name="OperatorName">
+        <data-type>varchar(128)</data-type>
+      </column>
+      <column id="104" parent="5" name="MakeDate">
+        <data-type>varchar(32)</data-type>
+      </column>
+      <key id="105" parent="5" name="PRIMARY">
+        <columns>ID</columns>
+        <primary>1</primary>
+      </key>
+      <column id="106" parent="6" name="ID">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="107" parent="6" name="TagName">
+        <data-type>varchar(24)</data-type>
+      </column>
+      <column id="108" parent="6" name="TagSubValue">
+        <data-type>varchar(64)</data-type>
+      </column>
+      <column id="109" parent="6" name="ShortName">
+        <data-type>varchar(32)</data-type>
+      </column>
+      <column id="110" parent="6" name="PYName">
+        <data-type>varchar(64)</data-type>
+      </column>
+      <column id="111" parent="6" name="TagOrder">
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="112" parent="6" name="IsDel">
+        <data-type>int(11)</data-type>
+      </column>
+      <key id="113" parent="6" name="PRIMARY">
+        <columns>ID</columns>
+        <primary>1</primary>
+      </key>
+      <column id="114" parent="7" name="ID">
+        <comment>编号</comment>
+        <mandatory>1</mandatory>
+        <data-type>varchar(12)</data-type>
+      </column>
+      <column id="115" parent="7" name="ShortName">
+        <data-type>varchar(12)</data-type>
+      </column>
+      <column id="116" parent="7" name="CityName">
+        <comment>城市名称</comment>
+        <data-type>varchar(32)</data-type>
+      </column>
+      <column id="117" parent="7" name="STPinYin">
+        <data-type>varchar(256)</data-type>
+      </column>
+      <column id="118" parent="7" name="ParentID">
+        <comment>父编号</comment>
+        <data-type>varchar(12)</data-type>
+      </column>
+      <column id="119" parent="7" name="Rank">
+        <comment>优先级</comment>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="120" parent="7" name="IsHot">
+        <comment>是否热门</comment>
+        <data-type>int(10)</data-type>
+      </column>
+      <column id="121" parent="7" name="StationAddr">
+        <data-type>varchar(256)</data-type>
+      </column>
+      <column id="122" parent="7" name="TicketAddr">
+        <data-type>varchar(256)</data-type>
+      </column>
+      <column id="123" parent="7" name="TicketPercent">
+        <comment>卖票百分比</comment>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="124" parent="7" name="CouponTicketPercent">
+        <comment>优惠票百分比</comment>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="125" parent="7" name="CouponPercent">
+        <comment>优惠百分比</comment>
+        <data-type>int(11)</data-type>
+      </column>
+      <key id="126" parent="7" name="PRIMARY">
+        <columns>ID</columns>
+        <primary>1</primary>
+      </key>
+      <column id="127" parent="8" name="ID">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="128" parent="8" name="CompanyName">
+        <data-type>varchar(64)</data-type>
+      </column>
+      <column id="129" parent="8" name="ShortName">
+        <data-type>varchar(32)</data-type>
+      </column>
+      <column id="130" parent="8" name="PYName">
+        <data-type>varchar(64)</data-type>
+      </column>
+      <key id="131" parent="8" name="PRIMARY">
+        <columns>ID</columns>
+        <primary>1</primary>
+      </key>
+      <column id="132" parent="9" name="ID">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="133" parent="9" name="VoucherCode">
+        <data-type>varchar(32)</data-type>
+      </column>
+      <column id="134" parent="9" name="VoucherName">
+        <data-type>varchar(32)</data-type>
+      </column>
+      <column id="135" parent="9" name="CID">
+        <data-type>varchar(32)</data-type>
+      </column>
+      <column id="136" parent="9" name="CName">
+        <data-type>varchar(128)</data-type>
+      </column>
+      <column id="137" parent="9" name="BeginDate">
+        <data-type>varchar(32)</data-type>
+      </column>
+      <column id="138" parent="9" name="EndDate">
+        <data-type>varchar(32)</data-type>
+      </column>
+      <column id="139" parent="9" name="LowLimit">
+        <data-type>decimal(16,2)</data-type>
+      </column>
+      <column id="140" parent="9" name="VPrice">
+        <data-type>decimal(16,2)</data-type>
+      </column>
+      <column id="141" parent="9" name="UserID">
+        <data-type>varchar(32)</data-type>
+      </column>
+      <column id="142" parent="9" name="UserName">
+        <data-type>varchar(128)</data-type>
+      </column>
+      <column id="143" parent="9" name="MakeDate">
+        <data-type>varchar(32)</data-type>
+      </column>
+      <column id="144" parent="9" name="Remark">
+        <data-type>varchar(128)</data-type>
+      </column>
+      <key id="145" parent="9" name="PRIMARY">
+        <columns>ID</columns>
+        <primary>1</primary>
+      </key>
+      <column id="146" parent="10" name="VoucherCode">
+        <comment>券码</comment>
+        <mandatory>1</mandatory>
+        <data-type>varchar(32)</data-type>
+      </column>
+      <column id="147" parent="10" name="VoucherName">
+        <comment>券名</comment>
+        <data-type>varchar(32)</data-type>
+      </column>
+      <column id="148" parent="10" name="VSort">
+        <data-type>int(11)</data-type>
+        <default-expression>&apos;0&apos;</default-expression>
+      </column>
+      <column id="149" parent="10" name="Memo">
+        <data-type>varchar(32)</data-type>
+      </column>
+      <column id="150" parent="10" name="CID">
+        <comment>客户ID</comment>
+        <data-type>varchar(32)</data-type>
+      </column>
+      <column id="151" parent="10" name="CName">
+        <comment>客户姓名</comment>
+        <data-type>varchar(32)</data-type>
+      </column>
+      <column id="152" parent="10" name="BeginDate">
+        <comment>开始日期</comment>
+        <data-type>varchar(32)</data-type>
+      </column>
+      <column id="153" parent="10" name="EndDate">
+        <comment>结束日期</comment>
+        <data-type>varchar(32)</data-type>
+      </column>
+      <column id="154" parent="10" name="LowLimit">
+        <comment>最低消费</comment>
+        <data-type>decimal(16,2)</data-type>
+      </column>
+      <column id="155" parent="10" name="VPrice">
+        <comment>面值</comment>
+        <data-type>decimal(16,2)</data-type>
+      </column>
+      <column id="156" parent="10" name="IsUse">
+        <comment>是否可用</comment>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="157" parent="10" name="IsUseName">
+        <comment>是否可用</comment>
+        <data-type>varchar(8)</data-type>
+      </column>
+      <column id="158" parent="10" name="MakeDate">
+        <comment>制券日期</comment>
+        <data-type>varchar(32)</data-type>
+      </column>
+      <key id="159" parent="10" name="PRIMARY">
+        <columns>VoucherCode</columns>
+        <primary>1</primary>
+      </key>
+      <column id="160" parent="11" name="ID">
+        <comment>编码</comment>
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="161" parent="11" name="RuleName">
+        <comment>规则名称</comment>
+        <data-type>varchar(32)</data-type>
+      </column>
+      <column id="162" parent="11" name="VSort">
+        <comment>券类型</comment>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="163" parent="11" name="VSortName">
+        <comment>券类型</comment>
+        <data-type>varchar(32)</data-type>
+      </column>
+      <column id="164" parent="11" name="BeginDate">
+        <comment>开始日期</comment>
+        <data-type>varchar(32)</data-type>
+      </column>
+      <column id="165" parent="11" name="EndDate">
+        <comment>结束日期</comment>
+        <data-type>varchar(32)</data-type>
+      </column>
+      <column id="166" parent="11" name="ValidDay">
+        <comment>有效期</comment>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="167" parent="11" name="BuySum">
+        <comment>满额可送</comment>
+        <data-type>decimal(16,2)</data-type>
+      </column>
+      <column id="168" parent="11" name="LowLimit">
+        <comment>最低消费可用</comment>
+        <data-type>decimal(16,2)</data-type>
+      </column>
+      <column id="169" parent="11" name="VPrice">
+        <comment>面值</comment>
+        <data-type>decimal(16,2)</data-type>
+      </column>
+      <column id="170" parent="11" name="IsLimitGive">
+        <data-type>int(11)</data-type>
+        <default-expression>&apos;0&apos;</default-expression>
+      </column>
+      <column id="171" parent="11" name="IsEnable">
+        <comment>是否启用</comment>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="172" parent="11" name="IsEnableName">
+        <comment>是否启用中文</comment>
+        <data-type>varchar(12)</data-type>
+      </column>
+      <column id="173" parent="11" name="MakeDate">
+        <data-type>varchar(32)</data-type>
+      </column>
+      <column id="174" parent="11" name="IsDel">
+        <data-type>int(11)</data-type>
+        <default-expression>&apos;0&apos;</default-expression>
+      </column>
+      <key id="175" parent="11" name="PRIMARY">
+        <columns>ID</columns>
+        <primary>1</primary>
+      </key>
+      <column id="176" parent="12" name="CID">
+        <comment>客户编号</comment>
+        <mandatory>1</mandatory>
+        <data-type>varchar(32)</data-type>
+      </column>
+      <column id="177" parent="12" name="Mobile">
+        <comment>客户手机号码</comment>
+        <data-type>varchar(16)</data-type>
+      </column>
+      <column id="178" parent="12" name="CName">
+        <comment>客户名称</comment>
+        <data-type>varchar(32)</data-type>
+      </column>
+      <column id="179" parent="12" name="Email">
+        <comment>客户邮箱</comment>
+        <data-type>varchar(64)</data-type>
+      </column>
+      <column id="180" parent="12" name="Password">
+        <comment>客户密码</comment>
+        <data-type>varchar(128)</data-type>
+      </column>
+      <column id="181" parent="12" name="Token">
+        <comment>Token</comment>
+        <data-type>varchar(128)</data-type>
+      </column>
+      <column id="182" parent="12" name="Money">
+        <comment>余额</comment>
+        <data-type>decimal(16,2)</data-type>
+      </column>
+      <column id="183" parent="12" name="Integral">
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="184" parent="12" name="Mileage">
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="185" parent="12" name="MakeDate">
+        <comment>注册日期</comment>
+        <data-type>varchar(32)</data-type>
+      </column>
+      <column id="186" parent="12" name="OpenId">
+        <comment>微信OPenId</comment>
+        <data-type>varchar(64)</data-type>
+      </column>
+      <column id="187" parent="12" name="HeadPhoto">
+        <data-type>varchar(256)</data-type>
+      </column>
+      <column id="188" parent="12" name="Lng">
+        <data-type>varchar(24)</data-type>
+      </column>
+      <column id="189" parent="12" name="Lat">
+        <data-type>varchar(24)</data-type>
+      </column>
+      <column id="190" parent="12" name="RegAddr">
+        <data-type>varchar(256)</data-type>
+      </column>
+      <column id="191" parent="12" name="Rank">
+        <data-type>int(11)</data-type>
+        <default-expression>&apos;0&apos;</default-expression>
+      </column>
+      <column id="192" parent="12" name="UserID">
+        <data-type>varchar(32)</data-type>
+      </column>
+      <column id="193" parent="12" name="UserName">
+        <data-type>varchar(128)</data-type>
+      </column>
+      <index id="194" parent="12" name="UserID_UNIQUE">
+        <columns>UserID</columns>
+        <unique>1</unique>
+      </index>
+      <key id="195" parent="12" name="PRIMARY">
+        <columns>CID</columns>
+        <primary>1</primary>
+      </key>
+      <key id="196" parent="12" name="UserID_UNIQUE">
+        <columns>UserID</columns>
+        <underlying-index>UserID_UNIQUE</underlying-index>
+      </key>
+      <column id="197" parent="13" name="ID">
+        <mandatory>1</mandatory>
+        <data-type>varchar(24)</data-type>
+      </column>
+      <column id="198" parent="13" name="DName">
+        <data-type>varchar(32)</data-type>
+      </column>
+      <column id="199" parent="13" name="PYName">
+        <data-type>varchar(64)</data-type>
+      </column>
+      <column id="200" parent="13" name="DMobile">
+        <data-type>varchar(32)</data-type>
+      </column>
+      <column id="201" parent="13" name="Password">
+        <data-type>varchar(256)</data-type>
+      </column>
+      <column id="202" parent="13" name="Token">
+        <data-type>varchar(256)</data-type>
+      </column>
+      <column id="203" parent="13" name="IDCard">
+        <data-type>varchar(24)</data-type>
+      </column>
+      <column id="204" parent="13" name="DefPlatNum">
+        <data-type>varchar(32)</data-type>
+      </column>
+      <column id="205" parent="13" name="IsLock">
+        <data-type>int(11)</data-type>
+        <default-expression>&apos;0&apos;</default-expression>
+      </column>
+      <column id="206" parent="13" name="LockDate">
+        <data-type>varchar(32)</data-type>
+      </column>
+      <column id="207" parent="13" name="LockLong">
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="208" parent="13" name="DefaultTime">
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="209" parent="13" name="IsStop">
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="210" parent="13" name="IsStopName">
+        <data-type>varchar(12)</data-type>
+      </column>
+      <column id="211" parent="13" name="MakeDate">
+        <data-type>varchar(32)</data-type>
+      </column>
+      <column id="212" parent="13" name="TCID">
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="213" parent="13" name="CompanyName">
+        <data-type>varchar(64)</data-type>
+      </column>
+      <key id="214" parent="13" name="PRIMARY">
+        <columns>ID</columns>
+        <primary>1</primary>
+      </key>
+      <column id="215" parent="14" name="ID">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="216" parent="14" name="DriverID">
+        <data-type>varchar(32)</data-type>
+      </column>
+      <column id="217" parent="14" name="Type">
+        <data-type>varchar(1)</data-type>
+      </column>
+      <column id="218" parent="14" name="Weekday">
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="219" parent="14" name="StartDate">
+        <data-type>varchar(32)</data-type>
+      </column>
+      <column id="220" parent="14" name="EndDate">
+        <data-type>varchar(32)</data-type>
+      </column>
+      <column id="221" parent="14" name="MakeDate">
+        <data-type>varchar(32)</data-type>
+      </column>
+      <key id="222" parent="14" name="PRIMARY">
+        <columns>ID</columns>
+        <primary>1</primary>
+      </key>
+      <column id="223" parent="15" name="ID">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="224" parent="15" name="Type">
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="225" parent="15" name="CID">
+        <data-type>varchar(64)</data-type>
+      </column>
+      <column id="226" parent="15" name="CName">
+        <data-type>varchar(64)</data-type>
+      </column>
+      <column id="227" parent="15" name="Mobile">
+        <data-type>varchar(32)</data-type>
+      </column>
+      <column id="228" parent="15" name="Content">
+        <data-type>varchar(1024)</data-type>
+      </column>
+      <column id="229" parent="15" name="LastIndexForCustomer">
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="230" parent="15" name="LastIndexForAdmin">
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="231" parent="15" name="Remark">
+        <data-type>varchar(1024)</data-type>
+      </column>
+      <column id="232" parent="15" name="Status">
+        <data-type>int(2)</data-type>
+        <default-expression>&apos;1&apos;</default-expression>
+      </column>
+      <column id="233" parent="15" name="MakeDate">
+        <data-type>varchar(32)</data-type>
+      </column>
+      <key id="234" parent="15" name="PRIMARY">
+        <columns>ID</columns>
+        <primary>1</primary>
+      </key>
+      <column id="235" parent="16" name="ID">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="236" parent="16" name="FeedbackID">
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="237" parent="16" name="Type">
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="238" parent="16" name="Content">
+        <data-type>varchar(1024)</data-type>
+      </column>
+      <column id="239" parent="16" name="ReplyID">
+        <data-type>varchar(64)</data-type>
+      </column>
+      <column id="240" parent="16" name="ReplyName">
+        <data-type>varchar(64)</data-type>
+      </column>
+      <column id="241" parent="16" name="Index">
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="242" parent="16" name="IsDel">
+        <data-type>int(2)</data-type>
+        <default-expression>&apos;0&apos;</default-expression>
+      </column>
+      <column id="243" parent="16" name="MakeDate">
+        <data-type>varchar(32)</data-type>
+      </column>
+      <key id="244" parent="16" name="PRIMARY">
+        <columns>ID</columns>
+        <primary>1</primary>
+      </key>
+      <column id="245" parent="17" name="ID">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="246" parent="17" name="MenuName">
+        <comment>菜单名称</comment>
+        <data-type>varchar(64)</data-type>
+      </column>
+      <column id="247" parent="17" name="MenuClass">
+        <comment>权限类</comment>
+        <data-type>varchar(32)</data-type>
+      </column>
+      <column id="248" parent="17" name="MenuUrl">
+        <comment>菜单路径</comment>
+        <data-type>varchar(128)</data-type>
+      </column>
+      <column id="249" parent="17" name="ParentID">
+        <comment>父编号</comment>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="250" parent="17" name="Rank">
+        <comment>优先级</comment>
+        <data-type>int(11)</data-type>
+      </column>
+      <key id="251" parent="17" name="PRIMARY">
+        <columns>ID</columns>
+        <primary>1</primary>
+      </key>
+      <column id="252" parent="18" name="ID">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="253" parent="18" name="OperatorID">
+        <data-type>varchar(64)</data-type>
+      </column>
+      <column id="254" parent="18" name="ProductName">
+        <data-type>varchar(128)</data-type>
+      </column>
+      <column id="255" parent="18" name="Amount">
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="256" parent="18" name="Count">
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="257" parent="18" name="Integral">
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="258" parent="18" name="Type">
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="259" parent="18" name="CustomerID">
+        <data-type>varchar(32)</data-type>
+      </column>
+      <column id="260" parent="18" name="CustomerName">
+        <data-type>varchar(128)</data-type>
+      </column>
+      <column id="261" parent="18" name="MakeDate">
+        <data-type>varchar(32)</data-type>
+      </column>
+      <key id="262" parent="18" name="PRIMARY">
+        <columns>ID</columns>
+        <primary>1</primary>
+      </key>
+      <column id="263" parent="19" name="ID">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="264" parent="19" name="Name">
+        <data-type>varchar(128)</data-type>
+      </column>
+      <column id="265" parent="19" name="Amount">
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="266" parent="19" name="Type">
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="267" parent="19" name="ValidDay">
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="268" parent="19" name="LowLimit">
+        <data-type>decimal(16,2)</data-type>
+      </column>
+      <column id="269" parent="19" name="VPrice">
+        <data-type>decimal(16,2)</data-type>
+      </column>
+      <column id="270" parent="19" name="IconUrl">
+        <data-type>varchar(128)</data-type>
+      </column>
+      <column id="271" parent="19" name="MainUrl">
+        <data-type>varchar(128)</data-type>
+      </column>
+      <column id="272" parent="19" name="StockFlag">
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="273" parent="19" name="FixedStock">
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="274" parent="19" name="CurrentStock">
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="275" parent="19" name="StartDate">
+        <data-type>varchar(32)</data-type>
+      </column>
+      <column id="276" parent="19" name="EndDate">
+        <data-type>varchar(32)</data-type>
+      </column>
+      <column id="277" parent="19" name="Status">
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="278" parent="19" name="Desc">
+        <data-type>mediumtext</data-type>
+      </column>
+      <column id="279" parent="19" name="MakeDate">
+        <data-type>varchar(32)</data-type>
+      </column>
+      <key id="280" parent="19" name="PRIMARY">
+        <columns>ID</columns>
+        <primary>1</primary>
+      </key>
+      <column id="281" parent="20" name="ID">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="282" parent="20" name="BeginDate">
+        <data-type>varchar(32)</data-type>
+      </column>
+      <column id="283" parent="20" name="EndDate">
+        <data-type>varchar(32)</data-type>
+      </column>
+      <column id="284" parent="20" name="Weekdays">
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="285" parent="20" name="Multiple">
+        <data-type>decimal(16,2)</data-type>
+      </column>
+      <column id="286" parent="20" name="MakeID">
+        <data-type>varchar(32)</data-type>
+      </column>
+      <column id="287" parent="20" name="MakeName">
+        <data-type>varchar(32)</data-type>
+      </column>
+      <column id="288" parent="20" name="MakeDate">
+        <data-type>varchar(32)</data-type>
+      </column>
+      <key id="289" parent="20" name="PRIMARY">
+        <columns>ID</columns>
+        <primary>1</primary>
+      </key>
+      <column id="290" parent="21" name="IRID">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="291" parent="21" name="LMID">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+      </column>
+      <key id="292" parent="21" name="PRIMARY">
+        <columns>IRID
+LMID</columns>
+        <primary>1</primary>
+      </key>
+      <column id="293" parent="22" name="ID">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="294" parent="22" name="DriverID">
+        <data-type>varchar(24)</data-type>
+      </column>
+      <column id="295" parent="22" name="GroupID">
+        <data-type>varchar(36)</data-type>
+      </column>
+      <column id="296" parent="22" name="Type">
+        <data-type>varchar(2)</data-type>
+      </column>
+      <column id="297" parent="22" name="PlateID">
+        <data-type>int(11)</data-type>
+      </column>
+      <index id="298" parent="22" name="DriverID_GroupID">
+        <columns>DriverID
+GroupID</columns>
+        <unique>1</unique>
+      </index>
+      <key id="299" parent="22" name="DriverID_GroupID">
+        <columns>DriverID
+GroupID</columns>
+        <underlying-index>DriverID_GroupID</underlying-index>
+      </key>
+      <key id="300" parent="22" name="PRIMARY">
+        <columns>ID</columns>
+        <primary>1</primary>
+      </key>
+      <column id="301" parent="23" name="ID">
+        <comment>编号</comment>
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="302" parent="23" name="GroupID">
+        <data-type>varchar(36)</data-type>
+      </column>
+      <column id="303" parent="23" name="LineID">
+        <comment>线路编号</comment>
+        <data-type>varchar(24)</data-type>
+      </column>
+      <column id="304" parent="23" name="LineName">
+        <comment>线路名称</comment>
+        <data-type>varchar(32)</data-type>
+      </column>
+      <column id="305" parent="23" name="Memo">
+        <data-type>varchar(32)</data-type>
+      </column>
+      <column id="306" parent="23" name="CityStartID">
+        <comment>始发站城市编号</comment>
+        <data-type>varchar(12)</data-type>
+      </column>
+      <column id="307" parent="23" name="CityStartName">
+        <comment>始发站城市名称</comment>
+        <data-type>varchar(32)</data-type>
+      </column>
+      <column id="308" parent="23" name="CityArriveID">
+        <comment>到达城市编号</comment>
+        <data-type>varchar(12)</data-type>
+      </column>
+      <column id="309" parent="23" name="CityArriveName">
+        <comment>到达城市名称</comment>
+        <data-type>varchar(32)</data-type>
+      </column>
+      <column id="310" parent="23" name="BalanceTicketWarn">
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="311" parent="23" name="TCID">
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="312" parent="23" name="TransCompany">
+        <comment>运输公司</comment>
+        <data-type>varchar(64)</data-type>
+      </column>
+      <column id="313" parent="23" name="DriverQuantity">
+        <data-type>int(11)</data-type>
+        <default-expression>&apos;1&apos;</default-expression>
+      </column>
+      <column id="314" parent="23" name="CarModelID">
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="315" parent="23" name="CarModelName">
+        <data-type>varchar(32)</data-type>
+      </column>
+      <column id="316" parent="23" name="ReleaseDay">
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="317" parent="23" name="MakeID">
+        <comment>制作人编号</comment>
+        <data-type>varchar(32)</data-type>
+      </column>
+      <column id="318" parent="23" name="MakeName">
+        <comment>制作人名称</comment>
+        <data-type>varchar(32)</data-type>
+      </column>
+      <column id="319" parent="23" name="MakeDate">
+        <comment>制作日期</comment>
+        <data-type>varchar(32)</data-type>
+      </column>
+      <key id="320" parent="23" name="PRIMARY">
+        <columns>ID</columns>
+        <primary>1</primary>
+      </key>
+      <column id="321" parent="24" name="ID">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="322" parent="24" name="LMID">
+        <comment>线路编号</comment>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="323" parent="24" name="Sort">
+        <comment>属性0出发站1到达站</comment>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="324" parent="24" name="SortName">
+        <comment>属性名称</comment>
+        <data-type>varchar(12)</data-type>
+      </column>
+      <column id="325" parent="24" name="STID">
+        <data-type>varchar(12)</data-type>
+      </column>
+      <column id="326" parent="24" name="STPinYin">
+        <comment>站点拼音</comment>
+        <data-type>varchar(32)</data-type>
+      </column>
+      <column id="327" parent="24" name="STName">
+        <comment>站点名称</comment>
+        <data-type>varchar(64)</data-type>
+      </column>
+      <column id="328" parent="24" name="SortNum">
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="329" parent="24" name="RequireTime">
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="330" parent="24" name="SubMileage">
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="331" parent="24" name="STRID">
+        <data-type>int(11)</data-type>
+      </column>
+      <key id="332" parent="24" name="PRIMARY">
+        <columns>ID</columns>
+        <primary>1</primary>
+      </key>
+      <column id="333" parent="25" name="ID">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="334" parent="25" name="PlateID">
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="335" parent="25" name="GroupID">
+        <data-type>varchar(36)</data-type>
+      </column>
+      <index id="336" parent="25" name="PlateID">
+        <columns>PlateID</columns>
+        <unique>1</unique>
+      </index>
+      <key id="337" parent="25" name="PlateID">
+        <columns>PlateID</columns>
+        <underlying-index>PlateID</underlying-index>
+      </key>
+      <key id="338" parent="25" name="PRIMARY">
+        <columns>ID</columns>
+        <primary>1</primary>
+      </key>
+      <column id="339" parent="26" name="ID">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="340" parent="26" name="LSUID">
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="341" parent="26" name="ShiftCode">
+        <data-type>varchar(12)</data-type>
+      </column>
+      <column id="342" parent="26" name="StartTime">
+        <data-type>varchar(32)</data-type>
+      </column>
+      <key id="343" parent="26" name="PRIMARY">
+        <columns>ID</columns>
+        <primary>1</primary>
+      </key>
+      <column id="344" parent="27" name="ID">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="345" parent="27" name="LMID">
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="346" parent="27" name="ScheduName">
+        <data-type>varchar(32)</data-type>
+      </column>
+      <column id="347" parent="27" name="IsDefault">
+        <data-type>int(11)</data-type>
+      </column>
+      <key id="348" parent="27" name="PRIMARY">
+        <columns>ID</columns>
+        <primary>1</primary>
+      </key>
+      <column id="349" parent="28" name="ID">
+        <comment>编号</comment>
+        <mandatory>1</mandatory>
+        <data-type>varchar(32)</data-type>
+        <default-expression>&apos;&apos;</default-expression>
+      </column>
+      <column id="350" parent="28" name="CID">
+        <comment>客户编号</comment>
+        <data-type>varchar(32)</data-type>
+      </column>
+      <column id="351" parent="28" name="LName">
+        <comment>姓名</comment>
+        <data-type>varchar(32)</data-type>
+      </column>
+      <column id="352" parent="28" name="LMobile">
+        <comment>手机号码</comment>
+        <data-type>varchar(16)</data-type>
+      </column>
+      <column id="353" parent="28" name="IDCode">
+        <comment>身份证号码</comment>
+        <data-type>varchar(24)</data-type>
+      </column>
+      <column id="354" parent="28" name="MakeDate">
+        <comment>添加日期</comment>
+        <data-type>varchar(32)</data-type>
+      </column>
+      <column id="355" parent="28" name="SynchroNO">
+        <data-type>bigint(20)</data-type>
+      </column>
+      <key id="356" parent="28" name="PRIMARY">
+        <columns>ID</columns>
+        <primary>1</primary>
+      </key>
+      <column id="357" parent="29" name="ID">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="358" parent="29" name="Type">
+        <data-type>int(2)</data-type>
+      </column>
+      <column id="359" parent="29" name="UserID">
+        <data-type>varchar(32)</data-type>
+      </column>
+      <column id="360" parent="29" name="UserName">
+        <data-type>varchar(32)</data-type>
+      </column>
+      <column id="361" parent="29" name="LMID">
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="362" parent="29" name="LineName">
+        <data-type>varchar(32)</data-type>
+      </column>
+      <column id="363" parent="29" name="ShiftNum">
+        <data-type>varchar(32)</data-type>
+      </column>
+      <column id="364" parent="29" name="RideDate">
+        <data-type>varchar(32)</data-type>
+      </column>
+      <column id="365" parent="29" name="Quantity">
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="366" parent="29" name="Seats">
+        <data-type>varchar(1024)</data-type>
+      </column>
+      <column id="367" parent="29" name="MakeDate">
+        <data-type>varchar(32)</data-type>
+      </column>
+      <key id="368" parent="29" name="PRIMARY">
+        <columns>ID</columns>
+        <primary>1</primary>
+      </key>
+      <column id="369" parent="30" name="TableName">
+        <comment>表名</comment>
+        <mandatory>1</mandatory>
+        <data-type>varchar(24)</data-type>
+      </column>
+      <column id="370" parent="30" name="CurrentValue">
+        <comment>当前值</comment>
+        <data-type>int(11)</data-type>
+      </column>
+      <key id="371" parent="30" name="PRIMARY">
+        <columns>TableName</columns>
+        <primary>1</primary>
+      </key>
+      <column id="372" parent="31" name="ID">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="373" parent="31" name="PlateNum">
+        <data-type>varchar(32)</data-type>
+      </column>
+      <column id="374" parent="31" name="NuclearLoad">
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="375" parent="31" name="CarModelID">
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="376" parent="31" name="CarModelName">
+        <data-type>varchar(32)</data-type>
+      </column>
+      <column id="377" parent="31" name="TCID">
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="378" parent="31" name="CompanyName">
+        <data-type>varchar(64)</data-type>
+      </column>
+      <index id="379" parent="31" name="PlateNum_UNIQUE">
+        <columns>PlateNum</columns>
+        <unique>1</unique>
+      </index>
+      <key id="380" parent="31" name="PlateNum_UNIQUE">
+        <columns>PlateNum</columns>
+        <underlying-index>PlateNum_UNIQUE</underlying-index>
+      </key>
+      <key id="381" parent="31" name="PRIMARY">
+        <columns>ID</columns>
+        <primary>1</primary>
+      </key>
+      <column id="382" parent="32" name="ID">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="383" parent="32" name="PTID">
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="384" parent="32" name="LMID">
+        <data-type>int(11)</data-type>
+      </column>
+      <key id="385" parent="32" name="PRIMARY">
+        <columns>ID</columns>
+        <primary>1</primary>
+      </key>
+      <column id="386" parent="33" name="ID">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="387" parent="33" name="STID">
+        <data-type>varchar(12)</data-type>
+      </column>
+      <column id="388" parent="33" name="BeginDate">
+        <data-type>varchar(32)</data-type>
+      </column>
+      <column id="389" parent="33" name="EndDate">
+        <data-type>varchar(32)</data-type>
+      </column>
+      <column id="390" parent="33" name="Weekdays">
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="391" parent="33" name="MakeID">
+        <data-type>varchar(32)</data-type>
+      </column>
+      <column id="392" parent="33" name="MakeName">
+        <data-type>varchar(32)</data-type>
+      </column>
+      <column id="393" parent="33" name="MakeDate">
+        <data-type>varchar(32)</data-type>
+      </column>
+      <key id="394" parent="33" name="PRIMARY">
+        <columns>ID</columns>
+        <primary>1</primary>
+      </key>
+      <column id="395" parent="34" name="ID">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="396" parent="34" name="PTID">
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="397" parent="34" name="BeginTime">
+        <data-type>varchar(12)</data-type>
+      </column>
+      <column id="398" parent="34" name="EndTime">
+        <data-type>varchar(12)</data-type>
+      </column>
+      <key id="399" parent="34" name="PRIMARY">
+        <columns>ID</columns>
+        <primary>1</primary>
+      </key>
+      <column id="400" parent="35" name="ID">
+        <mandatory>1</mandatory>
+        <data-type>varchar(32)</data-type>
+      </column>
+      <column id="401" parent="35" name="PromotionName">
+        <data-type>varchar(32)</data-type>
+      </column>
+      <column id="402" parent="35" name="LMID">
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="403" parent="35" name="BeginDate">
+        <data-type>varchar(32)</data-type>
+      </column>
+      <column id="404" parent="35" name="EndDate">
+        <data-type>varchar(32)</data-type>
+      </column>
+      <column id="405" parent="35" name="Weekdays">
+        <data-type>varchar(7)</data-type>
+      </column>
+      <column id="406" parent="35" name="BeginTime">
+        <data-type>varchar(12)</data-type>
+      </column>
+      <column id="407" parent="35" name="EndTime">
+        <data-type>varchar(12)</data-type>
+      </column>
+      <column id="408" parent="35" name="ConsAmount">
+        <data-type>decimal(16,2)</data-type>
+      </column>
+      <column id="409" parent="35" name="MakeID">
+        <data-type>varchar(32)</data-type>
+      </column>
+      <column id="410" parent="35" name="MakeName">
+        <data-type>varchar(32)</data-type>
+      </column>
+      <column id="411" parent="35" name="MakeDate">
+        <data-type>varchar(32)</data-type>
+      </column>
+      <column id="412" parent="35" name="IsEnable">
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="413" parent="35" name="IsEnableName">
+        <data-type>varchar(12)</data-type>
+      </column>
+      <column id="414" parent="35" name="PromotionLine">
+        <data-type>int(11)</data-type>
+        <default-expression>&apos;0&apos;</default-expression>
+      </column>
+      <column id="415" parent="35" name="IsDel">
+        <data-type>int(11)</data-type>
+        <default-expression>&apos;0&apos;</default-expression>
+      </column>
+      <key id="416" parent="35" name="PRIMARY">
+        <columns>ID</columns>
+        <primary>1</primary>
+      </key>
+      <column id="417" parent="36" name="ID">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="418" parent="36" name="PID">
+        <data-type>varchar(32)</data-type>
+      </column>
+      <column id="419" parent="36" name="BeginTime">
+        <data-type>varchar(12)</data-type>
+      </column>
+      <column id="420" parent="36" name="EndTime">
+        <data-type>varchar(12)</data-type>
+      </column>
+      <column id="421" parent="36" name="ReduceSum">
+        <data-type>decimal(16,2)</data-type>
+      </column>
+      <column id="422" parent="36" name="CouponPercent">
+        <comment>优惠票百分比</comment>
+        <data-type>int(11)</data-type>
+        <default-expression>&apos;100&apos;</default-expression>
+      </column>
+      <key id="423" parent="36" name="PRIMARY">
+        <columns>ID</columns>
+        <primary>1</primary>
+      </key>
+      <column id="424" parent="37" name="ID">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="425" parent="37" name="BeginDate">
+        <data-type>varchar(32)</data-type>
+      </column>
+      <column id="426" parent="37" name="EndDate">
+        <data-type>varchar(32)</data-type>
+      </column>
+      <column id="427" parent="37" name="Rank">
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="428" parent="37" name="MakeID">
+        <data-type>varchar(32)</data-type>
+      </column>
+      <column id="429" parent="37" name="MakeName">
+        <data-type>varchar(32)</data-type>
+      </column>
+      <column id="430" parent="37" name="MakeDate">
+        <data-type>varchar(32)</data-type>
+      </column>
+      <key id="431" parent="37" name="PRIMARY">
+        <columns>ID</columns>
+        <primary>1</primary>
+      </key>
+      <column id="432" parent="38" name="ID">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="433" parent="38" name="RRID">
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="434" parent="38" name="LMID">
+        <data-type>int(11)</data-type>
+      </column>
+      <key id="435" parent="38" name="PRIMARY">
+        <columns>ID</columns>
+        <primary>1</primary>
+      </key>
+      <column id="436" parent="39" name="ID">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="437" parent="39" name="RRID">
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="438" parent="39" name="AdvanceTime">
+        <data-type>double(16,2)</data-type>
+      </column>
+      <column id="439" parent="39" name="Deduction">
+        <data-type>int(11)</data-type>
+      </column>
+      <key id="440" parent="39" name="PRIMARY">
+        <columns>ID</columns>
+        <primary>1</primary>
+      </key>
+      <column id="441" parent="40" name="ID">
+        <mandatory>1</mandatory>
+        <data-type>varchar(32)</data-type>
+      </column>
+      <column id="442" parent="40" name="OutCode">
+        <data-type>varchar(64)</data-type>
+      </column>
+      <column id="443" parent="40" name="SOID">
+        <data-type>varchar(32)</data-type>
+      </column>
+      <column id="444" parent="40" name="CID">
+        <data-type>varchar(32)</data-type>
+      </column>
+      <column id="445" parent="40" name="CName">
+        <data-type>varchar(32)</data-type>
+      </column>
+      <column id="446" parent="40" name="Mobile">
+        <data-type>varchar(24)</data-type>
+      </column>
+      <column id="447" parent="40" name="Rank">
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="448" parent="40" name="RideDate">
+        <data-type>varchar(32)</data-type>
+      </column>
+      <column id="449" parent="40" name="StartTime">
+        <data-type>varchar(32)</data-type>
+        <default-expression>&apos;&apos;</default-expression>
+      </column>
+      <column id="450" parent="40" name="OriginalPrice">
+        <data-type>decimal(16,2)</data-type>
+      </column>
+      <column id="451" parent="40" name="TotalPrice">
+        <data-type>decimal(16,2)</data-type>
+      </column>
+      <column id="452" parent="40" name="Quantity">
+        <data-type>int(11)</data-type>
+        <default-expression>&apos;0&apos;</default-expression>
+      </column>
+      <column id="453" parent="40" name="RPercent">
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="454" parent="40" name="ActualPrice">
+        <data-type>decimal(16,2)</data-type>
+      </column>
+      <column id="455" parent="40" name="Memo">
+        <data-type>varchar(256)</data-type>
+      </column>
+      <column id="456" parent="40" name="RTStatus">
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="457" parent="40" name="MakeSort">
+        <data-type>int(11)</data-type>
+        <default-expression>&apos;0&apos;</default-expression>
+      </column>
+      <column id="458" parent="40" name="STStartID">
+        <data-type>varchar(12)</data-type>
+      </column>
+      <column id="459" parent="40" name="STStartName">
+        <data-type>varchar(32)</data-type>
+      </column>
+      <column id="460" parent="40" name="STArriveID">
+        <data-type>varchar(12)</data-type>
+      </column>
+      <column id="461" parent="40" name="STArriveName">
+        <data-type>varchar(32)</data-type>
+      </column>
+      <column id="462" parent="40" name="IsAffirm">
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="463" parent="40" name="IsAffirmName">
+        <data-type>varchar(12)</data-type>
+      </column>
+      <column id="464" parent="40" name="AffirmID">
+        <data-type>varchar(32)</data-type>
+      </column>
+      <column id="465" parent="40" name="AffirmName">
+        <data-type>varchar(32)</data-type>
+      </column>
+      <column id="466" parent="40" name="AffirmDate">
+        <data-type>varchar(32)</data-type>
+      </column>
+      <column id="467" parent="40" name="AffirmMemo">
+        <data-type>varchar(256)</data-type>
+      </column>
+      <column id="468" parent="40" name="ApproveID">
+        <data-type>varchar(32)</data-type>
+      </column>
+      <column id="469" parent="40" name="ApproveName">
+        <data-type>varchar(32)</data-type>
+      </column>
+      <column id="470" parent="40" name="ApproveDate">
+        <data-type>varchar(32)</data-type>
+      </column>
+      <column id="471" parent="40" name="MakeDate">
+        <data-type>varchar(32)</data-type>
+      </column>
+      <key id="472" parent="40" name="PRIMARY">
+        <columns>ID</columns>
+        <primary>1</primary>
+      </key>
+      <column id="473" parent="41" name="ID">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="474" parent="41" name="RTID">
+        <data-type>varchar(32)</data-type>
+      </column>
+      <column id="475" parent="41" name="CheckCode">
+        <data-type>varchar(36)</data-type>
+      </column>
+      <column id="476" parent="41" name="Price">
+        <data-type>decimal(16,2)</data-type>
+      </column>
+      <column id="477" parent="41" name="VPrice">
+        <data-type>decimal(16,2)</data-type>
+      </column>
+      <key id="478" parent="41" name="PRIMARY">
+        <columns>ID</columns>
+        <primary>1</primary>
+      </key>
+      <column id="479" parent="42" name="ID">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="480" parent="42" name="UserID">
+        <data-type>varchar(32)</data-type>
+      </column>
+      <column id="481" parent="42" name="STID">
+        <data-type>varchar(12)</data-type>
+      </column>
+      <column id="482" parent="42" name="STName">
+        <data-type>varchar(64)</data-type>
+      </column>
+      <column id="483" parent="42" name="OrderNum">
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="484" parent="42" name="CityID">
+        <data-type>varchar(12)</data-type>
+      </column>
+      <key id="485" parent="42" name="PRIMARY">
+        <columns>ID</columns>
+        <primary>1</primary>
+      </key>
+      <column id="486" parent="43" name="ID">
+        <comment>角色名称</comment>
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="487" parent="43" name="RoleName">
+        <data-type>varchar(64)</data-type>
+      </column>
+      <key id="488" parent="43" name="PRIMARY">
+        <columns>ID</columns>
+        <primary>1</primary>
+      </key>
+      <column id="489" parent="44" name="ID">
+        <comment>编号</comment>
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="490" parent="44" name="RoleID">
+        <comment>角色编号</comment>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="491" parent="44" name="FMID">
+        <comment>菜单编号</comment>
+        <data-type>int(11)</data-type>
+      </column>
+      <key id="492" parent="44" name="PRIMARY">
+        <columns>ID</columns>
+        <primary>1</primary>
+      </key>
+      <column id="493" parent="45" name="ID">
+        <comment>编号</comment>
+        <mandatory>1</mandatory>
+        <data-type>varchar(32)</data-type>
+      </column>
+      <column id="494" parent="45" name="OutCode">
+        <data-type>varchar(64)</data-type>
+      </column>
+      <column id="495" parent="45" name="PayFeedback">
+        <data-type>varchar(1024)</data-type>
+      </column>
+      <column id="496" parent="45" name="TicketCode">
+        <data-type>varchar(16)</data-type>
+      </column>
+      <column id="497" parent="45" name="CodeUrl">
+        <data-type>varchar(128)</data-type>
+      </column>
+      <column id="498" parent="45" name="CID">
+        <data-type>varchar(32)</data-type>
+      </column>
+      <column id="499" parent="45" name="CName">
+        <comment>客户编号</comment>
+        <data-type>varchar(32)</data-type>
+      </column>
+      <column id="500" parent="45" name="Mobile">
+        <comment>客户手机号码</comment>
+        <data-type>varchar(24)</data-type>
+      </column>
+      <column id="501" parent="45" name="Rank">
+        <data-type>int(11)</data-type>
+        <default-expression>&apos;0&apos;</default-expression>
+      </column>
+      <column id="502" parent="45" name="RideDate">
+        <comment>出发日期</comment>
+        <data-type>varchar(32)</data-type>
+      </column>
+      <column id="503" parent="45" name="LMID">
+        <comment>线路编号</comment>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="504" parent="45" name="LineName">
+        <comment>线路名称</comment>
+        <data-type>varchar(32)</data-type>
+      </column>
+      <column id="505" parent="45" name="STStartID">
+        <comment>出发站点编号</comment>
+        <data-type>varchar(12)</data-type>
+      </column>
+      <column id="506" parent="45" name="STStartName">
+        <comment>出发站点名称</comment>
+        <data-type>varchar(32)</data-type>
+      </column>
+      <column id="507" parent="45" name="STArriveID">
+        <comment>到达站点编号</comment>
+        <data-type>varchar(12)</data-type>
+      </column>
+      <column id="508" parent="45" name="STArriveName">
+        <comment>到达站点名称</comment>
+        <data-type>varchar(32)</data-type>
+      </column>
+      <column id="509" parent="45" name="StartTime">
+        <comment>发车时间</comment>
+        <data-type>varchar(32)</data-type>
+      </column>
+      <column id="510" parent="45" name="ArriveTime">
+        <comment>到达时间</comment>
+        <data-type>varchar(32)</data-type>
+      </column>
+      <column id="511" parent="45" name="ShiftID">
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="512" parent="45" name="ShiftCode">
+        <data-type>varchar(12)</data-type>
+      </column>
+      <column id="513" parent="45" name="Price">
+        <comment>单价</comment>
+        <data-type>decimal(16,2)</data-type>
+      </column>
+      <column id="514" parent="45" name="Quantity">
+        <comment>数量</comment>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="515" parent="45" name="DiscountQuantity">
+        <data-type>int(11)</data-type>
+        <default-expression>&apos;0&apos;</default-expression>
+      </column>
+      <column id="516" parent="45" name="TotalSum">
+        <comment>订单总价</comment>
+        <data-type>decimal(16,2)</data-type>
+      </column>
+      <column id="517" parent="45" name="Coupons">
+        <comment>优惠券编号</comment>
+        <data-type>varchar(32)</data-type>
+      </column>
+      <column id="518" parent="45" name="CouponsSum">
+        <comment>优惠金额</comment>
+        <data-type>decimal(16,2)</data-type>
+      </column>
+      <column id="519" parent="45" name="VPrice">
+        <data-type>decimal(16,2)</data-type>
+        <default-expression>&apos;0.00&apos;</default-expression>
+      </column>
+      <column id="520" parent="45" name="ActualSum">
+        <comment>实付金额</comment>
+        <data-type>decimal(16,2)</data-type>
+      </column>
+      <column id="521" parent="45" name="Mileage">
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="522" parent="45" name="LName">
+        <comment>联系人姓名</comment>
+        <data-type>varchar(32)</data-type>
+      </column>
+      <column id="523" parent="45" name="LMobile">
+        <comment>联系人手机号码</comment>
+        <data-type>varchar(32)</data-type>
+      </column>
+      <column id="524" parent="45" name="IDCode">
+        <comment>联系人身份证</comment>
+        <data-type>varchar(24)</data-type>
+      </column>
+      <column id="525" parent="45" name="PayMode">
+        <comment>支付方式  Ali,wx，bal（余额）</comment>
+        <data-type>varchar(12)</data-type>
+      </column>
+      <column id="526" parent="45" name="BalancePay">
+        <comment>余额支付</comment>
+        <data-type>decimal(16,2)</data-type>
+      </column>
+      <column id="527" parent="45" name="OtherPay">
+        <comment>其他支付</comment>
+        <data-type>decimal(16,2)</data-type>
+      </column>
+      <column id="528" parent="45" name="PayStatus">
+        <comment>支付状态</comment>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="529" parent="45" name="PayStatusName">
+        <comment>支付状态名称</comment>
+        <data-type>varchar(12)</data-type>
+      </column>
+      <column id="530" parent="45" name="Status">
+        <comment>订单状态0未取票1已取票2退款中3已退款4.已取消</comment>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="531" parent="45" name="StatusName">
+        <comment>状态名称</comment>
+        <data-type>varchar(12)</data-type>
+      </column>
+      <column id="532" parent="45" name="IsAbnormal">
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="533" parent="45" name="Memo">
+        <data-type>varchar(256)</data-type>
+      </column>
+      <column id="534" parent="45" name="MakeDate">
+        <comment>订单日期</comment>
+        <data-type>varchar(32)</data-type>
+      </column>
+      <column id="535" parent="45" name="BuyWay">
+        <comment>下单方式，wx，android，ios</comment>
+        <data-type>varchar(12)</data-type>
+      </column>
+      <column id="536" parent="45" name="GetWay">
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="537" parent="45" name="SID">
+        <data-type>varchar(32)</data-type>
+      </column>
+      <column id="538" parent="45" name="SName">
+        <data-type>varchar(32)</data-type>
+      </column>
+      <column id="539" parent="45" name="TakeDate">
+        <data-type>varchar(32)</data-type>
+      </column>
+      <column id="540" parent="45" name="ReceiveID">
+        <data-type>varchar(32)</data-type>
+        <default-expression>&apos;&apos;</default-expression>
+      </column>
+      <column id="541" parent="45" name="ReceiveName">
+        <data-type>varchar(32)</data-type>
+        <default-expression>&apos;&apos;</default-expression>
+      </column>
+      <column id="542" parent="45" name="ReceiveDate">
+        <data-type>varchar(32)</data-type>
+        <default-expression>&apos;&apos;</default-expression>
+      </column>
+      <column id="543" parent="45" name="IsSett">
+        <data-type>int(11)</data-type>
+        <default-expression>&apos;0&apos;</default-expression>
+      </column>
+      <column id="544" parent="45" name="IsIntegralSett">
+        <data-type>int(11)</data-type>
+        <default-expression>&apos;0&apos;</default-expression>
+      </column>
+      <key id="545" parent="45" name="PRIMARY">
+        <columns>ID</columns>
+        <primary>1</primary>
+      </key>
+      <column id="546" parent="46" name="CheckCode">
+        <mandatory>1</mandatory>
+        <data-type>varchar(36)</data-type>
+      </column>
+      <column id="547" parent="46" name="SOID">
+        <data-type>varchar(32)</data-type>
+      </column>
+      <column id="548" parent="46" name="TicketCode">
+        <data-type>varchar(16)</data-type>
+      </column>
+      <column id="549" parent="46" name="LMID">
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="550" parent="46" name="LineName">
+        <data-type>varchar(32)</data-type>
+      </column>
+      <column id="551" parent="46" name="ShiftID">
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="552" parent="46" name="ShiftCode">
+        <data-type>varchar(32)</data-type>
+      </column>
+      <column id="553" parent="46" name="TransCompany">
+        <data-type>varchar(64)</data-type>
+      </column>
+      <column id="554" parent="46" name="RideDate">
+        <data-type>varchar(32)</data-type>
+      </column>
+      <column id="555" parent="46" name="StartTime">
+        <data-type>varchar(32)</data-type>
+      </column>
+      <column id="556" parent="46" name="Price">
+        <data-type>decimal(16,2)</data-type>
+      </column>
+      <column id="557" parent="46" name="VPrice">
+        <data-type>decimal(16,2)</data-type>
+        <default-expression>&apos;0.00&apos;</default-expression>
+      </column>
+      <column id="558" parent="46" name="STStartID">
+        <data-type>varchar(12)</data-type>
+      </column>
+      <column id="559" parent="46" name="STStartName">
+        <data-type>varchar(32)</data-type>
+      </column>
+      <column id="560" parent="46" name="STArriveID">
+        <data-type>varchar(12)</data-type>
+      </column>
+      <column id="561" parent="46" name="STArriveName">
+        <data-type>varchar(32)</data-type>
+      </column>
+      <column id="562" parent="46" name="SeatID">
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="563" parent="46" name="SeatNO">
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="564" parent="46" name="IsTake">
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="565" parent="46" name="IsTakeName">
+        <data-type>varchar(4)</data-type>
+      </column>
+      <column id="566" parent="46" name="TakeDate">
+        <data-type>varchar(32)</data-type>
+      </column>
+      <column id="567" parent="46" name="IsOnTrain">
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="568" parent="46" name="IsOnTrainName">
+        <data-type>varchar(4)</data-type>
+      </column>
+      <column id="569" parent="46" name="OnTrainDate">
+        <data-type>varchar(32)</data-type>
+      </column>
+      <column id="570" parent="46" name="Memo">
+        <data-type>varchar(256)</data-type>
+      </column>
+      <column id="571" parent="46" name="PayStatus">
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="572" parent="46" name="Status">
+        <data-type>int(11)</data-type>
+        <default-expression>&apos;0&apos;</default-expression>
+      </column>
+      <column id="573" parent="46" name="IsDiscount">
+        <data-type>int(11)</data-type>
+        <default-expression>&apos;0&apos;</default-expression>
+      </column>
+      <column id="574" parent="46" name="SID">
+        <data-type>varchar(32)</data-type>
+      </column>
+      <column id="575" parent="46" name="SName">
+        <data-type>varchar(32)</data-type>
+      </column>
+      <column id="576" parent="46" name="SDate">
+        <data-type>varchar(32)</data-type>
+      </column>
+      <column id="577" parent="46" name="IsSett">
+        <data-type>int(11)</data-type>
+        <default-expression>&apos;0&apos;</default-expression>
+      </column>
+      <key id="578" parent="46" name="PRIMARY">
+        <columns>CheckCode</columns>
+        <primary>1</primary>
+      </key>
+      <column id="579" parent="47" name="ID">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="580" parent="47" name="SeatNO">
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="581" parent="47" name="ShiftID">
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="582" parent="47" name="IsSale">
+        <data-type>int(11)</data-type>
+      </column>
+      <key id="583" parent="47" name="PRIMARY">
+        <columns>ID</columns>
+        <primary>1</primary>
+      </key>
+      <column id="584" parent="48" name="ID">
+        <mandatory>1</mandatory>
+        <data-type>bigint(18)</data-type>
+      </column>
+      <column id="585" parent="48" name="LMID">
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="586" parent="48" name="LineName">
+        <data-type>varchar(32)</data-type>
+      </column>
+      <column id="587" parent="48" name="ShiftCode">
+        <data-type>varchar(24)</data-type>
+      </column>
+      <column id="588" parent="48" name="RideDate">
+        <data-type>varchar(32)</data-type>
+      </column>
+      <column id="589" parent="48" name="OriginStartTime">
+        <data-type>varchar(32)</data-type>
+      </column>
+      <column id="590" parent="48" name="CityStartID">
+        <data-type>varchar(12)</data-type>
+      </column>
+      <column id="591" parent="48" name="CityStartName">
+        <data-type>varchar(32)</data-type>
+      </column>
+      <column id="592" parent="48" name="OriginSTID">
+        <data-type>varchar(12)</data-type>
+      </column>
+      <column id="593" parent="48" name="OriginSTName">
+        <data-type>varchar(32)</data-type>
+      </column>
+      <column id="594" parent="48" name="CityArriveID">
+        <data-type>varchar(12)</data-type>
+      </column>
+      <column id="595" parent="48" name="CityArriveName">
+        <data-type>varchar(32)</data-type>
+      </column>
+      <column id="596" parent="48" name="STArriveID">
+        <data-type>varchar(32)</data-type>
+      </column>
+      <column id="597" parent="48" name="STArriveName">
+        <data-type>varchar(32)</data-type>
+      </column>
+      <column id="598" parent="48" name="Status">
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="599" parent="48" name="TCID">
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="600" parent="48" name="TransCompany">
+        <data-type>varchar(64)</data-type>
+      </column>
+      <column id="601" parent="48" name="MakeDate">
+        <data-type>varchar(32)</data-type>
+      </column>
+      <key id="602" parent="48" name="PRIMARY">
+        <columns>ID</columns>
+        <primary>1</primary>
+      </key>
+      <column id="603" parent="49" name="ID">
+        <mandatory>1</mandatory>
+        <data-type>bigint(18)</data-type>
+      </column>
+      <column id="604" parent="49" name="ShiftID">
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="605" parent="49" name="LMID">
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="606" parent="49" name="LineName">
+        <data-type>varchar(32)</data-type>
+      </column>
+      <column id="607" parent="49" name="PlateNum">
+        <data-type>varchar(32)</data-type>
+      </column>
+      <column id="608" parent="49" name="DriverID">
+        <data-type>varchar(32)</data-type>
+      </column>
+      <column id="609" parent="49" name="DriverName">
+        <data-type>varchar(32)</data-type>
+      </column>
+      <column id="610" parent="49" name="DriverIDII">
+        <data-type>varchar(32)</data-type>
+      </column>
+      <column id="611" parent="49" name="DriverNameII">
+        <data-type>varchar(32)</data-type>
+      </column>
+      <column id="612" parent="49" name="NuclearLoad">
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="613" parent="49" name="CurrPeople">
+        <data-type>int(11)</data-type>
+        <default-expression>&apos;0&apos;</default-expression>
+      </column>
+      <column id="614" parent="49" name="CurrStationID">
+        <data-type>varchar(32)</data-type>
+      </column>
+      <column id="615" parent="49" name="CurrStationName">
+        <data-type>varchar(32)</data-type>
+      </column>
+      <column id="616" parent="49" name="PunctualStart">
+        <data-type>varchar(32)</data-type>
+      </column>
+      <column id="617" parent="49" name="ActualStart">
+        <data-type>varchar(32)</data-type>
+      </column>
+      <column id="618" parent="49" name="IsStart">
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="619" parent="49" name="IsStartName">
+        <data-type>varchar(12)</data-type>
+      </column>
+      <column id="620" parent="49" name="Memo">
+        <data-type>varchar(256)</data-type>
+      </column>
+      <column id="621" parent="49" name="ChangeLog">
+        <data-type>varchar(256)</data-type>
+      </column>
+      <column id="622" parent="49" name="StartMemo">
+        <data-type>varchar(32)</data-type>
+      </column>
+      <column id="623" parent="49" name="AllTicketNum">
+        <data-type>int(11)</data-type>
+        <default-expression>&apos;0&apos;</default-expression>
+      </column>
+      <column id="624" parent="49" name="HalfTicketNum">
+        <data-type>int(11)</data-type>
+        <default-expression>&apos;0&apos;</default-expression>
+      </column>
+      <column id="625" parent="49" name="FreeTicketNum">
+        <data-type>int(11)</data-type>
+        <default-expression>&apos;0&apos;</default-expression>
+      </column>
+      <column id="626" parent="49" name="ConsignQuantity">
+        <data-type>int(11)</data-type>
+        <default-expression>&apos;0&apos;</default-expression>
+      </column>
+      <column id="627" parent="49" name="ConsignSum">
+        <data-type>decimal(16,2)</data-type>
+        <default-expression>&apos;0.00&apos;</default-expression>
+      </column>
+      <column id="628" parent="49" name="PassengerQuantity">
+        <data-type>int(11)</data-type>
+        <default-expression>&apos;0&apos;</default-expression>
+      </column>
+      <column id="629" parent="49" name="PassengerSum">
+        <data-type>decimal(16,2)</data-type>
+        <default-expression>&apos;0.00&apos;</default-expression>
+      </column>
+      <column id="630" parent="49" name="ReviseMemo">
+        <data-type>varchar(128)</data-type>
+      </column>
+      <column id="631" parent="49" name="DriverSign">
+        <data-type>varchar(128)</data-type>
+      </column>
+      <column id="632" parent="49" name="IsTemp">
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="633" parent="49" name="IsCancel">
+        <data-type>int(11)</data-type>
+        <default-expression>&apos;0&apos;</default-expression>
+      </column>
+      <column id="634" parent="49" name="IsCancelName">
+        <data-type>varchar(12)</data-type>
+      </column>
+      <column id="635" parent="49" name="MakeID">
+        <data-type>varchar(32)</data-type>
+      </column>
+      <column id="636" parent="49" name="MakeName">
+        <data-type>varchar(32)</data-type>
+      </column>
+      <column id="637" parent="49" name="MakeDate">
+        <data-type>varchar(32)</data-type>
+      </column>
+      <key id="638" parent="49" name="PRIMARY">
+        <columns>ID</columns>
+        <primary>1</primary>
+      </key>
+      <column id="639" parent="50" name="ID">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="640" parent="50" name="BeginDate">
+        <data-type>varchar(32)</data-type>
+      </column>
+      <column id="641" parent="50" name="EndDate">
+        <data-type>varchar(32)</data-type>
+      </column>
+      <column id="642" parent="50" name="ShowContent">
+        <data-type>varchar(128)</data-type>
+      </column>
+      <column id="643" parent="50" name="MakeID">
+        <data-type>varchar(32)</data-type>
+      </column>
+      <column id="644" parent="50" name="MakeName">
+        <data-type>varchar(128)</data-type>
+      </column>
+      <column id="645" parent="50" name="MakeDate">
+        <data-type>varchar(32)</data-type>
+      </column>
+      <key id="646" parent="50" name="PRIMARY">
+        <columns>ID</columns>
+        <primary>1</primary>
+      </key>
+      <column id="647" parent="51" name="ID">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="648" parent="51" name="STID">
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="649" parent="51" name="LMID">
+        <data-type>int(11)</data-type>
+      </column>
+      <index id="650" parent="51" name="STID">
+        <columns>STID
+LMID</columns>
+        <unique>1</unique>
+      </index>
+      <key id="651" parent="51" name="PRIMARY">
+        <columns>ID</columns>
+        <primary>1</primary>
+      </key>
+      <key id="652" parent="51" name="STID">
+        <columns>STID
+LMID</columns>
+        <underlying-index>STID</underlying-index>
+      </key>
+      <column id="653" parent="52" name="ID">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="654" parent="52" name="Mobile">
+        <comment>手机号码</comment>
+        <data-type>varchar(16)</data-type>
+      </column>
+      <column id="655" parent="52" name="VerifyCode">
+        <comment>验证码</comment>
+        <data-type>varchar(12)</data-type>
+      </column>
+      <column id="656" parent="52" name="Content">
+        <comment>短信内容</comment>
+        <data-type>varchar(128)</data-type>
+      </column>
+      <column id="657" parent="52" name="MakeDate">
+        <comment>发送日期</comment>
+        <data-type>varchar(32)</data-type>
+      </column>
+      <key id="658" parent="52" name="PRIMARY">
+        <columns>ID</columns>
+        <primary>1</primary>
+      </key>
+      <column id="659" parent="53" name="ID">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="660" parent="53" name="Sort">
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="661" parent="53" name="AppName">
+        <data-type>varchar(64)</data-type>
+      </column>
+      <column id="662" parent="53" name="VersionCode">
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="663" parent="53" name="FileUrl">
+        <data-type>varchar(128)</data-type>
+      </column>
+      <column id="664" parent="53" name="SoftDesc">
+        <data-type>varchar(1024)</data-type>
+      </column>
+      <column id="665" parent="53" name="MakeDate">
+        <data-type>varchar(32)</data-type>
+      </column>
+      <key id="666" parent="53" name="PRIMARY">
+        <columns>ID</columns>
+        <primary>1</primary>
+      </key>
+      <column id="667" parent="54" name="ID">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="668" parent="54" name="AreaMode">
+        <data-type>varchar(12)</data-type>
+      </column>
+      <column id="669" parent="54" name="ShowTitle">
+        <data-type>varchar(128)</data-type>
+      </column>
+      <column id="670" parent="54" name="ShowContent">
+        <data-type>text</data-type>
+      </column>
+      <column id="671" parent="54" name="MakeDate">
+        <data-type>varchar(32)</data-type>
+      </column>
+      <key id="672" parent="54" name="PRIMARY">
+        <columns>ID</columns>
+        <primary>1</primary>
+      </key>
+      <column id="673" parent="55" name="ID">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="674" parent="55" name="LMID">
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="675" parent="55" name="RuleName">
+        <data-type>varchar(64)</data-type>
+      </column>
+      <column id="676" parent="55" name="GroupID">
+        <data-type>varchar(32)</data-type>
+      </column>
+      <column id="677" parent="55" name="BeginTime">
+        <data-type>varchar(32)</data-type>
+      </column>
+      <column id="678" parent="55" name="EndTime">
+        <data-type>varchar(32)</data-type>
+      </column>
+      <column id="679" parent="55" name="IsDefault">
+        <data-type>int(11)</data-type>
+      </column>
+      <key id="680" parent="55" name="PRIMARY">
+        <columns>ID</columns>
+        <primary>1</primary>
+      </key>
+      <column id="681" parent="56" name="ID">
+        <comment>编号</comment>
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="682" parent="56" name="LMID">
+        <comment>线路编号</comment>
+        <data-type>varchar(24)</data-type>
+      </column>
+      <column id="683" parent="56" name="ShiftID">
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="684" parent="56" name="STStartID">
+        <comment>始发站编号</comment>
+        <data-type>varchar(12)</data-type>
+      </column>
+      <column id="685" parent="56" name="STStartName">
+        <comment>始发站名称</comment>
+        <data-type>varchar(32)</data-type>
+      </column>
+      <column id="686" parent="56" name="STArriveID">
+        <comment>到达站点编号</comment>
+        <data-type>varchar(12)</data-type>
+      </column>
+      <column id="687" parent="56" name="STArriveName">
+        <comment>到达站点名称</comment>
+        <data-type>varchar(32)</data-type>
+      </column>
+      <column id="688" parent="56" name="StartTime">
+        <comment>发车时间</comment>
+        <data-type>varchar(32)</data-type>
+      </column>
+      <column id="689" parent="56" name="ArriveTime">
+        <comment>到达时间</comment>
+        <data-type>varchar(32)</data-type>
+      </column>
+      <column id="690" parent="56" name="FavPrice">
+        <data-type>decimal(16,2)</data-type>
+      </column>
+      <column id="691" parent="56" name="TicketPrice">
+        <comment>票价</comment>
+        <data-type>decimal(16,2)</data-type>
+      </column>
+      <column id="692" parent="56" name="BalanceQuantity">
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="693" parent="56" name="AllQuantity">
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="694" parent="56" name="CouponQuantity">
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="695" parent="56" name="BalanceCouponQuantity">
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="696" parent="56" name="Mileage">
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="697" parent="56" name="Status">
+        <data-type>int(11)</data-type>
+      </column>
+      <key id="698" parent="56" name="PRIMARY">
+        <columns>ID</columns>
+        <primary>1</primary>
+      </key>
+      <column id="699" parent="57" name="ID">
+        <comment>编号</comment>
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="700" parent="57" name="ShiftID">
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="701" parent="57" name="LMID">
+        <comment>线路编号</comment>
+        <data-type>varchar(24)</data-type>
+      </column>
+      <column id="702" parent="57" name="BalanceQuantity">
+        <comment>剩余车票</comment>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="703" parent="57" name="AllQuantity">
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="704" parent="57" name="LockQuantity">
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="705" parent="57" name="CouponQuantity">
+        <comment>总优惠票</comment>
+        <data-type>int(11)</data-type>
+        <default-expression>&apos;0&apos;</default-expression>
+      </column>
+      <column id="706" parent="57" name="BalanceCouponQuantity">
+        <comment>剩余优惠票</comment>
+        <data-type>int(11)</data-type>
+        <default-expression>&apos;0&apos;</default-expression>
+      </column>
+      <column id="707" parent="57" name="MakeDate">
+        <comment>生成车票日期</comment>
+        <data-type>varchar(32)</data-type>
+      </column>
+      <column id="708" parent="57" name="IsRelease">
+        <data-type>int(11)</data-type>
+      </column>
+      <key id="709" parent="57" name="PRIMARY">
+        <columns>ID</columns>
+        <primary>1</primary>
+      </key>
+      <column id="710" parent="58" name="ID">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="711" parent="58" name="TPLName">
+        <data-type>varchar(64)</data-type>
+      </column>
+      <column id="712" parent="58" name="LMID">
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="713" parent="58" name="STRID">
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="714" parent="58" name="TicketQuantity">
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="715" parent="58" name="IsStart">
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="716" parent="58" name="CouponTicketQuantity">
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="717" parent="58" name="LockQuantity">
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="718" parent="58" name="StartSeat">
+        <data-type>int(11)</data-type>
+      </column>
+      <key id="719" parent="58" name="PRIMARY">
+        <columns>ID</columns>
+        <primary>1</primary>
+      </key>
+      <column id="720" parent="59" name="ID">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="721" parent="59" name="TPRID">
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="722" parent="59" name="LMID">
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="723" parent="59" name="LineName">
+        <data-type>varchar(32)</data-type>
+      </column>
+      <column id="724" parent="59" name="STStartID">
+        <data-type>varchar(32)</data-type>
+      </column>
+      <column id="725" parent="59" name="STStartName">
+        <data-type>varchar(32)</data-type>
+      </column>
+      <column id="726" parent="59" name="STArriveID">
+        <data-type>varchar(32)</data-type>
+      </column>
+      <column id="727" parent="59" name="STArriveName">
+        <data-type>varchar(32)</data-type>
+      </column>
+      <column id="728" parent="59" name="Price">
+        <data-type>decimal(16,2)</data-type>
+      </column>
+      <column id="729" parent="59" name="LimitSale">
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="730" parent="59" name="LimitCoupons">
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="731" parent="59" name="PriceSort">
+        <data-type>int(11)</data-type>
+      </column>
+      <key id="732" parent="59" name="PRIMARY">
+        <columns>ID</columns>
+        <primary>1</primary>
+      </key>
+      <column id="733" parent="60" name="ID">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="734" parent="60" name="FDate">
+        <data-type>varchar(32)</data-type>
+      </column>
+      <column id="735" parent="60" name="Quantity">
+        <data-type>int(11)</data-type>
+      </column>
+      <key id="736" parent="60" name="PRIMARY">
+        <columns>ID</columns>
+        <primary>1</primary>
+      </key>
+      <column id="737" parent="61" name="ID">
+        <comment>编号</comment>
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="738" parent="61" name="PicUrl">
+        <comment>图片链接</comment>
+        <data-type>varchar(500)</data-type>
+      </column>
+      <column id="739" parent="61" name="Url">
+        <comment>文章链接</comment>
+        <data-type>varchar(500)</data-type>
+      </column>
+      <column id="740" parent="61" name="Title">
+        <comment>标题</comment>
+        <data-type>varchar(128)</data-type>
+      </column>
+      <column id="741" parent="61" name="Description">
+        <comment>描述</comment>
+        <data-type>varchar(500)</data-type>
+      </column>
+      <column id="742" parent="61" name="MakeDate">
+        <comment>创建时间</comment>
+        <data-type>varchar(32)</data-type>
+      </column>
+      <column id="743" parent="61" name="IsSend">
+        <comment>是否推送</comment>
+        <data-type>int(11)</data-type>
+        <default-expression>&apos;0&apos;</default-expression>
+      </column>
+      <column id="744" parent="61" name="Rank">
+        <comment>级别（排序）</comment>
+        <data-type>int(11)</data-type>
+      </column>
+      <key id="745" parent="61" name="PRIMARY">
+        <columns>ID</columns>
+        <primary>1</primary>
+      </key>
+    </database-model>
+  </data-source>
+</component>

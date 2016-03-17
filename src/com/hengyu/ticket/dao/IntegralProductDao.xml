@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hengyu.ticket.dao.IntegralProductDao">
+
+    <select id="findIntegralProduct" resultMap="result_map">
+        SELECT *
+        FROM integral_product
+        WHERE id = #{id}
+        <if test="available">
+            and `Status`=2 and <![CDATA[ StartDate < NOW() ]]> and EndDate > NOW()
+        </if>
+    </select>
+
+    <select id="findIntegralProductList" resultMap="result_map">
+        select *
+        <include refid="findIntegralProductList_where"/>
+        order by MakeDate desc
+        limit #{page.startOfPage},#{page.pageSize}
+    </select>
+
+    <select id="findIntegralProductTotal" resultType="long">
+        select count(1)
+        <include refid="findIntegralProductList_where"/>
+    </select>
+
+    <sql id="findIntegralProductList_where">
+        from integral_product where 1=1
+        <if test="keyword != null">
+            and `Name` like concat('%',#{keyword},'%')
+        </if>
+        <if test="available">
+            and `Status`=2 and <![CDATA[ StartDate < NOW() ]]> and EndDate > NOW()
+        </if>
+    </sql>
+
+    <insert id="saveIntegralProduct" parameterType="IntegralProduct">
+        insert into integral_product(
+          ID, Name, Amount, Type, ValidDay, LowLimit, VPrice, IconUrl, MainUrl, StockFlag, FixedStock, CurrentStock, StartDate, EndDate, `Status`, `Desc`, MakeDate
+        )values(
+          #{id}, #{name}, #{amount}, #{type}, #{validday}, #{lowlimit}, #{vprice}, #{iconurl}, #{mainurl}, #{stockflag}, #{fixedstock}, #{currentstock}, #{startdate}, #{enddate}, #{status}, #{desc}, #{makedate}
+        )
+    </insert>
+
+    <update id="updateIntegralProduct" parameterType="IntegralProduct">
+        update integral_product set
+            Name=#{name}, Amount=#{amount}, Type=#{type}, ValidDay=#{validday}, LowLimit=#{lowlimit}, VPrice=#{vprice}, IconUrl=#{iconurl},
+            MainUrl=#{mainurl}, StockFlag=#{stockflag}, FixedStock=#{fixedstock},
+            CurrentStock=#{currentstock}, StartDate=#{startdate}, EndDate=#{enddate},Status=#{status},`Desc`=#{desc}
+        where ID=#{id}
+    </update>
+
+    <update id="updateIntegralProductStock">
+        update integral_product set CurrentStock=CurrentStock-#{count} where CurrentStock>=#{count} and ID=#{id}
+    </update>
+
+    <delete id="delIntegralProduct">
+        delete from integral_product where ID=#{id}
+    </delete>
+
+    <resultMap id="result_map" type="IntegralProduct">
+        <id column="ID" property="id"/>
+        <result column="Name" property="name"/>
+        <result column="Amount" property="amount"/>
+        <result column="Type" property="type"/>
+        <result column="ValidDay" property="validday"/>
+        <result column="LowLimit" property="lowlimit"/>
+        <result column="VPrice" property="vprice"/>
+        <result column="IconUrl" property="iconurl"/>
+        <result column="MainUrl" property="mainurl"/>
+        <result column="StockFlag" property="stockflag"/>
+        <result column="FixedStock" property="fixedstock"/>
+        <result column="CurrentStock" property="currentstock"/>
+        <result column="StartDate" property="startdate"/>
+        <result column="EndDate" property="enddate"/>
+        <result column="Status" property="status"/>
+        <result column="Desc" property="desc"/>
+        <result column="MakeDate" property="makedate"/>
+    </resultMap>
+</mapper>
+

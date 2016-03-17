@@ -1,0 +1,43 @@
+body {
+	margin-top: 50px;
+}
+
+@media ( max-width : 979px) {
+	body {
+		margin-top: 0px;
+	}
+}
+
+@media ( min-width : 980px) {
+	.nav-collapse.collapse {
+		height: auto !important;
+		overflow: visible !important;
+	}
+}
+
+.nav-tabs li a {
+	text-transform: uppercase;
+	background-color: #f2f2f2;
+	border-bottom: 1px solid #ddd;
+	text-shadow: 0px 1px 0px #fff;
+	filter: dropshadow(color = #fff, offx = 0, offy = 1);
+	font-size: 12px;
+	padding: 5px 8px;
+}
+
+.nav-tabs li a:hover {
+	border: 1px solid #ddd;
+	text-shadow: 0px 1px 0px #fff;
+	filter: dropshadow(color = #fff, offx = 0, offy = 1);
+}
+
+input.span4 {
+	height: 30px;
+}
+
+.Validform_wrong {
+    padding-left: 1px;
+}
+.Validform_checktip {
+    margin-left: 1px;
+}

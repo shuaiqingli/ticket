@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hengyu.ticket.dao.RefundRuleDao">
+  <insert id="save" parameterType="RefundRule" useGeneratedKeys="true" keyProperty="id">
+	insert
+	into
+		refund_rule
+		(<include refid="columns"/>)
+	values
+		(<include refid="propertys"/>)
+  </insert>
+  <delete id="delete" parameterType="java.lang.Integer">
+	delete
+	from
+		refund_rule
+	where
+		ID=#{id}
+  </delete>
+  <update id="update" parameterType="RefundRule">
+	update
+		refund_rule
+	set
+		`BeginDate`=#{begindate},
+		`EndDate`=#{enddate},
+		`Rank`=#{rank},
+		`MakeID`=#{makeid},
+		`MakeName`=#{makename},
+		`MakeDate`=#{makedate}
+	where
+		ID=#{id}
+  </update>
+  <select id="find" parameterType="java.lang.Integer" resultMap="result_map">
+	select
+		*
+	from
+		refund_rule
+	where
+		ID=#{id}
+  </select>
+  <select id="count" resultType="long" parameterType="Page">
+  	select count(count) from(
+		select count(1) as count from refund_rule as rr
+		<include refid="findlist_where"></include>
+		group by rr.id
+  	) t
+  </select>
+  
+  <select id="findlist" resultMap="result_map" parameterType="Page">
+  	select rr.*,GROUP_CONCAT(DISTINCT lm.LineID) as `line`,GROUP_CONCAT(DISTINCT rrt.AdvanceTime,'#',rrt.Deduction order BY rrt.AdvanceTime) as `time` 
+  	from refund_rule  as rr
+  	<include refid="findlist_where"></include>
+  	group by rr.id
+  	order by makedate desc
+  	limit #{startOfPage},#{pageSize}
+  </select>
+  <sql id="findlist_where">
+  	left join refund_rule_line as rrl on rrl.rrid = rr.id
+	left join refund_rule_time as rrt on rrt.RRID = rr.id
+	left join line_manage as lm on lm.id = rrl.LMID
+  	where 1=1
+  	<if test="param!=null">
+  		<if test="param.date!=null and param.date !='' ">
+  			and #{param.date} between begindate and enddate
+  		</if>
+  	</if>
+  </sql>
+  
+  <select id="findLineManageByRule" resultMap="com.hengyu.ticket.dao.LineManageDao.result_map" parameterType="Page">
+  	select * from line_manage as lm 
+  	<include refid="findLineManageByRule_where"></include>
+  	<if test="param.type==1">
+  		limit #{startOfPage},#{pageSize}
+  	</if>
+  </select>
+  
+  <select id="findLineManageByRuleCount" resultType="long" parameterType="Page">
+  	select count(1) from line_manage as lm 
+  	<include refid="findLineManageByRule_where"></include>
+  </select>
+  
+  <sql id="findLineManageByRule_where">
+  	where lm.id 
+  	<if test="param.type==1">
+  		not
+  	</if>
+  	in(
+  		select lmid from refund_rule_line where rrid=#{param.rrid}
+  	)
+  	<if test="param!=null and param.keyword!=null and param.keyword!='' ">
+  	and(
+			lm.`LineID` like concat('%',#{param.keyword},'%')
+			or
+			lm.`TransCompany` like concat('%',#{param.keyword},'%')
+			or
+			lm.`linename` like concat('%',#{param.keyword},'%')
+		)
+  	</if>
+  </sql>
+  
+  <select id="findRuleByLmidTicketDateRank" resultMap="result_map2">
+  	select 
+  		rr.*,rrt.id as rrt_id,rrt.advancetime as rrt_advancetime ,rrt.deduction as rrt_deduction
+	from refund_rule as rr 
+	join refund_rule_line as rrl on rr.id = rrl.rrid and rrl.lmid = #{lmid}
+	join refund_rule_time as rrt on rrt.rrid = rr.id
+	where #{ticketdate} between rr.begindate and rr.enddate and rr.rank = #{rank}
+	order by rrt.advancetime desc
+<!-- 	limit 0,1 -->
+  </select>
+  
+  
+  <sql id="columns">
+	`BeginDate`,
+	`EndDate`,
+	`Rank`,
+	`MakeID`,
+	`MakeName`,
+	`MakeDate`
+  </sql>
+  <sql id="propertys">
+	#{begindate},
+	#{enddate},
+	#{rank},
+	#{makeid},
+	#{makename},
+	#{makedate}
+  </sql>
+  <resultMap id="result_map" type="RefundRule">
+    <id column="ID" property="id" javaType="java.lang.Integer"/>
+    <result column="BeginDate" property="begindate" javaType="java.lang.String"/>
+    <result column="EndDate" property="enddate" javaType="java.lang.String"/>
+    <result column="Rank" property="rank" javaType="java.lang.Integer"/>
+    <result column="MakeID" property="makeid" javaType="java.lang.String"/>
+    <result column="MakeName" property="makename" javaType="java.lang.String"/>
+    <result column="MakeDate" property="makedate" javaType="java.lang.String"/>
+    <result column="time" property="time" javaType="java.lang.String"/>
+    <result column="line" property="line" javaType="java.lang.String"/>
+  </resultMap>
+  
+  <resultMap type="RefundRule" id="result_map2" extends="result_map">
+  	<collection property="times" columnPrefix="rrt_" resultMap="com.hengyu.ticket.dao.RefundRuleTimeDao.result_map"></collection>
+  </resultMap>
+  
+</mapper>

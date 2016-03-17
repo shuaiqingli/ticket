@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hengyu.ticket.dao.DataStatisticDao">
+
+	<select id="dataStatisticOrder" resultType="map">
+		select sum(todayorder) as todayorder,sum(yesterdayorder) as yesterdayorder,sum(sumorder) as sumorder from (
+			SELECT
+				SUM(if(makedate between #{param1} and #{param2} and (PayStatus=1 or PayStatus=2) ,1,0)) todayorder,
+				SUM(if(makedate between #{param3} and #{param4}  and (PayStatus=1 or PayStatus=2) ,1,0)) yesterdayorder,
+				0 as sumorder
+			FROM
+				sale_order
+			WHERE
+				makedate BETWEEN #{param3} and #{param2}
+			UNION
+			SELECT
+				0,0,SUM(if(PayStatus=1 or PayStatus=2,1,0))
+			FROM
+				sale_order
+		) as orders
+	</select>
+	
+	<select id="dataStatisticTicket" resultType="map">
+		select sum(todayticket) as todayticket,sum(yesterdayticket) as yesterdayticket,sum(sumticket) as sumticket from (
+			SELECT
+				SUM(if(RideDate = CURRENT_DATE() and (PayStatus=1) ,1,0)) todayticket,
+				SUM(if(RideDate =  DATE_SUB(CURRENT_DATE (),INTERVAL 7 DAY) ,1,0)) yesterdayticket,
+				0 as sumticket
+			FROM
+				sale_order_ticket as t1
+			WHERE
+				t1.IsOnTrain = 1 and (RideDate = CURRENT_DATE() or RideDate = DATE_SUB(CURRENT_DATE (),INTERVAL 7 DAY)) 
+			UNION
+			SELECT
+				0,0,SUM(if(PayStatus=1,1,0))
+			FROM
+				sale_order_ticket as t2 where  t2.IsOnTrain = 1
+		) as orders
+	</select>
+<!-- 	<select id="dataStatisticTicket" resultType="map"> -->
+<!-- 		select sum(todayticket) as todayticket,sum(yesterdayticket) as yesterdayticket,sum(sumticket) as sumticket from ( -->
+<!-- 			SELECT -->
+<!-- 				SUM(if(RideDate = CURRENT_DATE(),CurrPeople,0)) todayticket, -->
+<!-- 				SUM(if(RideDate = DATE_SUB(CURRENT_DATE (),INTERVAL 1 DAY)  ,CurrPeople,0)) yesterdayticket, -->
+<!-- 				0 as sumticket -->
+<!-- 			FROM -->
+<!-- 				shift_start -->
+<!-- 			WHERE -->
+<!-- 				RideDate BETWEEN DATE_SUB( -->
+<!-- 					CURRENT_DATE (), -->
+<!-- 					INTERVAL 1 DAY -->
+<!-- 				) -->
+<!-- 			AND CURRENT_DATE () -->
+<!-- 			UNION -->
+<!-- 			SELECT -->
+<!-- 				0,0,SUM(CurrPeople) -->
+<!-- 			FROM -->
+<!-- 				shift_start -->
+<!-- 		) as tickets -->
+<!-- 	</select> -->
+	<select id="dataStatisticFollow" resultType="map">
+		select sum(todayfllow) as todayfllow,sum(yesterdayfllow) as yesterdayfllow,sum(sumfllow) as sumfllow from (
+			SELECT
+				SUM(if(fdate = CURRENT_DATE(),Quantity,0)) todayfllow,
+				SUM(if(fdate = DATE_SUB(CURRENT_DATE (),INTERVAL 7 DAY)  ,Quantity,0)) yesterdayfllow,
+				0 as sumfllow
+			FROM
+				weixin_follow
+			WHERE
+				fdate BETWEEN DATE_SUB(
+					CURRENT_DATE (),
+					INTERVAL 7 DAY
+				)
+			AND CURRENT_DATE ()
+			UNION
+			SELECT
+				0,0,SUM(Quantity)
+			FROM
+				weixin_follow
+		) as wx
+	</select>
+	<select id="dataStatisticRegister" resultType="map">
+		select sum(todayregister) as todayregister,sum(yesterdayregister) as yesterdayregister,sum(sumregister) as sumregister from (
+			SELECT
+				SUM(if(makedate between #{param1} and #{param2},1,0)) todayregister,
+				SUM(if(makedate between #{param3} and #{param4} ,1,0)) yesterdayregister,
+				0 as sumregister
+			FROM
+				customer
+			WHERE makedate BETWEEN #{param3} and #{param2}
+			UNION
+			SELECT
+				0,0,SUM(1)
+			FROM
+				customer
+		) as customers
+	</select>
+	
+	<insert id="saveWXFollow" parameterType="map">
+		insert into weixin_follow(FDate,Quantity) values(#{fdate},#{quantity})
+	</insert>
+	<update id="updateWXFollow" parameterType="string">
+	 	update weixin_follow set Quantity = ifnull(Quantity,0)+1 where fdate = #{fdate}
+	</update>
+	
+	<select id="findByDate" parameterType="string" resultType="map">
+	 	select * from weixin_follow where fdate = #{fdate}
+	</select>
+	
+</mapper>

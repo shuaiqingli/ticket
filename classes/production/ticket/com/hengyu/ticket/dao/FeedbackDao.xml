@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hengyu.ticket.dao.FeedbackDao">
+
+    <select id="findFeedbackStatusForCustomer" resultType="int">
+        select count(1) from
+            (
+                select count(t2.ID) latestRecordsForAdmin from feedback t1
+                left join feedback_detail t2 on t2.FeedbackID=t1.ID and t2.Index > t1.LastIndexForAdmin and t2.Type=2
+                where t1.CID=#{cid}
+                GROUP BY t1.ID
+            ) t
+        where latestRecordsForAdmin > 0
+    </select>
+    
+    <select id="getAllFeedback" resultType="int">
+        select count(1) from
+            (
+                select count(t2.ID) latestRecordsForCustomer from feedback t1
+                left join feedback_detail t2 on t2.FeedbackID=t1.ID and t2.Index > t1.LastIndexForCustomer and t2.Type=1
+                GROUP BY t1.ID
+            ) t
+        where latestRecordsForCustomer > 0
+    </select>
+
+    <select id="findFeedback" resultMap="result_map">
+        SELECT *
+        FROM feedback
+        WHERE id = #{id}
+    </select>
+
+    <select id="findFeedbackList" resultMap="result_map_with_record">
+        select *
+        <include refid="findFeedbackList_where"/>
+        <if test="feedback != null and feedback.cid != null">
+            order by `status`, latestRecordsForAdmin desc, MakeDate desc
+        </if>
+        <if test="feedback == null or feedback.cid == null">
+            order by `status`, latestRecordsForCustomer desc, MakeDate desc
+        </if>
+        limit #{page.startOfPage},#{page.pageSize}
+    </select>
+
+    <select id="findFeedbackTotal" resultType="long">
+        select count(1)
+        <include refid="findFeedbackList_where"/>
+    </select>
+
+    <sql id="findFeedbackList_where">
+        from
+            (
+            select t.*,count(t3.ID) latestRecordsForAdmin from
+                (
+                select t.*,count(t2.ID) latestRecordsForCustomer from feedback t
+                left join feedback_detail t2 on t2.FeedbackID=t.ID and t2.Index > t.LastIndexForCustomer and t2.Type=1
+                GROUP BY t.ID
+                ) t
+            left join feedback_detail t3 on t3.FeedbackID=t.ID and t3.Index > t.LastIndexForAdmin and t3.Type=2
+            GROUP BY t.ID
+            ) t
+        where 1=1
+        <if test="feedback != null">
+            <if test="feedback.type != null">
+                and `Type`=#{feedback.type}
+            </if>
+            <if test="feedback.cid != null">
+                and `CID`=#{feedback.cid}
+            </if>
+            <if test="feedback.content != null">
+                and ( `Content` like concat('%',#{feedback.content},'%') or `CName` like concat('%',#{feedback.content},'%') or `ID` like concat('%',#{feedback.content},'%') or `Mobile` like concat('%',#{feedback.content},'%') )
+            </if>
+        </if>
+    </sql>
+
+    <insert id="saveFeedback" parameterType="Feedback" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO feedback (
+            Type, CID, CName, Content, LastIndexForCustomer, LastIndexForAdmin, Remark, MakeDate, Mobile
+        ) VALUES (
+            #{type}, #{cid}, #{cname}, #{content}, #{lastindexforcustomer}, #{lastindexforadmin}, #{remark}, #{makedate}, #{mobile}
+        )
+    </insert>
+
+    <update id="updateFeedback" parameterType="Feedback">
+        UPDATE feedback
+        SET
+            Content              = #{content},
+            LastIndexForCustomer = #{lastindexforcustomer},
+            LastIndexForAdmin    = #{lastindexforadmin},
+            Remark               = #{remark},
+            Status               = #{status}
+        WHERE ID = #{id}
+    </update>
+
+    <delete id="delFeedback">
+        DELETE FROM feedback
+        WHERE ID = #{id}
+    </delete>
+    
+    <resultMap id="result_map" type="Feedback">
+        <id column="ID" property="id"/>
+        <result column="Type" property="type"/>
+        <result column="CID" property="cid"/>
+        <result column="CName" property="cname"/>
+        <result column="Mobile" property="mobile"/>
+        <result column="Content" property="content"/>
+        <result column="LastIndexForCustomer" property="lastindexforcustomer"/>
+        <result column="LastIndexForAdmin" property="lastindexforadmin"/>
+        <result column="Remark" property="remark"/>
+        <result column="Status" property="status"/>
+        <result column="MakeDate" property="makedate"/>
+    </resultMap>
+    <resultMap id="result_map_with_record" type="Feedback">
+        <id column="ID" property="id"/>
+        <result column="Type" property="type"/>
+        <result column="CID" property="cid"/>
+        <result column="CName" property="cname"/>
+        <result column="Mobile" property="mobile"/>
+        <result column="Content" property="content"/>
+        <result column="LastIndexForCustomer" property="lastindexforcustomer"/>
+        <result column="LastIndexForAdmin" property="lastindexforadmin"/>
+        <result column="Remark" property="remark"/>
+        <result column="Status" property="status"/>
+        <result column="MakeDate" property="makedate"/>
+        <result column="latestRecordsForCustomer" property="latestRecordsForCustomer"/>
+        <result column="latestRecordsForAdmin" property="latestRecordsForAdmin"/>
+    </resultMap>
+</mapper>
+

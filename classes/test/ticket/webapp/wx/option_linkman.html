@@ -1,0 +1,62 @@
+<!doctype html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>选择联系人</title>
+<meta name="keywords" content="关键词,后台添加" />
+<meta name="description" content="描述,后台添加" />
+<meta name="viewport" content="width=device-width, initial-scale=0.5, maximum-scale=1.0, user-scalable=0" />
+<meta name="format-detection" content="telephone=no" />
+<meta name="apple-touch-fullscreen" content="YES" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="MobileOptimized" content="320" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black" />
+<link type="text/css" rel="stylesheet" href="css/css.css">
+<script type="text/javascript" src="js/jquery-1.4.2.js?jsversion=3"></script>
+
+<script type="text/javascript" src="js/wx.js?jsversion=3"></script>
+<script type="text/javascript" src="js/option_linkman.js?jsversion=3"></script>
+<script type="text/javascript">
+// $(function(){
+// 	importjs(['option_linkman.js'])
+// })
+</script>
+
+</head>
+
+<body>
+	<table style="border-collapse:collapse;width:100%;">
+		<tr class="link" style="background-color:#fff;display:none;border-bottom:1px solid #ccc;">
+			<td class="f_option" style="padding:15px 0;">
+				<input type="hidden" class="id"/>
+				<div class="lname" style="font-size:32px;color:#353535;line-height:50px;padding-left:20px;"></div>
+				<div class="lmobile" style="font-size:28px;color:#6f6f6f;line-height:50px;padding-left:20px;"></div>
+				<div class="idcode" style="font-size:28px;color:#6f6f6f;line-height:50px;padding-left:20px;"></div>
+				<span style="display:none;" class="json"></span>
+			</td>
+			<td class="f_edit view" style="overflow:hidden;" onclick="send('link_edit.html');">
+				<div style="float:right;padding-right:20px;padding-left:30px;"><img src="images/edit.png"/></div>
+			</td>
+		</tr>
+	</table>
+	<div style="text-align:center;">
+		<a onclick="send('link_edit.html');" style="display:inline-block;line-height:82px;width:80%;border-radius:4px;color:#ffffff;background-color:#00cea8;font-size:36px;margin-top:82px;margin-bottom:82px;">新增联系人</a>
+	</div>
+	<ul>
+		<!-- <h1 class="o_contact1" style="height: 80px;padding-top: 30px;position: relative;">
+			<p class="i_red_pot1" ></p>
+			<span>常用联系人</span>
+			<div style="position: absolute;right:30px;top:23px;" onclick="send('link_edit.html');">
+				<img src="../images/add001.png" style="width: 64px;height: 64px;">
+			</div>
+		</h1> -->
+		<!-- <li class="f_option link" style="display: none;">
+			<input type="radio" id="radio-4-1" name="linkman" class="f_regular_radio" >
+			<label for="radio-4-1"></label>
+			<span class="lname"></span>
+			<span style="float: right;padding-right: 20px;" class="lmobile"></span>
+			<span style="display: none;" class="json"></span>
+		</li> -->
+	</ul>
+</body>
+</html>

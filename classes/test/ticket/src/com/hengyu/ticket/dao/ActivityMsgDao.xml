@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hengyu.ticket.dao.ActivityMsgDao">
+
+    <select id="findActivityMsgStatus" resultType="int">
+        select count(1) from activity_msg where AMSort=#{amsort} and BeginDate <![CDATA[ < ]]> now() and EndDate > now()
+        <if test="idList != null">
+            and ID not in
+            <foreach collection="idList" item="id" open="(" close=")" separator=",">
+                #{id}
+            </foreach>
+        </if>
+    </select>
+
+    <select id="findAvailableActivityMsg" resultMap="result_map">
+        SELECT *
+        FROM activity_msg
+        WHERE id = #{id} and AMSort=0 and BeginDate <![CDATA[ < ]]> now() and EndDate > now()
+    </select>
+
+    <select id="findAvailableActivityMsgList" resultMap="result_map">
+        select * from activity_msg where BeginDate <![CDATA[ < ]]> now() and EndDate > now()
+        <if test="type == 0">
+          and (AMSort = 0 or AMSort = 1)
+        </if>
+        <if test="type == 1">
+            and AMSort = 2
+        </if>
+        order by MakeDate desc
+    </select>
+
+    <select id="findActivityMsg" resultMap="result_map">
+        SELECT *
+        FROM activity_msg
+        WHERE id = #{id}
+    </select>
+
+    <select id="findActivityMsgList" resultMap="result_map">
+        select *
+        <include refid="findActivityMsgList_where"/>
+        order by MakeDate desc
+        limit #{page.startOfPage},#{page.pageSize}
+    </select>
+
+    <select id="findActivityMsgTotal" resultType="long">
+        select count(1)
+        <include refid="findActivityMsgList_where"/>
+    </select>
+
+    <sql id="findActivityMsgList_where">
+        from activity_msg where 1=1
+        <if test="keyword != null">
+            and ( `AMTitle` like concat('%',#{keyword},'%') or `AMContent` like concat('%',#{keyword},'%') )
+        </if>
+        <if test="amsort != null">
+            and AMSort=#{amsort}
+        </if>
+    </sql>
+
+    <insert id="saveActivityMsg" parameterType="ActivityMsg">
+        INSERT INTO activity_msg (
+            AMSort, AMTitle, AMPictureUrl, AMContent, BeginDate, EndDate, MakeID, MakeName, MakeDate
+        ) VALUES (
+            #{amsort}, #{amtitle}, #{ampictureurl}, #{amcontent}, #{begindate}, #{enddate}, #{makeid}, #{makename},
+            #{makedate}
+        )
+    </insert>
+
+    <update id="updateActivityMsg" parameterType="ActivityMsg">
+        UPDATE activity_msg
+        SET
+            AMSort    = #{amsort}, AMTitle = #{amtitle}, AMPictureUrl = #{ampictureurl}, AMContent = #{amcontent},
+            BeginDate = #{begindate}, EndDate = #{enddate}
+        WHERE ID = #{id}
+    </update>
+
+    <delete id="delActivityMsg">
+        DELETE FROM activity_msg
+        WHERE ID = #{id}
+    </delete>
+
+    <resultMap id="result_map" type="ActivityMsg">
+        <id column="ID" property="id"/>
+        <result column="AMSort" property="amsort"/>
+        <result column="AMTitle" property="amtitle"/>
+        <result column="AMPictureUrl" property="ampictureurl"/>
+        <result column="AMContent" property="amcontent"/>
+        <result column="BeginDate" property="begindate"/>
+        <result column="EndDate" property="enddate"/>
+        <result column="MakeID" property="makeid"/>
+        <result column="MakeName" property="makename"/>
+        <result column="MakeDate" property="makedate"/>
+    </resultMap>
+</mapper>
+

@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:task="http://www.springframework.org/schema/task"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
+		http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-3.2.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.2.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.2.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.2.xsd
+		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.2.xsd">
+	
+	<!-- 配置信息 -->
+	<bean class="com.hengyu.ticket.config.TicketConfig" id="ticketConfig">
+		<property name="ticketTime" value="15"/>
+		<property name="domain" value="http://www.jcticket.com/"/>
+		<!--<property name="domain" value="http://192.168.4.176/ticket/"/>-->
+		<property name="debug" value="true"/>
+		<property name="wxmsg">
+			<map>
+				<entry key="coupon_first" value="您已收到捷乘巴士红包一个"/>
+				<entry key="coupon_remark" value="感谢使用捷乘巴士！"/>
+				<entry key="coupon_template" value="qBJigB91To5kvM00-pMKuQJsY9wNxO7KJWVPPyIBaNM"/>
+				<entry key="coupon_url" value="http://jcticket.com/wx/coupon.html?hide_desc=1"/>
+				<entry key="color" value="#173177"/>
+				<entry key="buyfailure_template" value="hTB8r_4w-SvpsPO2aDiiOyzGP8OzBoLnY12A4XDgi4E"/>
+				<entry key="buy_success_template" value="XZ7pk0ZxZxb5Xcjn6ptVf6DBiYzHleHZ3caoWO4epHs"/>
+				<entry key="buy_success_first" value="亲爱的乘客，您的车票购买成功啦。"/>
+				<entry key="buy_success_remark" value="祝您旅途愉快！"/>
+			</map>
+		</property>
+	</bean>
+	
+	<bean class="com.hengyu.ticket.config.WXSubscribe">
+		<property name="picurl" value="https://mmbiz.qlogo.cn/mmbiz/K9YGwVib4dhHC1CvyCw92jvW6t2GicCaJaI5ktKJEAjLwH41ibHABznnchRQGtbvaxwGHcILHYLJTEMowiaXD6qf4Q/0?wx_fmt=jpeg"></property>
+		<property name="url" value="http://mp.weixin.qq.com/s?__biz=MzIyMjEwMTE0OA==&amp;mid=402797775&amp;idx=1&amp;sn=e2adfb2d97aa47c41ba64e21bf52c87f&amp;scene=0#wechat_redirect"></property>
+		<property name="title" value="“捷乘巴士”正式上线啦！ "></property>
+		<property name="desc" value="从前的车牛马都慢，一生只够爱一个人~ 现在的交通太拥挤，我们才更需要“捷乘”"></property>
+		<property name="items">
+			<list>
+				<map>
+					<entry key="PicUrl" value="https://mmbiz.qlogo.cn/mmbiz/K9YGwVib4dhFfibLRNGMcNqb6ZLibYkhuVE8DVu8Kf4fUTFggt5ribhQzvTW8BibNVgKSujbQMJiaOLaMwUuk8q18VibQ/0?wx_fmt=jpeg"/>
+					<entry key="Url" value="http://mp.weixin.qq.com/s?__biz=MzIyMjEwMTE0OA==&amp;mid=403287259&amp;idx=1&amp;sn=10fe46525e6c09ad3573e5d084423122&amp;scene=4#wechat_redirect"/>
+					<entry key="Title" value="好消息~新增天河客运站线上售票！ "/>
+					<entry key="Description" value="尊敬的用户：您好！自2016年2月16日起，进入捷乘巴士可购买从天河客运站开往深圳班次的车票！欢迎往返于广深的小伙伴们前来订票，谢谢您的支持，您的支持是我们的无限动力！"/>
+				</map>
+				<map>
+					<entry key="PicUrl" value="http://jcticket.com/wx/images/logo@2x.png"/>
+					<entry key="Url" value="http://mp.weixin.qq.com/s?__biz=MzIyMjEwMTE0OA==&amp;mid=403568200&amp;idx=2&amp;sn=8994932e7d235bf993433669559c9c8e&amp;scene=1&amp;srcid=0307wkRNs0jQQ5SegczTMzId&amp;from=singlemessage&amp;isappinstalled=0#wechat_redirect"/>
+					<entry key="Title" value="好消息 | 使用“捷乘巴士”订票 ~ 深丰线票价只要60元！ "/>
+					<entry key="Description" value="从3月7日起，往返深圳和丰顺之间的班车，线上票价低至60元！ 从3月5日起，广州至丰顺每天18:00的班车，线上票价低至100元！ 欢迎使用捷乘巴士订票，感谢您的支持！"/>
+				</map>
+			</list>
+		</property>
+	</bean>
+	
+</beans>

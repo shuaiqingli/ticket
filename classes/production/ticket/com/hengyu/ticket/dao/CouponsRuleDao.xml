@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hengyu.ticket.dao.CouponsRuleDao">
+	<insert id="save" parameterType="CouponsRule">
+		insert
+		into
+		coupons_rule
+		(
+		<include refid="columns" />
+		)
+		values
+		(
+		<include refid="propertys" />
+		)
+	</insert>
+	<delete id="delete" parameterType="java.lang.Integer">
+		delete
+		from
+		coupons_rule
+		where
+		ID=#{id}
+	</delete>
+	<update id="update" parameterType="CouponsRule">
+		update
+		coupons_rule
+		set
+		`RuleName`=#{rulename},
+		`VSort`=#{vsort},
+		`VSortName`=#{vsortname},
+		`BeginDate`=#{begindate},
+		`EndDate`=#{enddate},
+		`ValidDay`=#{validday},
+		`BuySum`=#{buysum},
+		`LowLimit`=#{lowlimit},
+		`VPrice`=#{vprice},
+		`IsEnable`=#{isenable},
+		`IsEnableName`=#{isenablename},
+		`islimitgive`=#{islimitgive},
+		`IsDel`=#{isdel}
+		where
+		ID=#{id}
+	</update>
+	<select id="find" parameterType="java.lang.Integer" resultMap="result_map">
+		select
+		*
+		from
+		coupons_rule
+		where
+		ID=#{id}
+	</select>
+	<select id="count" resultType="java.lang.Integer">
+		select
+		count(1)
+		from
+		coupons_rule
+	</select>
+	<select id="findList" parameterType="Page" resultMap="result_map">
+		select
+		*
+		from
+		coupons_rule
+		<include refid="findList_where"></include>
+		order by
+		MakeDate
+		desc
+		limit
+		#{startOfPage},#{pageSize}
+	</select>
+	<select id="totalCount" parameterType="Page" resultType="long">
+		select
+		count(1)
+		from
+		coupons_rule
+		<include refid="findList_where"></include>
+	</select>
+	<sql id="findList_where">
+		<where>
+			IsDel =0
+			<if test="param != null and param.keywords != null">
+				and `RuleName` like '%${param.keywords}%'
+			</if>
+		</where>
+	</sql>
+	<select id="getCouponsRuleByRegist" parameterType="map"
+		resultMap="result_map">
+		select
+		*
+		from
+		coupons_rule
+		where VSort=1 and IsDel=0 and
+		BeginDate<![CDATA[<=]]>#{currdate}
+		and EndDate<![CDATA[>=]]>#{currdate}
+		order by
+		ID
+		desc
+	</select>
+	<select id="getCouponsRuleByBuy" parameterType="map" resultMap="result_map">
+		select
+		*
+		from
+		coupons_rule
+		where VSort=2 and IsDel=0
+		and BeginDate<![CDATA[<=]]>#{currdate}
+		and EndDate<![CDATA[>=]]>#{currdate}
+		and LowLimit <![CDATA[<=]]>#{ordersum}
+		order by
+		LowLimit
+		desc
+		limit
+		1
+	</select>
+	
+	<select id="findCouponRuleByType" resultMap="result_map">
+		select * from coupons_rule 
+		where VSort = #{type} and CURRENT_DATE() between BeginDate and EndDate and IsDel=0 and isenable = 1
+		order by VPrice desc
+	</select>
+	
+	<sql id="columns">
+		`RuleName`,
+		`VSort`,
+		`VSortName`,
+		`BeginDate`,
+		`EndDate`,
+		`ValidDay`,
+		`BuySum`,
+		`LowLimit`,
+		`VPrice`,
+		`IsEnable`,
+		`IsEnableName`,
+		`MakeDate`,
+		`islimitgive`,
+		`IsDel`
+	</sql>
+	<sql id="propertys">
+		#{rulename},
+		#{vsort},
+		#{vsortname},
+		#{begindate},
+		#{enddate},
+		#{validday},
+		#{buysum},
+		#{lowlimit},
+		#{vprice},
+		#{isenable},
+		#{isenablename},
+		#{makedate},
+		#{islimitgive},
+		#{isdel}
+	</sql>
+	<resultMap id="result_map" type="CouponsRule">
+		<id column="ID" property="id" javaType="java.lang.Integer" />
+		<result column="RuleName" property="rulename" javaType="java.lang.String" />
+		<result column="VSort" property="vsort" javaType="java.lang.Integer" />
+		<result column="VSortName" property="vsortname" javaType="java.lang.String" />
+		<result column="BeginDate" property="begindate" javaType="java.lang.String" />
+		<result column="EndDate" property="enddate" javaType="java.lang.String" />
+		<result column="ValidDay" property="validday" javaType="java.lang.Integer" />
+		<result column="BuySum" property="buysum" javaType="java.math.BigDecimal" />
+		<result column="LowLimit" property="lowlimit" javaType="java.math.BigDecimal" />
+		<result column="VPrice" property="vprice" javaType="java.math.BigDecimal" />
+		<result column="IsEnable" property="isenable" javaType="java.lang.Integer" />
+		<result column="IsEnableName" property="isenablename" javaType="java.lang.String" />
+		<result column="MakeDate" property="makedate" javaType="java.lang.String" />
+		<result column="IsDel" property="isdel" javaType="java.lang.Integer" />
+		<result column="IsLimitGive" property="islimitgive" javaType="java.lang.Integer" />
+	</resultMap>
+</mapper>

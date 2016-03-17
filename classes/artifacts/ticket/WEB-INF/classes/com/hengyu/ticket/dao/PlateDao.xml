@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hengyu.ticket.dao.PlateDao">
+    <select id="findListByLineGroupID" parameterType="java.lang.String" resultMap="result_map">
+        SELECT *
+        FROM plate t1, line_plate t2
+        WHERE t1.ID = t2.PlateID AND t2.GroupID = #{groupID}
+    </select>
+
+    <select id="totalCountForBindLine" parameterType="Page" resultType="long">
+        select count(1)
+        <include refid="findListForBindLine_where"/>
+    </select>
+
+    <select id="findListForBindLine" parameterType="java.lang.String" resultMap="result_map">
+        select *
+        <include refid="findListForBindLine_where"/>
+        limit #{startOfPage},#{pageSize}
+    </select>
+
+    <sql id="findListForBindLine_where">
+        from plate t1 LEFT JOIN line_plate t2 ON t1.ID=t2.PlateID where t2.ID IS NULL
+        <if test="param != null and param.platenum != null">
+            and t1.PlateNum LIKE CONCAT('%',#{param.platenum},'%')
+        </if>
+    </sql>
+
+    <insert id="save" parameterType="Plate">
+        insert
+        into
+        plate
+        (
+        <include refid="columns"/>
+        )
+        values
+        (
+        <include refid="propertys"/>
+        )
+    </insert>
+    <update id="update" parameterType="Plate">
+        UPDATE
+            plate
+        SET
+            `PlateNum`     = #{platenum},
+            `carmodelid`   = #{carmodelid},
+            `carmodelname` = #{carmodelname},
+            `NuclearLoad`  = #{nuclearload},
+            `tcid` = #{tcid},
+            `companyname` = #{companyname}
+        WHERE
+            ID = #{id}
+    </update>
+    <delete id="delete" parameterType="int">
+        DELETE FROM
+            plate
+        WHERE ID = #{id}
+    </delete>
+    <select id="find" parameterType="java.lang.Integer" resultMap="result_map">
+        SELECT *
+        FROM
+            plate
+        WHERE
+            ID = #{id}
+    </select>
+    <select id="findlist" parameterType="Page" resultMap="result_map">
+        select
+        *
+        from
+        plate
+        <include refid="findlist_where"></include>
+        limit
+        #{startOfPage},#{pageSize}
+    </select>
+    <select id="totalCount" parameterType="Page" resultType="long">
+        select
+        count(1)
+        from
+        plate
+        <include refid="findlist_where"></include>
+    </select>
+    <sql id="findlist_where">
+        <where>
+            <if test="param != null and param.platenum != null">
+                `PlateNum` like '%${param.platenum}%'
+            </if>
+        </where>
+    </sql>
+    <select id="getPlateByKeywords" resultMap="result_map"
+            parameterType="map">
+        SELECT *
+        FROM
+            plate
+        WHERE
+            PlateNum LIKE '%${keywords}%'
+    </select>
+    <sql id="columns">
+        `PlateNum`,
+        `carmodelid`,
+        `carmodelname`,
+        `NuclearLoad`,
+        tcid,
+        companyname
+    </sql>
+    <sql id="propertys">
+        #{platenum},
+        #{carmodelid},
+        #{carmodelname},
+        #{nuclearload},
+        #{tcid},
+        #{companyname}
+    </sql>
+    <resultMap id="result_map" type="Plate">
+        <id column="ID" property="id" javaType="java.lang.Integer"/>
+        <result column="PlateNum" property="platenum" javaType="java.lang.String"/>
+        <result column="carmodelname" property="carmodelname" javaType="java.lang.String"/>
+        <result column="NuclearLoad" property="nuclearload" javaType="java.lang.Integer"/>
+        <result column="carmodelid" property="carmodelid" javaType="java.lang.Integer"/>
+        <result column="tcid" property="tcid" javaType="java.lang.Integer"/>
+        <result column="companyname" property="companyname" javaType="java.lang.String"/>
+    </resultMap>
+</mapper>

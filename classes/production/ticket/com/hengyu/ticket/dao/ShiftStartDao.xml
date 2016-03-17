@@ -1,0 +1,830 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hengyu.ticket.dao.ShiftStartDao">
+    <select id="driverStatisticList" resultType="java.util.HashMap">
+        select *
+        <include refid="driverStatisticList_where"/>
+        limit #{page.startOfPage},#{page.pageSize}
+    </select>
+
+    <select id="driverStatisticTotal" resultType="long">
+        select count(1)
+        <include refid="driverStatisticList_where"/>
+    </select>
+
+    <sql id="driverStatisticList_where">
+        from
+        (
+            select CommonDriverID,CommonDriverName,ShiftCode,RideDate,LineName,sum(CurrPeople) as PeopleTotal from
+            (
+            SELECT
+            t1.*,t2.ShiftCode,t2.RideDate,
+            DriverID   AS CommonDriverID,
+            DriverName AS CommonDriverName
+            FROM shift_start t1 LEFT JOIN shift t2 ON t1.ShiftID=t2.ID
+            WHERE (t1.DriverID IS NOT NULL AND length(trim(t1.DriverID)) > 0)
+            UNION
+            SELECT
+            t1.*,t2.ShiftCode,t2.RideDate,
+            DriverIDII   AS CommonDriverID,
+            DriverNameII AS CommonDriverName
+            FROM shift_start t1 LEFT JOIN shift t2 ON t1.ShiftID=t2.ID
+            WHERE (t1.DriverIDII IS NOT NULL AND length(trim(t1.DriverIDII)) > 0)
+            ) t
+            where 1=1
+            <if test="endDate != null">
+                and RideDate <![CDATA[ <= ]]> #{endDate}
+            </if>
+            <if test="startDate != null">
+                and RideDate >= #{startDate}
+            </if>
+            <if test="keyword != null">
+                and (CommonDriverID like concat('%',#{keyword},'%') or CommonDriverName like concat('%',#{keyword},'%') or ShiftCode like concat('%',#{keyword},'%') or LineName like concat('%',#{keyword},'%'))
+            </if>
+            GROUP BY RideDate,ShiftCode,CommonDriverID
+            ORDER BY RideDate,ShiftCode,CommonDriverID
+        ) t
+    </sql>
+
+    <select id="isShiftStartExist" resultType="long">
+        SELECT count(1)
+        FROM shift_start
+        WHERE LMID = #{lmid} and RideDate = #{date}
+    </select>
+
+    <select id="isDriverExistForShiftStart" resultType="long">
+        SELECT count(1)
+        FROM shift_start
+        WHERE LMID = #{lmid} and RideDate = #{date} and DriverID is not null
+    </select>
+
+    <select id="getShiftStartListBylmidList" resultType="java.util.HashMap">
+        select ID,ShiftCode,OriginStartTime,LMID,DriverID,DriverName,DriverIDII,DriverNameII,PlateNum,NuclearLoad from shift_start where RideDate = #{date} and LMID in
+        <foreach collection="lmidList" open="(" close=")" separator="," item="lmid">
+            #{lmid}
+        </foreach>
+        GROUP BY ShiftCode ORDER BY OriginStartTime, LMID
+    </select>
+
+    <select id="getPlateListForDistributePlate" resultType="java.util.HashMap">
+        SELECT t.*
+        FROM
+        (SELECT
+        t1.*,
+        t2.GroupID
+        FROM plate t1, line_plate t2
+        WHERE t1.ID = t2.PlateID AND t2.GroupID = #{groupid}) t
+        LEFT JOIN shift_start t3 ON t3.PlateNum = t.PlateNum AND t3.RideDate = #{date}
+        WHERE t3.ID IS NULL
+        <if test="plateidList != null">
+            and t.ID in
+            <foreach collection="plateidList" open="(" close=")" separator="," item="plateid">
+                #{plateid}
+            </foreach>
+        </if>
+    </select>
+
+    <select id="getPlatePosition" resultType="java.util.HashMap">
+		<![CDATA[
+        SELECT
+            cs.ID,
+            cs.CityName
+        FROM (
+                 SELECT t2.ParentID
+                 FROM
+                     (
+                         SELECT *
+                         FROM shift_start
+                         WHERE PlateNum = #{platenum} AND RideDate < #{date}
+                         ORDER BY RideDate DESC , OriginStartTime DESC
+                         LIMIT 1
+                     ) AS t1, city_station t2
+                 WHERE t1.STArriveID = t2.ID
+             ) foo, city_station cs
+        WHERE foo.ParentID = cs.ID
+        ]]>
+	</select>
+
+    <select id="getDriverListForDistributeDriver" resultType="java.util.HashMap">
+        SELECT t.*
+        FROM
+        (SELECT
+        t1.*,
+        t2.GroupID,
+        t2.Type,
+        t2.PlateID
+        FROM driver t1, line_driver t2
+        WHERE t1.ID = t2.DriverID AND (t1.IsStop = '0' or t1.IsStop is null) AND t2.GroupID = #{groupid}
+        <if test="type != null">
+            AND t2.Type = #{type}
+        </if>
+        AND t1.ID NOT IN (
+        SELECT st1.ID
+        FROM driver st1 LEFT JOIN driver_holiday st2 ON st2.DriverID = st1.ID
+        WHERE
+        <![CDATA[
+                           (st2.Type = 1 AND st2.Weekday & 1 > 0) OR
+                           (st2.Type = 2 AND DATE_FORMAT(st2.StartDate, '%Y-%m-%d') <= #{date} AND
+                            DATE_FORMAT(st2.EndDate, '%Y-%m-%d') >= #{date})
+						   ]]>
+        GROUP BY st1.ID
+        )
+        ) t
+        LEFT JOIN shift_start t3 ON (t3.DriverID = t.ID OR t3.DriverIDII = t.ID) AND t3.RideDate = #{date}
+        WHERE t3.ID IS NULL
+        <if test="driveridList != null">
+            and t.ID in
+            <foreach collection="driveridList" open="(" close=")" separator="," item="driverid">
+                #{driverid}
+            </foreach>
+        </if>
+    </select>
+
+    <select id="getDriverPosition" resultType="java.util.HashMap">
+		<![CDATA[
+        SELECT
+            cs.ID,
+            cs.CityName
+        FROM (
+                 SELECT t2.ParentID
+                 FROM
+                     (
+                         SELECT *
+                         FROM shift_start
+                         WHERE (DriverID = #{driverid} OR DriverIDII = #{driverid}) AND RideDate < #{date}
+                         ORDER BY RideDate DESC , OriginStartTime DESC
+                         LIMIT 1
+                     ) AS t1, city_station t2
+                 WHERE t1.STArriveID = t2.ID
+             ) foo, city_station cs
+        WHERE foo.ParentID = cs.ID
+        ]]>
+	</select>
+
+    <update id="bindDriverAndPlateToShiftStart" parameterType="java.util.Map">
+        update shift_start
+          set DriverID=#{DriverID},DriverName=#{DriverName},DriverIDII=#{DriverIDII},DriverNameII=#{DriverNameII},PlateNum=#{PlateNum},NuclearLoad=#{NuclearLoad}
+        where ID=#{ID}
+    </update>
+
+    <insert id="save" parameterType="ShiftStart" useGeneratedKeys="true"
+            keyProperty="id" keyColumn="ID">
+        insert
+        into
+        shift_start
+        (
+        <include refid="columns"/>
+        )
+        values
+        (
+        <include refid="propertys"/>
+        )
+    </insert>
+    <insert id="batchSave" parameterType="list">
+        insert
+        into
+        shift_start
+        (
+        <include refid="columns"/>
+        )
+        values
+        <foreach item="i" collection="list" index="index" separator=",">
+            (
+            <include refid="batch_propertys"/>
+            )
+        </foreach>
+    </insert>
+    
+    <select id="findShiftlist" parameterType="Page" resultType="map">
+		select 
+			ss.id,s.shiftcode,s.ridedate,s.linename,ss.currstationname,s.starrivename,punctualstart,ss.isstart,isstartname,platenum
+		from shift_start as ss
+		<include refid="findShiftlist_where"></include>
+		limit
+        #{startOfPage},#{pageSize}
+	</select>
+	<select id="findShiftlistCount" parameterType="Page" resultType="long">
+		select count(1) from shift_start as ss
+		<include refid="findShiftlist_where"></include>
+	</select>
+	<sql id="findShiftlist_where">
+        join shift as s on s.id = ss.shiftid
+		where 1=1
+		<if test="param.date!=null and param.date!='' ">
+			and s.ridedate = #{param.date}
+		</if>
+		<if test="param.starttime!=null and param.starttime!='' ">
+			and punctualstart between #{param.starttime} and '23:59'              
+		</if>
+		<if test="param.shiftcode!=null and param.shiftcode!='' ">
+			and s.shiftcode like '%${param.shiftcode}%'
+		</if>
+		<if test="param.ststartid!=null and param.ststartid!='' ">
+			and currstationid  = #{param.ststartid}
+		</if>
+		<if test="param.starriveid!=null and param.starriveid!='' ">
+			and starriveid  = #{param.starriveid}
+		</if>
+		<if test="admin!=null and admin.isAdmin != 1 ">
+			and lmid in(
+				<include refid="com.hengyu.ticket.dao.AdminDao.admin_power_lines"></include>
+			)
+		</if>
+	</sql>
+	
+    
+    <update id="update" parameterType="ShiftStart">
+        UPDATE
+            shift_start
+        SET
+            `ShiftCode`         = #{shiftcode},
+            `RideDate`          = #{ridedate},
+            `lmid`              = #{lmid},
+            `LineName`          = #{linename},
+            `OriginSTID`        = #{originstid},
+            `OriginSTName`      = #{originstname},
+            `STArriveID`        = #{starriveid},
+            `STArriveName`      = #{starrivename},
+            `OriginStartTime`   = #{originstarttime},
+            `PlateNum`          = #{platenum},
+            `DriverID`          = #{driverid},
+            `DriverName`        = #{drivername},
+            `NuclearLoad`       = #{nuclearload},
+            `CurrPeople`        = #{currpeople},
+            `CurrStationID`     = #{currstationid},
+            `CurrStationName`   = #{currstationname},
+            `PunctualStart`     = #{punctualstart},
+            `ActualStart`       = #{actualstart},
+            `IsStart`           = #{isstart},
+            `IsStartName`       = #{isstartname},
+            `Memo`              = #{memo},
+            `StartMemo`         = #{startmemo},
+            `AllTicketNum`      = #{allticketnum},
+            `HalfTicketNum`     = #{halfticketnum},
+            `FreeTicketNum`     = #{freeticketnum},
+            `MakeID`            = #{makeid},
+            `MakeName`          = #{makename},
+            `MakeDate`          = #{makedate},
+            `ConsignQuantity`   = #{consignquantity},
+            `ConsignSum`        = #{consignsum},
+            `PassengerQuantity` = #{passengerquantity},
+            `ConsignSum`        = #{consignsum},
+            `ReviseMemo`        = #{revisememo},
+            `DriverSign`        = #{driversign}
+        WHERE
+            ID = #{id}
+    </update>
+    <select id="find" parameterType="int" resultMap="result_map">
+        SELECT *
+        FROM
+            shift_start
+        WHERE
+            ID = #{id}
+    </select>
+
+    <select id="findApprovedShiftStart" parameterType="LineSchedue"
+            resultMap="com.hengyu.ticket.dao.LineScheduDetailDao.result_map">
+        SELECT
+            ShiftCode       AS shiftcode,
+            originstarttime AS starttime
+        FROM
+            shift_start
+        WHERE
+            lmid = #{lmid}
+            AND
+            RideDate = #{date}
+        GROUP BY
+            ShiftCode
+    </select>
+
+    <select id="findApprovedShiftDates" resultType="string">
+        SELECT RideDate
+        FROM
+            shift_start
+        WHERE
+            lmid = #{param1}
+            AND
+            RideDate BETWEEN #{param2} AND #{param3}
+        GROUP BY
+            RideDate
+    </select>
+    
+    <select id="findShiftStartBylmidDateShiftCode" resultMap="result_map">
+    	SELECT * FROM  shift_start
+        WHERE  lmid = #{lmid} AND RideDate = #{ridedate} and ShiftCode = #{shiftcode}
+    </select>
+
+    <sql id="columns">
+        `ShiftCode`,
+        `RideDate`,
+        `lmid`,
+        `LineName`,
+        `OriginSTID`,
+        `OriginSTName`,
+        `STArriveID`,
+        `STArriveName`,
+        `OriginStartTime`,
+        `PlateNum`,
+        `DriverID`,
+        `DriverName`,
+        `DriverIDII`,
+        `DriverNameII`,
+        `NuclearLoad`,
+        `CurrPeople`,
+        `CurrStationID`,
+        `CurrStationName`,
+        `PunctualStart`,
+        `ActualStart`,
+        `IsStart`,
+        `IsStartName`,
+        `Memo`,
+        `ChangeLog`,
+        `StartMemo`,
+        `AllTicketNum`,
+        `HalfTicketNum`,
+        `FreeTicketNum`,
+        `MakeID`,
+        `MakeName`,
+        `MakeDate`,
+        `ConsignQuantity`,
+        `ConsignSum`,
+        `PassengerQuantity`,
+        `PassengerSum`,
+        `ReviseMemo`,
+        `DriverSign`,
+        `IsTemp`,
+        iscancel,
+        iscancelname
+    </sql>
+    <select id="getShiftStartByDate" resultMap="result_map"
+            parameterType="map">
+        select
+        *
+        from
+        shift_start ss,admin_line al
+        <include refid="findShiftStartList_where"></include>
+        order by ss.punctualstart
+        limit
+        #{startOfPage},#{pageSize}
+    </select>
+    <select id="totalCount" resultType="long" parameterType="map">
+        select
+        count(*)
+        from
+        shift_start ss,admin_line al
+        <include refid="findShiftStartList_where"></include>
+    </select>
+    <sql id="findShiftStartList_where">
+        <where>
+            ss.RideDate = #{ridedate} and
+            ss.CurrStationID =
+            #{currstationid} and
+            (ss.IsStart=0 or (ss.IsStart=2 and ss.punctualstart>#{beforstart})) and ss.lmid=al.lmid and al.userid=#{userid} 
+        </where>
+    </sql>
+    <select id="getNormalShiftStartBySearch" resultMap="result_map"
+            parameterType="map">
+        select
+        *
+        from
+        shift_start ss,admin_line al
+        <include refid="getNormalShiftStartSearch_where"></include>
+        order by ss.punctualstart 
+        limit
+        #{startOfPage},#{pageSize}
+    </select>
+    <select id="totalCountByNormalSearch" resultType="long" parameterType="map">
+        select
+        count(*)
+        from
+        shift_start ss,admin_line al 
+        <include refid="getNormalShiftStartSearch_where"></include>
+    </select>
+    <sql id="getNormalShiftStartSearch_where">
+        <where>
+            ss.RideDate = #{ridedate} and ss.lmid=al.lmid and al.userid=#{userid} 
+            <if test="keywords != null and keywords != '' ">
+                and
+                (ss.CurrStationID =
+                #{currstationid}
+                and ss.ShiftCode like
+                '%${keywords}%') 
+            </if>
+            <if test="istemp == 0 ">
+                and ss.CurrStationID =
+                #{currstationid}
+                and ss.IsTemp = #{istemp}
+            </if>
+            <if test="istemp == 1 ">
+                and ss.IsTemp = #{istemp} or (ss.CurrStationID =
+                #{currstationid} and ss.IsTemp=#{istemp} and ss.RideDate = #{ridedate})
+            </if>
+        </where>
+    </sql>
+    
+    <select id="getShiftStartBySearch" resultMap="result_map"
+            parameterType="map">
+        select
+        *
+        from
+        shift_start
+        <include refid="getShiftStartSearch_where"></include>
+        order by punctualstart
+        limit
+        #{startOfPage},#{pageSize}
+    </select>
+    <select id="totalCountBySearch" resultType="long" parameterType="map">
+        select
+        count(*)
+        from
+        shift_start
+        <include refid="getShiftStartSearch_where"></include>
+    </select>
+    <sql id="getShiftStartSearch_where">
+        <where>
+            RideDate = #{ridedate}
+            <if test="keywords != null and keywords != '' ">
+                and
+                (CurrStationID =
+                #{currstationid}
+                and ShiftCode like
+                '%${keywords}%') or (IsTemp=1 and ShiftCode like '%${keywords}%')
+            </if>
+            <if test="istemp == 0 ">
+                and CurrStationID =
+                #{currstationid}
+                and IsTemp = #{istemp}
+            </if>
+            <if test="istemp == 1 ">
+                and IsTemp = #{istemp} or (CurrStationID =
+                #{currstationid} and IsTemp=#{istemp} and RideDate = #{ridedate})
+            </if>
+        </where>
+    </sql>
+    <select id="getShiftStartByCRS" resultMap="result_map"
+            parameterType="map">
+        SELECT *
+        FROM
+            shift_start
+        WHERE
+            CurrStationID = #{currstationid} AND RideDate = #{ridedate} AND
+            ShiftCode = #{shiftcode}
+    </select>
+    <select id="getShiftStartByTemp" resultMap="result_map"
+            parameterType="map">
+        SELECT *
+        FROM
+            shift_start
+        WHERE
+            RideDate = #{ridedate} AND
+            ShiftCode = #{shiftcode} AND IsTemp = 1
+    </select>
+    <update id="toStart" parameterType="map">
+        UPDATE
+            shift_start
+        SET
+            `PlateNum`          = #{platenum},
+            `DriverID`          = #{driverid},
+            `DriverName`        = #{drivername},
+            `DriverIDII`        = #{driveridii},
+            `DriverNameII`      = #{drivernameii},
+            `NuclearLoad`       = #{nuclearload},
+            `CurrPeople`        = #{currpeople},
+            `ActualStart`       = #{actualstart},
+            `Memo`              = #{memo},
+            `IsStart`           = #{isstart},
+            `IsStartName`       = #{isstartname},
+            `AllTicketNum`      = #{allticketnum},
+            `HalfTicketNum`     = #{halfticketnum},
+            `FreeTicketNum`     = #{freeticketnum},
+            `ConsignQuantity`   = #{consignquantity},
+            `ConsignSum`        = #{consignsum},
+            `PassengerQuantity` = #{passengerquantity},
+            `PassengerSum`      = #{passengersum},
+            MakeID              = #{makeid},
+            MakeName			= #{makename},
+            MakeDate			= #{makedate}
+        WHERE
+            ID = #{id}
+    </update>
+    <update id="modifyShiftStart" parameterType="map">
+        UPDATE
+            shift_start
+        SET
+            `CurrPeople`        = #{currpeople},
+            `AllTicketNum`      = #{allticketnum},
+            `HalfTicketNum`     = #{halfticketnum},
+            `FreeTicketNum`     = #{freeticketnum},
+            `ConsignQuantity`   = #{consignquantity},
+            `ConsignSum`        = #{consignsum},
+            `PassengerQuantity` = #{passengerquantity},
+            `PassengerSum`      = #{passengersum}
+        WHERE
+            ID = #{id}
+    </update>
+    <update id="completeShiftStart" parameterType="map">
+        UPDATE
+            shift_start
+        SET
+            `PlateNum`     = #{platenum},
+            `DriverID`     = #{driverid},
+            `DriverName`   = #{drivername},
+            `DriverIDII`   = #{driveridii},
+            `DriverNameII` = #{drivernameii},
+            `NuclearLoad`  = #{nuclearload}
+        WHERE
+            ShiftCode = #{shiftcode} AND lmid = #{lmid} AND RideDate = #{ridedate} AND IsStart = 0
+    </update>
+    <update id="cancelShiftStart" parameterType="map">
+        UPDATE
+            shift_start
+        SET
+            `IsStart`     = #{iscancel},
+            `IsStartName` = #{iscancelname}
+        WHERE
+            ShiftCode = #{shiftcode} AND RideDate = #{ridedate} AND (IsStart = 0 OR IsStart = 2)
+    </update>
+    <update id="changeIsCancel" parameterType="map">
+        UPDATE
+            shift_start
+        SET
+            `IsCancel`     = #{iscancel},
+            `IsCancelName` = #{iscancelname}
+        WHERE
+            ShiftCode = #{shiftcode} AND RideDate = #{ridedate} 
+    </update>
+    <select id="getTempShiftCodeCount" resultType="long" parameterType="map">
+        SELECT count(*)
+        FROM
+            shift_start
+        WHERE
+            left(shiftcode, 3) = '${threecode}'
+    </select>
+
+    <delete id="delNotApproveShiftStart" parameterType="TicketLine">
+        DELETE FROM
+            shift_start
+        WHERE
+            lmid = #{lmid}
+            AND
+            ridedate >= #{ticketdate}
+    </delete>
+    <update id="addShiftStartMemo" parameterType="map">
+        UPDATE
+            shift_start
+        SET
+            `Memo` = CONCAT(ifnull(Memo,''), #{memo})
+        WHERE
+            ID = #{id}
+    </update>
+    <update id="updShiftStartMemo" parameterType="map">
+        UPDATE
+            shift_start
+        SET
+            `Memo` = #{memo}
+        WHERE
+            ID = #{id}
+    </update>
+    <select id="getShiftStartBySRL" resultMap="result_map"
+            parameterType="map">
+        SELECT *
+        FROM
+            shift_start
+        WHERE
+            ShiftCode = #{shiftcode} AND RideDate = #{ridedate} AND
+            LMID = #{lmid}
+    </select>
+    <update id="updStartMemo" parameterType="map">
+        UPDATE
+            shift_start
+        SET
+            `StartMemo` = #{startmemo}
+        WHERE
+            ShiftCode = #{shiftcode} AND RideDate = #{ridedate}
+    </update>
+    
+    <select id="getShiftStartByDriver" parameterType="map" resultType="java.util.HashMap">
+        select * from shift_start as ss where ss.RideDate=#{ridedate} and ss.IsStart=0 and ss.LMID 
+        in(select lm.ID from line_manage as lm left join line_driver ld on lm.GroupID = ld.GroupID 
+        where ld.DriverID=#{driverid}) 
+  		group by shiftcode order by ss.PunctualStart
+    </select>
+
+    <select id="findExportExcelShiftByDate" resultType="map">
+        SELECT
+            s.shiftcode,
+            s.ridedate,
+            s.linename,
+            s.originstarttime,
+            currstationname,
+            starrivename,
+            platenum,
+            istemp,
+            allticketnum,
+            halfticketnum,
+            freeticketnum,
+            punctualstart,
+            drivername,
+            drivernameii,
+            memo
+        FROM
+            shift_start as ss
+        JOIN shift as s on s.id = ss.shiftid
+        WHERE
+            RideDate BETWEEN #{begindate} AND #{enddate}
+        <if test=" lmid != null and lmid != '' ">
+             AND lmid = #{lmid}
+        </if>
+    </select>
+    
+    <select id="findStatisticShiftStartByLine" parameterType="Page" resultType="map">
+    	select
+			lm.lineid,
+			lm.linename,
+            s.originstname as  ststartname,
+			s.starrivename as starrivename,
+			sum(
+				ifnull(allticketnum, 0) + ifnull(halfticketnum, 0) + ifnull(freeticketnum, 0)
+			) as allpeople,
+			sum(allticketnum) as allticketnum,
+			sum(halfticketnum) as halfticketnum,
+			sum(freeticketnum) as freeticketnum,
+			sum(consignquantity) as consignquantity,
+			sum(consignsum) as consignsum,
+			sum(passengerquantity) as passengerquantity,
+			sum(passengersum) as passengersum
+		<include refid="findStatisticShiftStartByLine_where"></include>
+		limit  
+			#{startOfPage},#{pageSize}
+    </select>
+    <select id="findStatisticCountShiftStartByLine" parameterType="Page" resultType="long">
+    	select count(1) from(
+			SELECT
+				count(1)
+			<include refid="findStatisticShiftStartByLine_where"></include>
+		) as ss
+    </select>
+    <sql id="findStatisticShiftStartByLine_where">
+        from
+        shift_start as ss
+        join line_manage as lm on lm.id = ss.lmid
+        JOIN shift as s on ss.ShiftID = s.ID
+    	where
+			ridedate between #{param.begindate} and #{param.enddate}
+		<if test="admin!=null and admin.isAdmin!=1">
+			lm.id in(<include refid="com.hengyu.ticket.dao.AdminDao.admin_power_lines"></include>)
+		</if>
+		group by
+			lm.id
+    </sql>
+    
+    <select id="getShiftStartDataReport" parameterType="map" resultType="map">
+    	select left(ss.shiftcode,3) as shiftcode,ss.linename as linename,ss.currstationname as currstationname,sum(ifnull(ss.allticketnum,0)) as allticketnum,
+    	sum(ifnull(ss.halfticketnum,0)) as halfticketnum,sum(ifnull(ss.freeticketnum,0)) as freeticketnum
+		from shift_start ss,admin_line al where  ss.ridedate=#{ridedate} 
+		and ss.currstationid=${currstationid} and ss.lmid=al.lmid and al.userid=#{userid} group by ss.lmid
+    </select>
+    
+    <select id="getShiftStartDataReportByDriver" parameterType="map" resultType="map">
+    	select left(ss.shiftcode,3) as shiftcode,ss.linename as linename,ss.currstationname as currstationname,sum(ifnull(ss.allticketnum,0)) as allticketnum,
+    	sum(ifnull(ss.halfticketnum,0)) as halfticketnum,sum(ifnull(ss.freeticketnum,0)) as freeticketnum
+		from shift_start ss where ss.driverid=#{userid} and ss.ridedate=#{ridedate} 
+		group by ss.currstationid
+    </select>
+    
+    <sql id="propertys">
+        #{shiftcode},
+        #{ridedate},
+        #{lmid},
+        #{linename},
+        #{originstid},
+        #{originstname},
+        #{starriveid},
+        #{starrivename},
+        #{originstarttime},
+        #{platenum},
+        #{driverid},
+        #{drivername},
+        #{driveridii},
+        #{drivernameii},
+        #{nuclearload},
+        #{currpeople},
+        #{currstationid},
+        #{currstationname},
+        #{punctualstart},
+        #{actualstart},
+        #{isstart},
+        #{isstartname},
+        #{memo},
+        #{changelog},
+        #{startmemo},
+        #{allticketnum},
+        #{halfticketnum},
+        #{freeticketnum},
+        #{makeid},
+        #{makename},
+        #{makedate},
+        #{consignquantity},
+        #{consignsum},
+        #{passengerquantity},
+        #{passengersum},
+        #{revisememo},
+        #{driversign},
+        #{istemp},
+        #{iscancel},
+        #{iscancelname} 
+    </sql>
+    <sql id="batch_propertys">
+        #{i.shiftcode},
+        #{i.ridedate},
+        #{i.lmid},
+        #{i.linename},
+        #{i.originstid},
+        #{i.originstname},
+        #{i.starriveid},
+        #{i.starrivename},
+        #{i.originstarttime},
+        #{i.platenum},
+        #{i.driverid},
+        #{i.drivername},
+        #{i.driveridii},
+        #{i.drivernameii},
+        #{i.nuclearload},
+        #{i.currpeople},
+        #{i.currstationid},
+        #{i.currstationname},
+        #{i.punctualstart},
+        #{i.actualstart},
+        #{i.isstart},
+        #{i.isstartname},
+        #{i.memo},
+        #{i.changelog},
+        #{i.startmemo},
+        #{i.allticketnum},
+        #{i.halfticketnum},
+        #{i.freeticketnum},
+        #{i.makeid},
+        #{i.makename},
+        #{i.makedate},
+        #{i.consignquantity},
+        #{i.consignsum},
+        #{i.passengerquantity},
+        #{i.passengersum},
+        #{i.revisememo},
+        #{i.driversign},
+        #{i.istemp},
+        #{i.iscancel},
+        #{i.iscancelname}
+    </sql>
+    <resultMap id="result_map" type="ShiftStart">
+        <id column="ID" property="id" javaType="java.lang.Long"/>
+        <result column="ShiftCode" property="shiftcode" javaType="java.lang.String"/>
+        <result column="RideDate" property="ridedate" javaType="java.lang.String"/>
+        <result column="lmid" property="lmid"/>
+        <result column="LineName" property="linename" javaType="java.lang.String"/>
+        <result column="OriginSTID" property="originstid" javaType="java.lang.String"/>
+        <result column="OriginSTName" property="originstname" javaType="java.lang.String"/>
+        <result column="STArriveID" property="starriveid" javaType="java.lang.String"/>
+        <result column="STArriveName" property="starrivename" javaType="java.lang.String"/>
+        <result column="OriginStartTime" property="originstarttime"
+                javaType="java.lang.String"/>
+        <result column="PlateNum" property="platenum" javaType="java.lang.String"/>
+        <result column="DriverID" property="driverid" javaType="java.lang.String"/>
+        <result column="DriverName" property="drivername" javaType="java.lang.String"/>
+        <result column="NuclearLoad" property="nuclearload" javaType="java.lang.Integer"/>
+        <result column="CurrPeople" property="currpeople" javaType="java.lang.Integer"/>
+        <result column="CurrStationID" property="currstationid"
+                javaType="java.lang.String"/>
+        <result column="CurrStationName" property="currstationname"
+                javaType="java.lang.String"/>
+        <result column="PunctualStart" property="punctualstart"
+                javaType="java.lang.String"/>
+        <result column="ActualStart" property="actualstart" javaType="java.lang.String"/>
+        <result column="IsStart" property="isstart" javaType="java.lang.Integer"/>
+        <result column="IsStartName" property="isstartname" javaType="java.lang.String"/>
+        <result column="Memo" property="memo" javaType="java.lang.String"/>
+        <result column="ChangeLog" property="changelog" javaType="java.lang.String"/>
+        <result column="StartMemo" property="startmemo" javaType="java.lang.String"/>
+        <result column="AllTicketNum" property="allticketnum" javaType="java.lang.Integer"/>
+        <result column="HalfTicketNum" property="halfticketnum"
+                javaType="java.lang.Integer"/>
+        <result column="FreeTicketNum" property="freeticketnum"
+                javaType="java.lang.Integer"/>
+        <result column="MakeID" property="makeid" javaType="java.lang.String"/>
+        <result column="MakeName" property="makename" javaType="java.lang.String"/>
+        <result column="MakeDate" property="makedate" javaType="java.lang.String"/>
+        <result column="ConsignQuantity" property="consignquantity"/>
+        <result column="ConsignSum" property="consignsum" javaType="java.math.BigDecimal"/>
+        <result column="PassengerQuantity" property="passengerquantity"/>
+        <result column="PassengerSum" property="passengersum" javaType="java.math.BigDecimal"/>
+        <result column="ReviseMemo" property="revisememo"/>
+        <result column="DriverSign" property="driversign"/>
+        <result column="driveridii" property="driveridii"/>
+        <result column="drivernameii" property="drivernameii"/>
+        <result column="changelog" property="changelog"/>
+        <result column="IsTemp" property="istemp"/>
+        <result column="IsCancel" property="iscancel"/>
+        <result column="IsCancelName" property="iscancelname"/>
+    </resultMap>
+</mapper>

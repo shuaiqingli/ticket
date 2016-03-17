@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hengyu.ticket.dao.SoftUpgradeDao">
+	<insert id="save" parameterType="SoftUpgrade">
+		insert
+		into
+		soft_upgrade
+		(
+		<include refid="columns" />
+		)
+		values
+		(
+		<include refid="propertys" />
+		)
+	</insert>
+	<delete id="delete" parameterType="java.lang.Integer">
+		delete
+		from
+		soft_upgrade
+		where
+		ID=#{id}
+	</delete>
+	<update id="update" parameterType="SoftUpgrade">
+		update
+		soft_upgrade
+		set
+		`AppName`=#{appname},
+		`VersionCode`=#{versioncode},
+		`FileUrl`=#{fileurl},
+		`SoftDesc`=#{softdesc},
+		`MakeDate`=#{makedate}
+		where
+		ID=#{id}
+	</update>
+	<select id="find" parameterType="java.lang.Integer" resultMap="result_map">
+		select
+		*
+		from
+		soft_upgrade
+		where
+		ID=#{id}
+	</select>
+	<select id="count" resultType="java.lang.Integer">
+		select
+		count(1)
+		from
+		soft_upgrade
+	</select>
+	<select id="getNewVersion" resultMap="result_map">
+		select
+		*
+		from
+		soft_upgrade
+		WHERE sort = #{sort}
+		order by id desc
+		limit 0,1
+	</select>
+	<select id="findlist" resultMap="result_map" parameterType="Page">
+		select
+		*
+		from
+		soft_upgrade order by id desc
+		limit #{startOfPage},#{pageSize}
+	</select>
+	<select id="findlistCount" resultType="long" parameterType="Page">
+		select
+		count(1)
+		from
+		soft_upgrade
+	</select>
+	<sql id="columns">
+		`AppName`,
+		`VersionCode`,
+		`FileUrl`,
+		`SoftDesc`,
+		`MakeDate`
+	</sql>
+	<sql id="propertys">
+		#{appname},
+		#{versioncode},
+		#{fileurl},
+		#{softdesc},
+		#{makedate}
+	</sql>
+	<resultMap id="result_map" type="SoftUpgrade">
+		<id column="ID" property="id" javaType="java.lang.Integer" />
+		<result column="AppName" property="appname" javaType="java.lang.String" />
+		<result column="VersionCode" property="versioncode" javaType="java.lang.Integer" />
+		<result column="sort" property="sort" javaType="java.lang.Integer" />
+		<result column="FileUrl" property="fileurl" javaType="java.lang.String" />
+		<result column="SoftDesc" property="softdesc" javaType="java.lang.String" />
+		<result column="MakeDate" property="makedate" javaType="java.lang.String" />
+	</resultMap>
+</mapper>

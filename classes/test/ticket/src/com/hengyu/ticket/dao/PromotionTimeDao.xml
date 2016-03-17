@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hengyu.ticket.dao.PromotionTimeDao">
+  <insert id="save" parameterType="PromotionTime">
+	insert
+	into
+		promotion_time
+		(<include refid="columns"/>)
+	values
+		(<include refid="propertys"/>)
+  </insert>
+  <delete id="delete" parameterType="java.lang.Integer">
+	delete
+	from
+		promotion_time
+	where
+		ID=#{id}
+  </delete>
+  <update id="update" parameterType="PromotionTime">
+	update
+		promotion_time
+	set
+		`PID`=#{pid},
+		`couponpercent`=#{couponpercent},
+		`BeginTime`=#{begintime},
+		`EndTime`=#{endtime},
+		`ReduceSum`=#{reducesum}
+	where
+		ID=#{id}
+  </update>
+  <select id="find" parameterType="java.lang.Integer" resultMap="result_map">
+	select
+		*
+	from
+		promotion_time
+	where
+		ID=#{id}
+  </select>
+  <select id="getPromotionTimeByPID" parameterType="java.lang.String" resultMap="result_map">
+	select
+		*
+	from
+		promotion_time
+	where
+		PID=#{pid}
+  </select>
+  <delete id="delPromotionByPID" parameterType="java.lang.String">
+	delete
+	from
+		promotion_time
+	where
+		PID=#{pid}
+  </delete>
+  <sql id="columns">
+	`PID`,
+	`couponpercent`,
+	`BeginTime`,
+	`EndTime`,
+	`ReduceSum`
+  </sql>
+  <sql id="propertys">
+	#{pid},
+	#{couponpercent},
+	#{begintime},
+	#{endtime},
+	#{reducesum}
+  </sql>
+  <resultMap id="result_map" type="PromotionTime">
+    <id column="ID" property="id" javaType="java.lang.Integer"/>
+    <result column="PID" property="pid" javaType="java.lang.String"/>
+    <result column="BeginTime" property="begintime" javaType="java.lang.String"/>
+    <result column="EndTime" property="endtime" javaType="java.lang.String"/>
+    <result column="ReduceSum" property="reducesum" javaType="java.lang.Double"/>
+    <result column="couponpercent" property="couponpercent"/>
+  </resultMap>
+</mapper>

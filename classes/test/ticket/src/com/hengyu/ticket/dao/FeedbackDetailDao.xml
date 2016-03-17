@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hengyu.ticket.dao.FeedbackDetailDao">
+    <update id="delFeedbackDetail">
+        update feedback_detail set IsDel=1 where ID=#{id} and Type=2
+    </update>
+    
+    <select id="findFeedbackDetailMaxIndex" resultType="int">
+        select ifnull(max(`Index`),0) from feedback_detail where FeedbackID=#{feedbackid}
+    </select>
+    
+    <select id="findFeedbackDetailList" resultMap="result_map">
+        select * from feedback_detail where FeedbackID=#{feedbackid} and (IsDel is NULL  or IsDel != 1) order by `Index`
+    </select>
+
+    <insert id="saveFeedbackDetail" parameterType="FeedbackDetail">
+        INSERT INTO feedback_detail (
+            FeedbackID, Type, Content, ReplyID, ReplyName, `Index`, MakeDate
+        ) VALUES (
+            #{feedbackid}, #{type}, #{content}, #{replyid}, #{replyname}, #{index}, #{makedate}
+        )
+    </insert>
+
+    <delete id="delAllFeedbackDetail">
+        delete from feedback_detail where FeedbackID=#{feedbackid}
+    </delete>
+
+    <resultMap id="result_map" type="FeedbackDetail">
+        <id column="ID" property="id"/>
+        <result column="FeedbackID" property="feedbackid"/>
+        <result column="Type" property="type"/>
+        <result column="Content" property="content"/>
+        <result column="ReplyID" property="replyid"/>
+        <result column="ReplyName" property="replyname"/>
+        <result column="Index" property="index"/>
+        <result column="MakeDate" property="makedate"/>
+    </resultMap>
+</mapper>
+

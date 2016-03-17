@@ -1,0 +1,114 @@
+<!doctype html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<title>代金券</title>
+		<meta name="keywords" content="代金券" />
+		<meta name="description" content="代金券" />
+		<meta name="viewport" content="width=device-width, initial-scale=0.5, maximum-scale=1.0, user-scalable=0" />
+		<meta name="format-detection" content="telephone=no" />
+		<meta name="apple-touch-fullscreen" content="YES" />
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<meta name="MobileOptimized" content="320" />
+		<meta name="apple-mobile-web-app-status-bar-style" content="black" />
+		<link rel="stylesheet" type="text/css" href="css/coupon.css">
+		<link rel="stylesheet" type="text/css" href="css/css.css">
+	</head>
+	<body>
+		<div class="cp_item" style="display: none;">
+			<div class="cp_cont">
+				<div class="cp_tip">
+					<span class="cp_tipline"></span>满<span class="lowlimit">0</span>元使用
+				</div>
+				&yen;<span class="cp_price vprice">5</span>元代金券
+			</div>
+			<div class="cp_date">
+					有效期至<span class="enddate">2015-01-01</span>
+			</div>
+		</div>
+		<div class="cp_item cp_item2" style="display: none;">
+			<div class="cp_cont2">
+				<div class="cp_tip2">
+					<span class="cp_tipline2"></span>满<span class="lowlimit">0</span>元使用
+				</div>
+				&yen;<span class="cp_price vprice">5</span>元代金券
+			</div>
+			<div class="cp_date2">
+					有效期至<span class="enddate">2015-01-01</span>
+			</div>
+		</div>
+<!-- 		<div class="cp_item"> -->
+<!-- 			<div class="cp_cont"> -->
+<!-- 				<div class="cp_tip"> -->
+<!-- 					<span class="cp_tipline"></span>满100元使用 -->
+<!-- 				</div> -->
+<!-- 				&yen;<span class="cp_price">5</span>元代金券 -->
+<!-- 			</div> -->
+<!-- 			<div class="cp_date"> -->
+<!-- 					有效期至16-12-12 -->
+<!-- 			</div> -->
+<!-- 		</div> -->
+		<div style="font-size:25px;padding:0 24px;line-height:50px;" class="desc">
+			<div>使用代金券适用不同的改、退票规则，详情请参阅</div>
+			<a href="#" style="color:#ff6861;" class="buymemo_page">《订票及乘车须知》</a>
+			<div style="text-align:center;margin-top:50px;font-size:30px;" class="not_use">
+				<div style="width:300px;line-height:80px;background-color:#fff;border-radius:10px;display:inline-block;">
+					暂不使用代金券
+				</div>
+			</div>
+		</div>
+	</body>
+</html>
+<script type="text/javascript" src="js/jquery-1.4.2.js?jsversion=3"></script>
+<script type="text/javascript" src="js/wx.js?jsversion=3"></script>
+<script type="text/javascript">
+$(function(){
+	var params = gethrefparams();
+	post("web/api/customer/coupons",function(json){
+		if(json.datas.length!=0){
+			jeach(json.datas, function(k,v){
+				var c = null;
+				if(isempty(v.vsort)==false&&v.vsort==3){
+					c = $('.cp_item').eq(0).clone(true);
+				}else{
+					c = $('.cp_item2').eq(0).clone(true);
+				}
+				jeach(v,function(k,v){
+					return {$:c};
+				})
+				 $('.cp_item').last().after(c.data('json',v).show());
+			});
+		}else{
+			notdata(json);
+		}
+	})
+	
+	if(!isempty(params.hide_desc)){
+		$('.desc').hide();
+		return;
+	}
+	$('.cp_item').bind('click',function(){
+		var detail = $.cookie('ticket_detail');
+		if(detail!=null){
+			detail = JSON.parse(detail);
+			var total = parseFloat($.cookie('total'));
+			var num = parseInt($.cookie('ticket_num'));
+			var total = total/num;
+			var low = $(this).data('json').lowlimit;
+			if(total>=low){
+// 				toast.show('可以使用优惠劵！')
+				$.cookie('coupon',JSON.stringify($(this).data('json')));
+				send('order_infomation.html');
+			}else{
+				toast.show('消费均价满'+low+'才能使用该优惠劵')
+			}
+		}
+	});
+	
+	$('.not_use').click(function(){
+		$.cookie('coupon',null);
+		$.cookie('not_use_coupon','true');
+		send('order_infomation.html');
+	});
+});
+</script>

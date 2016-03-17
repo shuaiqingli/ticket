@@ -1,0 +1,44 @@
+<!doctype html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<title>登录</title>
+		<meta name="keywords" content="关键词,后台添加" />
+		<meta name="description" content="描述,后台添加" />
+		<meta name="viewport" content="width=device-width, initial-scale=0.5, maximum-scale=1.0, user-scalable=0" />
+		<meta name="format-detection" content="telephone=no" />
+		<meta name="apple-touch-fullscreen" content="YES" />
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<meta name="MobileOptimized" content="320" />
+		<meta name="apple-mobile-web-app-status-bar-style" content="black" />
+		<link type="text/css" rel="stylesheet" href="css/css.css">
+		<script type="text/javascript" src="js/jquery-1.4.2.js?jsversion=3"></script>
+		<script type="text/javascript" src="js/wx.js?jsversion=3.2"></script>
+		<script type="text/javascript" src="js/login.js?jsversion=3"></script>
+		<!-- <script type="text/javascript" src="js/import.js?jsversion=3"></script> -->
+		<script type="text/javascript">
+		// $(function(){
+		// 	importjs(['login.js'])
+		// })
+			$(function(){
+				$('body').css('background','#fff');
+			});
+		</script>
+	</head>
+	<body style="backgroud-color:#fff;">
+		<div class="l_body">
+			<form action="javascript:void(0)" method="post" id="login">
+				<div class="login">
+					<input type="text" name="mobile" maxlength="11"  data-msg="手机号" class="l_input1 mobile notnull"  placeholder="请输入手机号"/>
+					<input type="password" name="password" data-msg="密码" class="l_input2 password notnull" placeholder="请输入密码"/>
+				</div>
+				<input type="submit" value="" name="" class="l_btn btn_login" />
+				<div class="l_link">
+					<a href="#" class="l_link1" onclick="send('register.html');">快速注册</a>
+					<a href="#" class="l_link2" onclick="send('password.html');">找回密码</a>
+				</div>
+			</form>
+		</div>
+	</body>
+</html>
+

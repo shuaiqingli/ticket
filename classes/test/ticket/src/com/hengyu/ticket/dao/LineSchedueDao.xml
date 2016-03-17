@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hengyu.ticket.dao.LineSchedueDao">
+  <insert id="save" parameterType="LineSchedue">
+	insert
+	into
+		line_schedue
+		(<include refid="columns"/>)
+	values
+		(<include refid="propertys"/>)
+  </insert>
+  <delete id="delete" parameterType="java.lang.Integer">
+	delete
+	from
+		line_schedue
+	where
+		ID=#{id}
+  </delete>
+  <update id="update" parameterType="LineSchedue">
+	update
+		line_schedue
+	set
+		`LMID`=#{lmid},
+		`ScheduName`=#{scheduname}
+	where
+		ID=#{id}
+  </update>
+  <select id="find" parameterType="java.lang.Integer" resultMap="result_map">
+	select
+		*
+	from
+		line_schedue
+	where
+		ID=#{id}
+  </select>
+  <select id="findRuleByLineSchedue" parameterType="LineSchedue" resultMap="result_map2">
+	select
+		ls.*,sf.isapprove,
+		<include refid="com.hengyu.ticket.dao.LineSchedueRuleDao.pre_columns" ></include>
+	from
+		line_schedue as ls
+	join
+	(
+		select
+			if (count(1) >= 1, 1, 0) as isapprove
+		from
+			shift_start ss
+		where
+			ss.lmid = #{lmid}
+		and ss.ridedate = #{date}
+	) as sf 
+	join
+		line_schedue_rule as lsr
+	on
+		ls.id = lsr.lsid
+	where
+		#{date} between ls.BeginDate and ls.EndDate
+	and
+		ls.IsEffect = 1
+	and
+		ls.lmid = #{lmid}
+  </select>
+  <select id="findExistsSchedue" parameterType="LineSchedue" resultMap="result_map">
+	select
+		*
+	from
+		line_schedue
+	where
+		lmid = #{lmid}
+	and(
+		#{begindate} between `begindate` and `enddate`
+		or
+		#{enddate} between `begindate` and `enddate`
+	)
+	<if test="id != null">
+	and
+		id not in(#{id})
+	</if>
+	limit 0,1
+  </select>
+  
+  <select id="totalCount" resultType="long" parameterType="Page">
+	select
+		count(1)
+	from
+		line_schedue as ls
+	<include refid="findList_where"></include>
+  </select>
+  
+  <select id="findList" resultMap="result_map2">
+	select
+		ls.*
+	from
+		line_schedue as ls
+	WHERE lmid = #{lmid}
+  </select>
+  
+  <sql id="findList_where">
+  	where
+  		ls.lmid = #{param.lmid}
+  	and 
+  		enddate >= CURRENT_DATE()
+  </sql>
+  
+  
+  <select id="findByEndDate" parameterType="LineSchedue" resultMap="result_map">
+  	select
+		*
+	from
+		line_schedue
+	where
+		lmid = #{lmid}
+	and
+		begindate > #{enddate}
+	order by 
+		begindate
+	limit
+		0,1
+  </select>
+  <select id="findByBeginDate" parameterType="LineSchedue" resultMap="result_map">
+  	select
+		*
+	from
+		line_schedue
+	where
+		lmid = #{lmid}
+	and
+		enddate <![CDATA[<]]> #{begindate}
+	order by 
+		begindate
+	desc
+	limit
+		0,1
+  </select>
+  <select id="findLastDate" parameterType="LineSchedue" resultMap="result_map">
+  	select
+		*
+	from
+		line_schedue
+	where
+		enddate in (
+			select
+				max(enddate)
+			from
+				line_schedue as ls
+			where
+				lmid = #{lmid}
+		)
+	and 
+		lmid = #{lmid}
+	limit
+		0,1
+  </select>
+  
+  <sql id="columns">
+	`LMID`,
+	`ScheduName`
+  </sql>
+  
+  <sql id="propertys">
+	#{lmid},
+	#{scheduname}
+  </sql>
+  
+  <sql id="pre_columns">
+  	ls.`id` as ls_id,
+	ls.`LMID`  as ls_LMID,
+	ls.`ScheduName`  as ls_ScheduName
+  </sql>
+  
+  <resultMap id="result_map" type="LineSchedue">
+    <id column="ID" property="id" javaType="java.lang.Integer"/>
+    <result column="LMID" property="lmid" javaType="java.lang.Integer"/>
+    <result column="ScheduName" property="scheduname" javaType="java.lang.String"/>
+  </resultMap>
+  
+  <resultMap  type="LineSchedue" id="result_map2" extends="result_map">
+  	<collection property="schedules" column="id" select="com.hengyu.ticket.dao.LineScheduDetailDao.findByLineScheduleID">
+  	</collection>
+  </resultMap>
+</mapper>

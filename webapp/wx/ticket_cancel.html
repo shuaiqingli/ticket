@@ -1,0 +1,120 @@
+<!doctype html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<title>我的车票</title>
+		<meta name="keywords" content="关键词,后台添加" />
+		<meta name="description" content="描述,后台添加" />
+		<meta name="viewport" content="width=device-width, initial-scale=0.5, maximum-scale=1.0, user-scalable=0" />
+		<meta name="format-detection" content="telephone=no" />
+		<meta name="apple-touch-fullscreen" content="YES" />
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<meta name="MobileOptimized" content="320" />
+		<meta name="apple-mobile-web-app-status-bar-style" content="black" />
+		<link type="text/css" rel="stylesheet" href="css/css.css">
+		<script type="text/javascript" src="js/jquery-1.4.2.js?jsversion=3"></script>
+		<script type="text/javascript" src="js/wx.js?jsversion=3"></script>
+		<script type="text/javascript" src="js/ticket_cancel.js?jsversion=3"></script>
+		<script type="text/javascript">
+			$(function(){
+				$('.tp').click(function(){
+					$('.choose_opt').fadeIn();
+					$('.btn_group').show();
+					$('.tp').hide();
+					$('.tips').show();
+				});
+				$('.cancel_btn').click(function(){
+					$('.choose_opt').fadeOut();
+					$('.btn_group').hide();
+					$('.tp').show();
+					$('.tips').hide();
+				});
+				$('.sel_img').click(function(){
+					if($(this).attr('sel')==1){
+						$(this).attr('src','images/choose_grey.png');
+						$(this).attr('sel','0');
+						if($('.sel_img[sel=1]').length==0){
+							$('.confirm_btn').css('background','');
+							$('.confirm_btn').css('border','1px solid #adadad');
+							$('.confirm_btn').css('color','#adadad');
+						}
+					}else if($(this).attr('sel')==0){
+						$(this).attr('src','images/choose_light.png');
+						$(this).attr('sel','1');
+						$('.confirm_btn').css('background','#ff6861');
+						$('.confirm_btn').css('border','1px solid #ff6861');
+						$('.confirm_btn').css('color','#ffffff');
+					}
+				});
+				$('.confirm_btn').click(function(){
+// 					$('#overlay1,#tip_box').show();
+				});
+				$('#qx').click(function(){
+					$('#overlay1,#tip_box').hide();
+				});
+			});
+		</script>
+	</head>
+	<body style="background-color: #eee;margin: 0 0;color:#353535;font-size: 28px;font-family: '微软雅黑','Source Sans Pro', 'Helvetica Neue', Helvetica, Arial, sans-serif;">
+		<div style="text-align:center;width:100%;padding:30px 0px;background:#fff;">
+			<table>
+				<tr>
+					<td style="width:25%;vertical-align:top;"><img src="images/alert4.png"/>&nbsp;温馨提示:</td>
+					<td style="text-align:left;padding-right:20px;"><div>退票将按规则扣除相应手续费，详情请参阅<a href="#" style="color:red;" class="buymemo_page">《订票及乘车须知》</a></div></td>
+				</tr>
+			</table>
+		</div>
+		<div id="overlay1" style="display:none;opacity:0.5;background-color:#555;width:100%;height:100%;position:fixed;top:0;left:0;z-index:10"></div>
+		<div id="tip_box" style="display:none;text-align:center;position:fixed;top:100px;width:100%;z-index:12;">
+			<div style=";line-height:50px;display:inline-block;width:80%;margin:0 auto;background:#fff;border-radius:5px;">
+				<div style="text-align:left;padding:20px 20px;">
+					<div>您将退票:<span class="refundcount">0</span>张</div>
+					<div>手续费:车票原价金额的<span class="percent">0</span>%</div>
+					<div>应退金额:<span class="refundmoney">0</span></div>
+					<div class="order_status">请务必在<span style="font-weight:bold;">发车前</span>将已取的车票退回给捷乘站务，否则将无法完成退款！</div>
+					<div>请确定是否退票？</div>
+				</div>
+				<div style="text-align:center;padding-top:40px;overflow:hidden;">
+					<div id="qd" style="cursor:pointer;display:inline-block;border-top:1px solid #ccc;border-radius:5px;padding:20px 0px;float:left;width:50%;">确定</div>
+					<div id="qx" style="cursor:pointer;display:inline-block;border-top:1px solid #ccc;border-radius:5px;padding:20px 0px;float:left;width:50%;">取消</div>
+				</div>
+			</div>
+		</div>
+		<div style="padding: 0 30px;text-align: center;margin-top: 20px;display: none;" class="ticket">
+			<div style="overflow: hidden;display: inline-block;">
+				<div class="choose_opt" style="float:left;height: 100px;padding: 0 10px;padding-top: 50px;display:none;">
+					<img class="sel_img" sel="0" src="images/choose_grey.png">
+				</div>
+				<div style="float: left;"><img src="images/left.png"/></div>
+				<div style="float: left;background-color: #fff;overflow: hidden;">
+					<div style="display: inline-block;float:left;height: 150px;">
+						<div style="font-size: 25px;line-height: 40px;margin-top: 35px;text-align: left;padding-left: 10px;padding-right: 20px;">验票码:
+<!-- 						1234-5678-4567 -->
+							<span class="checkcode"></span>
+						</div>
+						<div style="font-size: 25px;line-height: 40px;text-align: left;padding-left: 10px;padding-right: 20px;">座位号:
+<!-- 							13号 -->
+								<span class="seatno"></span>
+						</div>
+					</div>
+					<div style="display: inline-block;float:right;padding: 20px 10px;height: 110px;">
+						<img src="images/yz.png" style="height: 110px;" class="qrcode">
+					</div>
+				</div>
+				<div style="float: left;"><img src="images/right.png"/></div>
+			</div>
+		</div>
+		<div style="width:523px;margin:0 auto;text-align: left;margin-top: 20px;color:red;display: none;" class="tips">点击勾选退票</div>
+		<div class="btn_group" style="text-align: center;margin: 120px 0px;display:none;">
+			<div class="cancel_btn" style="display:inline-block;border:1px solid #00cea8;line-height: 80px;width: 150px;border-radius: 5px;color:#00cea8;">取消</div>
+			<div style="display:inline-block;width:120px;"></div>
+			<div class="confirm_btn" style="display:inline-block;border:1px solid #adadad;line-height: 80px;width: 150px;border-radius: 5px;color:#adadad;">确定</div>
+		</div>
+		<div class="btn_cancel" style="display:none;text-align: center;margin: 120px 0px;display:none;">
+			<div class="tp" style="border:1px solid #ff6861;line-height: 80px;width: 200px;border-radius: 5px;color:#ff6861;margin:0 auto;">退票</div>
+		</div>
+		<div class="outdate_btn" style="text-align: center;margin: 120px 0px;display: none;">
+			<div class="outdate" style="display:inline-block;border:1px solid #999;line-height: 80px;width: 200px;border-radius: 5px;color:#999;margin:0 auto;">已过退票期限</div>
+		</div>
+	</body>
+</html>

@@ -1,0 +1,240 @@
+<!doctype html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<title>深圳-广州</title>
+	<meta name="keywords" content="关键词,后台添加" />
+	<meta name="description" content="描述,后台添加" />
+	<meta name="viewport" content="width=device-width, initial-scale=0.5, maximum-scale=1.0, user-scalable=0" />
+	<meta name="format-detection" content="telephone=no" />
+	<meta name="apple-touch-fullscreen" content="YES" />
+	<meta name="apple-mobile-web-app-capable" content="yes" />
+	<meta name="MobileOptimized" content="320" />
+	<meta name="apple-mobile-web-app-status-bar-style" content="black" />
+	<link type="text/css" rel="stylesheet" href="css/css.css">
+	<script src="js/jquery-1.11.1.min.js"></script>
+	<script src="js/jquery.nicescroll.min.js"></script>
+	
+	<script type="text/javascript">
+		window.onload=function(){
+			if($('.f_right').height()<$(window).height()){
+				$('.f_right').css('height',$(window).height()+'px');
+				$('.f_right').css({
+					position:'fixed',
+					top:'0px',
+					right:'0px'
+				});
+			}
+			var filterBtn=document.getElementById("filterBtn");
+			var choseFilter=document.getElementById("choseFilter");
+			var win_hei=$(window).height()-99;
+			var t_list=$('.t_list');
+			filterBtn.onclick=function(){
+				choseFilter.style.display='block';
+				t_list.css({
+					position:"fixed",
+					width:"100%",
+					height:win_hei,
+					overflow:"hidden",
+				});
+			}
+			/* $('#ullist li').click(function(){
+				if($('.f_right').height()<$(window).height()){
+					$('.f_right').css('height',$(window).height()+'px');
+					$('.f_right').css({
+						position:'fixed',
+						top:'0px',
+						right:'0px'
+					});
+				} 
+			});*/
+			$('.favprice').css('font-family','"微软雅黑","Source Sans Pro", "Helvetica Neue", Helvetica, Arial, sans-serif');
+		}
+	</script>
+	<script type="text/javascript" src="js/wx.js"></script>
+	<script type="text/javascript" src="js/ticket_list.js"></script>
+	<!--<script type="text/javascript">-->
+		<!--$(function(){-->
+			<!--importjs(['ticket_list.js']);-->
+			<!--$("#wrapper").niceScroll({  -->
+				<!--cursorcolor:"#E62020",  -->
+				<!--cursoropacitymin:0,  -->
+				<!--touchbehavior:false,  -->
+				<!--cursorwidth:"10px",  -->
+				<!--cursorborder:"0",  -->
+				<!--cursorborderradius:"5px"  -->
+			<!--}).css({-->
+				<!--'':'',-->
+			<!--});-->
+		<!--})-->
+	<!--</script>-->
+</head>
+<body>
+<!--头部-->
+<div class="t_header clearfix" style="z-index:999;">
+<ul class="t_nav">
+<li class="t_previous previous" style="color: #000;">
+<h1 style="font-size:30px;">前一天</h1>
+</li>
+<li class="t_today">
+<h1 class="start_date">
+</h1>
+<p class="week"></p>
+</li>
+<li class="t_next next" style="color: #000;">
+<h1 style="font-size:30px;">后一天</h1>
+</li>
+</ul>
+</div>
+
+<!--内容主体-->
+<div class="t_list">
+<ul>
+<!-- <li class="t_item on_hui"> -->
+
+<!-- <ul> -->
+<!-- <li class="t_item1 clearfix"><p class="t_time1 on_ticket1">12:00</p><p class="t_time2">13:00</p></li> -->
+<!-- <li class="t_item2 clearfix"><p class="t_station1">福田站</p><p class="t_station2">广园站</p></li> -->
+<!-- <li class="t_item3 clearfix"><p class="t_company">恒誉汽车有限公司</p><p class="t_rest"><span>余</span>22</p><p class="t_fame">&yen;&nbsp;122<span class="t_original">144</span></p></li> -->
+<!-- </ul> -->
+<!-- </li> -->
+
+<!-- <li class="t_item on_hui"> -->
+
+<!-- <ul> -->
+<!-- <li class="t_item1 clearfix"><p class="t_time1 on_ticket2">12:00</p><p class="t_time2">13:00</p></li> -->
+<!-- <li class="t_item2 clearfix"><p class="t_station1">福田站</p><p class="t_station2">广园站</p></li> -->
+<!-- <li class="t_item3 clearfix"><p class="t_company">恒誉汽车有限公司</p><p class="t_rest"><span>余</span>22</p><p class="t_fame">&yen;&nbsp;122<span class="t_original">144</span></p></li> -->
+<!-- </ul> -->
+<!-- </li> -->
+
+<!-- <li class="t_item on_hui"> -->
+<!-- <ul> -->
+<!-- <li class="t_item1 clearfix"><p class="t_time1 on_ticket3">12:00</p><p class="t_time2">13:00</p></li> -->
+<!-- <li class="t_item2 clearfix"><p class="t_station1">福田站</p><p class="t_station2">广园站</p></li> -->
+<!-- <li class="t_item3 clearfix"><p class="t_company">恒誉汽车有限公司</p><p class="t_rest"><span>余</span>22</p><p class="t_fame">&yen;&nbsp;122<span class="t_original">144</span></p></li> -->
+<!-- </ul> -->
+<!-- </li> -->
+
+<li class="t_item ticketline" style="display: none;height:160px;margin-bottom:0;padding-top:20px;">
+	<ul style="padding-left:20px;">
+		<li class="t_item1 clearfix"><p class="t_time1 starttime fontyh" style="font-size:38px;font-weight:bold;">00:00</p>
+		<div style="position:relative;top:4px;display:inline-block;font-size:24px;color:#8c8c8c;float:left;height:56px;line-height:56px;">
+			预计<span class="arrivetime"></span>到达
+			<!-- <div class="t_time2 arrivetime fontyh" style="display:inline-block;padding-right:35px;font-size:38px;">00:00</div>
+			 -->
+		</div>
+		<div style="display:inline-block;height:60px;line-height:60px;font-size:32px;float:right;padding-right:20px;">
+		<div style="color:red;text-align:right;height:50px;">
+<!-- 		<img src="images/coupon-.png"/> -->
+		&nbsp;<span class="goodprice" style="font-size:24px;">优惠价</span><span style="font-size:22px">&yen;</span><span class="favprice" style="font-family:'微软雅黑','Source Sans Pro', 'Helvetica Neue', Helvetica, Arial, sans-serif;">123</span>
+		</div>
+		<div style="height:30px;line-height:30px;;float:right;text-align:right;display:inline-block;color:#8c8c8c;font-size:24px;position:relative;margin-top:-8px;right:3px;">
+			<div style="width:100%;height:1px;background-color:#8c8c8c;position:absolute;top:17px;"></div>
+			<span style="font-size:20px;">原价</span><span style="font-size:18px;">&yen;</span><span class="ticketprice" style="display: initial;color: #8c8c8c;margin: initial;font-size:24px;">123</span>
+		</div>
+		</div>
+		</li>
+		<li class="t_item2 clearfix">
+			<p class="t_station1 ststartname" style="font-size:30px;color: #353535;float:left;">-</p>
+			<div style="text-align:center;font-size:30px;color: #353535;float:left;width:50px;"><img style="position:relative;bottom:3px;display:inline-block;" src="images/point_g.png"></div>
+			<p class="t_station2 starrivename" style="padding-right:35px;font-size:30px;color: #353535;float:left;">-</p>
+		</li>
+		<li class="t_item3 clearfix">
+			<p class="t_company" style="font-size: 18px;margin-left: -20px;width:68%;">
+			<img src="images/company.png" style="position:relative;top:2px;"/><span class="transcompany" style="font-size:20px;padding-left:6px;color:#8c8c8c">-</span>
+			<!-- <span>|</span>
+			<span style="display:inline-block;color:#aa6c00;font-size:20px;text-indent:initial;padding-left:6px;" class="carmodelname">-</span> -->
+			</p>
+			<p class="t_rest" style="display:none;">
+				<span>余</span>
+				<span class="balancequantity fontyh" style="background: #fff;color: #535353;font-size: 24px;">0</span>
+			</p>
+			<p class="t_fame" style="margin-right: 30px;font-size:24px;width:30%">
+				<!-- &yen; -->&nbsp;<span class="favprice fontyh" style="display:none;">0.00</span><span style="font-size:24px;color:#353535;">剩余</span><span class="stationquantity" style="color:#353535;">22</span><span style="color:#353535;">张</span><img style="display:none;" class="carmodelid" src="images/best.png"/>
+ 				<!-- <span class="t_original" style="display: inline-block; font-family: '微软雅黑',"Source Sans Pro", "Helvetica Neue", Helvetica, Arial, sans-serif;color: #B9B9B9;font-size: 27px;">
+ 					&yen;<span class="ticketprice"></span>
+ 				</span>  -->
+				<span class="t_original" style="display:none"></span>
+			</p>
+		</li>
+	</ul>
+	<span class="json" style="display: none;"></span>
+	<div style="height:1px;background-color:#ccc;position:relative;top:20px;"></div>
+</li>
+</ul>
+<div class="u_blank" style="height: 100px;"></div>
+</div>
+
+<!--尾部-->
+<div class="t_footer">
+<ul>
+<li class="tf_nav">
+	<div class="tf_bytp menu_time c53" type='0'>时间<img style="position:relative;top:7px;" src="images/down_grey.png"/></div>
+</li>
+<li class="tf_nav">
+	<div class="tf_bytp menu_price c53" type='0'>价格<img style="position:relative;top:7px;" src="images/up_grey.png"/></div>
+</li>
+<li class="tf_nav">
+<div class="tf_bychose" id="filterBtn">筛选<img style="position:relative;top:7px;" src="images/sift_44.png"//>
+</div>
+</li>
+</ul>
+</div>
+<form action="javascript:void();" method="post" id="filter">
+<div class="filter" id="choseFilter" style="z-index:999;position:absolute;">
+<div class="f_left" style="width: 30%;background: #0000"></div>
+	<div class="f_right" style="width: 70%;background-color:#e9e9e9;">
+		<h1 class="f_title" style="overflow:hidden;">
+			<div class="filter_btn filter_title" style="text-align:left;float:left;position:relative;top:0px;left:6px;display:inline-block;">筛选</div>
+			<!--<span></span>-->
+			<img src="images/f_filter.png" style="position:relative;top:28px;left:12px;float:left;"/>
+		</h1>
+		<div id="wrapper">
+			<ul class="f_right_content li" id="ullist" style="display:block;background-color:#e9e9e9;">
+				<h2 class="f_depart start" style="padding-left: 11px;background-color:#e9e9e9;">出发站</h2>
+				<li class="f_option station" style="display: none;margin-bottom:1px;">
+				<input type="radio" id="radio-2-1" name="filter_depart" class="f_regular_radio id"/><label for="radio-2-1"></label>
+				<span class="cityname">-</span>
+				</li>
+				<ul id="begin_citys" class="begin_city_div">
+					<!-- 出发站目录列表的内容 -->
+				</ul>
+				<h2 class="f_depart end" style="padding-left: 11px;background-color:#e9e9e9;">到达站</h2>
+				<div id="end_citys" class="end_city_div">
+					<!-- 到达站目录列表的内容 -->
+				</div>
+				<h2 class="f_depart time" style="padding-left: 11px;background-color:#e9e9e9;">出发时间</h2>
+				<ul id="ullists" class="sdas">
+					<li class="f_option" style="margin-bottom:1px;">
+						<input type="radio" id="radio-4-1" checked="checked" name="time" class="f_regular_radio" value="00:00-23:59" /><label for="radio-4-1"></label>
+						<span>不限</span>
+					</li>
+<!-- 					<li class="f_option" style="margin-bottom:1px;"> -->
+<!-- 						<input type="radio" id="radio-4-2" name="time" class="f_regular_radio" value="00:00-06:00" /><label for="radio-4-2"></label> -->
+<!-- 						<span>凌晨(00:00-06:00)</span> -->
+<!-- 					</li> -->
+					<li class="f_option" style="margin-bottom:1px;">
+						<input type="radio" id="radio-4-3" name="time" class="f_regular_radio" value="06:00-12:00" /><label for="radio-4-3"></label>
+						<span>上午(06:00-12:00)</span>
+					</li>
+					<li class="f_option" style="margin-bottom:1px;">
+						<input type="radio" id="radio-4-4" name="time" class="f_regular_radio" value="12:00-18:00" /><label for="radio-4-4"></label>
+						<span>下午(12:00-18:00)</span>
+					</li>
+					<li class="f_option" style="margin-bottom:1px;">
+						<input type="radio" id="radio-4-2" name="time" class="f_regular_radio" value="18:00-22:00" /><label for="radio-4-4"></label>
+						<span>晚上(18:00-22:00)</span>
+					</li>
+				</ul>
+				<div style="height:60px;line-height:60px;font-size:30px;text-align:center;margin-top:40px;">
+					<a class="fil_btn" style="display:inline-block;width:80%;background-color:#00cea8;border-radius:10px;color:#fff;cursor:pointer;">筛选</a>
+				</div>
+			</ul>
+		</div>
+		<div class="f_blank"></div>
+	</div>
+</div>
+</form>
+</body>
+</html>

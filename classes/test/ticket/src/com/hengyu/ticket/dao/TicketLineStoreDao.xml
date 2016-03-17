@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hengyu.ticket.dao.TicketLineStoreDao">
+	<update id="addQuantity">
+		update ticket_line_store set
+		`balancequantity` = ifnull(balancequantity,0) + #{quantity},
+		balancecouponquantity = ifnull(balancecouponquantity,0) + #{discountquantity}
+		where ID = #{id}
+	</update>
+
+  <insert id="save" parameterType="TicketLineStore">
+	insert
+	into
+		ticket_line_store
+		(<include refid="columns"/>)
+	values
+		(<include refid="propertys"/>)
+  </insert>
+  
+  <insert id="batchSave" parameterType="list">
+	insert
+	into
+		ticket_line_store
+		(<include refid="columns"/>)
+	values
+	<foreach item="i" collection="list" index="index"  separator=",">
+		(<include refid="batch_propertys"/>)
+	</foreach>
+  </insert>
+  
+  <delete id="delNotApproveTicketLineStore" parameterType="TicketLine">
+  		delete from 
+  			ticket_line_store
+  		where
+  			lmid = #{lmid}
+  		and
+  			TicketDate >= #{ticketdate}
+  </delete>
+  
+  <update id="update" parameterType="TicketLineStore">
+	update
+		ticket_line_store
+	set
+		`LMID`=#{lmid},
+		`ShiftCode`=#{shiftcode},
+		`TicketDate`=#{ticketdate},
+		`BalanceQuantity`=#{balancequantity},
+		`AllQuantity`=#{allquantity},
+		`MakeDate`=#{makedate},
+		`CouponQuantity`=#{couponquantity},
+		`currstationid`=#{currstationid},
+		`BalanceCouponQuantity`=#{balancecouponquantity}
+	where
+		ID=#{id}
+  </update>
+  
+  <update id="updateApproveQuantity">
+	update
+		ticket_line_store
+	set
+		`BalanceQuantity`=#{allquantity},
+		`AllQuantity`=#{allquantity},
+		`CouponQuantity`=#{couponquantity},
+		`BalanceCouponQuantity`=#{couponquantity}
+	where
+		lmid = #{tl.lmid} and shiftcode = #{tl.shiftcode} and ticketdate = #{tl.ticketdate} and currstationid = #{tl.ststartid}
+  </update>
+  
+  <update id="updateQuantityByOrder" parameterType="SaleOrder">
+	update
+		ticket_line_store
+	set
+		`balancequantity`= ifnull(balancequantity,0) - #{quantity},
+		 balancecouponquantity=ifnull(balancecouponquantity,0) - #{discountquantity}
+	where ifnull(balancequantity,0) >=  #{quantity} and ifnull(balancecouponquantity,0) >=  #{discountquantity}
+	and lmid = #{lmid} and ShiftCode = #{shiftNum} and TicketDate = #{rideDate} and currstationid = #{sTStartID}
+  </update>
+  
+  <update id="addQuantityByOrder" parameterType="SaleOrder">
+	update
+		ticket_line_store
+	set
+		`balancequantity` = ifnull(balancequantity,0) + #{quantity},
+		 balancecouponquantity = ifnull(balancecouponquantity,0) + #{discountquantity}
+	where lmid = #{lmid} and ShiftCode = #{shiftNum} and TicketDate = #{rideDate} and currstationid = #{sTStartID} 
+	and AllQuantity >= ifnull(balancequantity,0) + #{quantity}
+  </update>
+  
+  <select id="find" parameterType="java.lang.Integer" resultMap="result_map">
+	select
+		*
+	from
+		ticket_line_store
+	where
+		ID=#{id}
+  </select>
+  <select id="findBySaleOrder" resultMap="result_map" resultType="SaleOrder">
+	select
+		*
+	from
+		ticket_line_store
+	where
+		lmid = #{lmid} and ShiftCode = #{shiftNum} and TicketDate = #{rideDate} and currstationid = #{sTStartID}
+  </select>
+  
+  <sql id="columns">
+	`LMID`,
+	`ShiftCode`,
+	`TicketDate`,
+	`BalanceQuantity`,
+	`AllQuantity`,
+	`MakeDate`,
+	`CouponQuantity`,
+	`currstationid`,
+	`BalanceCouponQuantity`
+  </sql>
+  <sql id="propertys">
+	#{lmid},
+	#{shiftcode},
+	#{ticketdate},
+	#{balancequantity},
+	#{allquantity},
+	#{makedate},
+	#{couponquantity},
+	#{currstationid},
+	#{balancecouponquantity}
+  </sql>
+  <sql id="batch_propertys">
+	#{i.lmid},
+	#{i.shiftcode},
+	#{i.ticketdate},
+	#{i.balancequantity},
+	#{i.allquantity},
+	#{i.makedate},
+	#{i.couponquantity},
+	#{i.currstationid},
+	#{i.balancecouponquantity}
+  </sql>
+  
+  <resultMap id="result_map" type="TicketLineStore">
+    <id column="ID" property="id" />
+    <result column="LMID" property="lmid"/>
+    <result column="ShiftCode" property="shiftcode" />
+    <result column="TicketDate" property="ticketdate" />
+    <result column="BalanceQuantity" property="balancequantity" />
+    <result column="AllQuantity" property="allquantity" />
+    <result column="MakeDate" property="makedate" />
+    <result column="CouponQuantity" property="couponquantity" />
+    <result column="BalanceCouponQuantity" property="balancecouponquantity" />
+    <result column="currstationid" property="currstationid"/>
+  </resultMap>
+</mapper>

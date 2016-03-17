@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hengyu.ticket.dao.LockTicketLogDao">
+
+    <select id="findLockTicketLogList" resultMap="result_map">
+        select *
+        <include refid="findLockTicketLogList_where"/>
+        order by MakeDate desc
+        limit #{page.startOfPage},#{page.pageSize}
+    </select>
+
+    <select id="findLockTicketLogTotal" resultType="long">
+        select count(1)
+        <include refid="findLockTicketLogList_where"/>
+    </select>
+
+    <sql id="findLockTicketLogList_where">
+        from lock_ticket_log where 1=1
+        <if test="keyword != null">
+            and ( `UserName` like concat('%',#{keyword},'%') or `LineName` like concat('%',#{keyword},'%') or `ShiftNum`
+            like concat('%',#{keyword},'%') )
+        </if>
+        <if test="type != null">
+           and Type = #{type}
+        </if>
+        <if test="ridedate != null">
+            and RideDate = #{ridedate}
+        </if>
+        <if test="makedate != null">
+            and date(MakeDate) = #{makedate}
+        </if>
+    </sql>
+
+    <insert id="saveLockTicketLog" parameterType="LockTicketLog">
+        INSERT INTO lock_ticket_log (
+            Type, UserID, UserName, LMID, LineName, ShiftNum, RideDate, Quantity, Seats, MakeDate
+        ) VALUES (
+            #{type}, #{userid}, #{username}, #{lmid}, #{linename}, #{shiftnum}, #{ridedate}, #{quantity}, #{seats},
+            #{makedate}
+        )
+    </insert>
+
+    <resultMap id="result_map" type="LockTicketLog">
+        <id column="ID" property="id"/>
+        <result column="Type" property="type"/>
+        <result column="UserID" property="userid"/>
+        <result column="UserName" property="username"/>
+        <result column="LMID" property="lmid"/>
+        <result column="LineName" property="linename"/>
+        <result column="ShiftNum" property="shiftnum"/>
+        <result column="RideDate" property="ridedate"/>
+        <result column="Quantity" property="quantity"/>
+        <result column="Seats" property="seats"/>
+        <result column="MakeDate" property="makedate"/>
+    </resultMap>
+</mapper>
+

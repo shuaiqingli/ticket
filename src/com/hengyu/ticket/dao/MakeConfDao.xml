@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hengyu.ticket.dao.MakeConfDao">
+  <insert id="save" parameterType="MakeConf">
+	insert
+	into
+		make_conf
+		(<include refid="columns"/>)
+	values
+		(<include refid="propertys"/>)
+  </insert>
+  <update id="update" parameterType="MakeConf">
+	update
+		make_conf
+	set
+		`TableName`=#{tableName},
+		`CurrentValue`=#{currentValue}
+	where
+		TableName=#{tableName}
+  </update>
+  <update id="updateVal" parameterType="MakeConf">
+	update
+		make_conf
+	set
+		`CurrentValue`=CurrentValue+1
+	where
+		TableName=#{tableName}
+	and
+		CurrentValue = #{currentValue}
+  </update>
+  <select id="find" parameterType="java.lang.String" resultMap="result_map">
+	select
+		*
+	from
+		make_conf
+	where
+		TableName=#{tableName}
+  </select>
+  <sql id="columns">
+	`TableName`,
+	`CurrentValue`
+  </sql>
+  <sql id="propertys">
+	#{tableName},
+	#{currentValue}
+  </sql>
+  <resultMap id="result_map" type="MakeConf">
+    <id column="TableName" property="tableName" javaType="java.lang.String"/>
+    <result column="CurrentValue" property="currentValue" javaType="java.lang.Integer"/>
+  </resultMap>
+</mapper>

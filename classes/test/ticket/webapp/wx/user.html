@@ -1,0 +1,91 @@
+<!doctype html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>个人中心</title>
+<meta name="keywords" content="关键词,后台添加" />
+<meta name="description" content="描述,后台添加" />
+<meta name="viewport" content="width=device-width, initial-scale=0.5, maximum-scale=1.0, user-scalable=0" />
+<meta name="format-detection" content="telephone=no" />
+<meta name="apple-touch-fullscreen" content="YES" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="MobileOptimized" content="320" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black" />
+<link type="text/css" rel="stylesheet" href="css/css.css">
+<script type="text/javascript" src="js/jquery-1.4.2.js?jsversion=3"></script>
+<script type="text/javascript" src="js/wx.js?jsversion=3"></script>
+<script type="text/javascript" src="js/user.js?jsversion=3"></script>
+</head>
+
+<body>
+<div id="tip_box" style="display:none;top:250px;z-index:11;text-align:center;width:500px;height:300px;position:fixed;background-color:#fff;border:1px solid #ccc;">
+	<div style="height:200px;line-height:200px;font-size:30px;">确定退出？</div>
+	<div style="height:100px;line-height:100px;font-size:28px;width:500px;">
+		<div style="display:inline-block;cursor:pointer;width:200px;" id="confirms" class="logout">确定</div>
+		<div style="display:inline-block;cursor:pointer;width:200px;" id="cancels">取消</div>
+	</div>
+</div>
+<div id="overlay" style="display:none;opacity:0.5;background-color:#555;width:100%;height:100%;position:fixed;top:0;left:0;z-index:10"></div>
+<div class="u_header">
+<div class="h_img" style="background: url('images/user_header.png') no-repeat center;height: 90px;width:90px;">
+<!-- <img src="images/user_center.png" width="51" height="57" class="icon" /> -->
+</div>
+<p class="cname">未登录</p>
+</div>
+<div class="u_main">
+<ul class="u_balance">
+	<li class="jifen_shop" onclick="send('integral_product_list.html')">
+		<div style="font-size:28px;text-align:center;display:inline;">积分商城</div>
+		<div class="u_jifen" style="font-size:24px;height:35px;line-height:35px;padding-left:40px;">0分</div>
+	</li>
+<li class="coupon" onclick="send('coupon.html?hide_desc=1')">
+<h2>代金券</h2>
+<p class="u_zhang">×&nbsp;<span class="coupons">0</span>张</p>
+</li>
+</ul>
+
+<div class="u_information">
+<ul class="u_list">
+<li onclick="send('linkman_list.html')">常用联系人<span></span></li>
+<li onclick="send('safe.html')">账户安全<span></span></li>
+<li onclick="send('miles.html')">里程累计<span></span></li>
+<li onclick="send('feedback_common.html')">常见问题<span></span></li>
+<li id="feedback" onclick="send('feedback_list.html')">我的提问<img src="images/news_red.png" style="display:none;height:28px;vertical-align: middle;padding-left: 6px;"><span></span></li>
+
+<li class="about_page">关于捷乘<span></span></li>
+<li class="logouts">退出登录<span></span></li>
+</ul>
+<div class="u_blank"></div>
+</div>
+</div>
+
+<div class="layout_footer">
+<ul>
+<li class="menu_nav"><a href="index.html">
+<div class="menu_nav_index"></div>
+<p>首页</p>
+</a></li>
+
+<li class="menu_nav"><a href="news.html?v=1.2">
+<div class="menu_nav_news"></div>
+<p>资讯</p>
+</a></li>
+
+
+<li class="menu_nav"><a href="order_list.html">
+<div class="menu_nav_order"></div>
+<p>订单</p>
+</a></li>
+
+<li class="menu_nav"><a href="user.html">
+<div class="on_my"></div>
+<p class="on">我的</p>
+</a></li>
+</ul>
+</div>
+</form>
+</body>
+</html>
+
+
+

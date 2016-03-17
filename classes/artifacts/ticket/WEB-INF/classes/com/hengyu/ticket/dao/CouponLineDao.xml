@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hengyu.ticket.dao.CouponLineDao">
+
+    <insert id="saveCouponLine" parameterType="CouponLine">
+        INSERT INTO coupon_line (
+            VoucherCode, VoucherName, CID, CName, BeginDate, EndDate, LowLimit, VPrice, UserID, UserName, MakeDate, Remark
+        ) VALUES (
+            #{vouchercode}, #{vouchername}, #{cid}, #{cname}, #{begindate}, #{enddate}, #{lowlimit}, #{vprice},
+                            #{userid}, #{username}, #{makedate}, #{remark}
+        )
+    </insert>
+
+    <select id="findCouponLineList" resultMap="result_map">
+        select *
+        <include refid="findCouponLineList_where"/>
+        order by MakeDate desc
+        limit #{page.startOfPage},#{page.pageSize}
+    </select>
+
+    <select id="findCouponLineTotal" resultType="long">
+        select count(1)
+        <include refid="findCouponLineList_where"/>
+    </select>
+
+    <sql id="findCouponLineList_where">
+        from coupon_line where 1=1
+        <if test="keyword != null">
+            and ( `UserName` like concat('%',#{keyword},'%') or `CName` like concat('%',#{keyword},'%') or `VoucherCode` like concat('%',#{keyword},'%') )
+        </if>
+    </sql>
+
+    <select id="findCouponPriceTotalForAdmin" resultType="java.math.BigDecimal">
+        SELECT ifnull(sum(VPrice), 0)
+        FROM coupon_line
+        WHERE UserID = #{userid} AND date(MakeDate) = date(now())
+    </select>
+
+    <select id="findCouponPriceTotalForCustomer" resultType="java.math.BigDecimal">
+        SELECT ifnull(sum(VPrice), 0)
+        FROM coupon_line
+        WHERE CID = #{cid} AND date(MakeDate) = date(now())
+    </select>
+
+    <resultMap id="result_map" type="CouponLine">
+        <id column="ID" property="id"/>
+        <result column="VoucherCode" property="vouchercode"/>
+        <result column="VoucherName" property="vouchername"/>
+        <result column="CID" property="cid"/>
+        <result column="CName" property="cname"/>
+        <result column="BeginDate" property="begindate"/>
+        <result column="EndDate" property="enddate"/>
+        <result column="LowLimit" property="lowlimit"/>
+        <result column="VPrice" property="vprice"/>
+        <result column="UserID" property="userid"/>
+        <result column="UserName" property="username"/>
+        <result column="MakeDate" property="makedate"/>
+        <result column="Remark" property="remark"/>
+    </resultMap>
+</mapper>
+

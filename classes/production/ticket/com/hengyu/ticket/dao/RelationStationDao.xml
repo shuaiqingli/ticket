@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hengyu.ticket.dao.RelationStationDao">
+  <insert id="save" parameterType="RelationStation">
+	insert
+	into
+		relation_station
+		(<include refid="columns"/>)
+	values
+		(<include refid="propertys"/>)
+  </insert>
+  <delete id="deleteByIDS" parameterType="map">
+	delete
+	from
+		relation_station
+	where
+		userid = #{userid}
+	<if test="ids!='' ">
+	and
+		STID in 
+		<foreach item="id" collection="ids" open="(" close=")" separator=",">
+			#{id}
+		</foreach>
+	</if>
+		
+  </delete>
+  <update id="update" parameterType="RelationStation">
+	update
+		relation_station
+	set
+		`UserID`=#{userid},
+		`STID`=#{stid},
+		`STName`=#{stname}
+	where
+		ID=#{id}
+  </update>
+  <select id="find" parameterType="java.lang.Integer" resultMap="result_map">
+	select
+		*
+	from
+		relation_station
+	where
+		ID=#{id}
+  </select>
+  <select id="findByUser" parameterType="java.lang.String" resultMap="result_map">
+	select
+		userid,stid,cs.cityname as stname
+	from
+		relation_station as rs
+	join city_station as cs on cs.id = rs.stid
+	where
+		`UserID`=#{userid}
+  </select>
+  <sql id="columns">
+	`UserID`,
+	`STID`,
+	`STName`
+  </sql>
+  <sql id="propertys">
+	#{userid},
+	#{stid},
+	#{stname}
+  </sql>
+  <resultMap id="result_map" type="RelationStation">
+    <id column="ID" property="id" javaType="java.lang.Integer"/>
+    <result column="UserID" property="userid" javaType="java.lang.String"/>
+    <result column="STID" property="stid" javaType="java.lang.String"/>
+    <result column="STName" property="stname" javaType="java.lang.String"/>
+  </resultMap>
+</mapper>

@@ -1,0 +1,757 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hengyu.ticket.dao.SaleOrderDao">
+	<select id="billStatisticList" resultType="java.util.HashMap">
+		select *
+		<include refid="billStatisticList_where"/>
+		order by RideDate desc
+		limit #{page.startOfPage},#{page.pageSize}
+	</select>
+
+	<select id="billStatisticTotal" resultType="long">
+		select count(1)
+		<include refid="billStatisticList_where"/>
+	</select>
+
+	<sql id="billStatisticList_where">
+		from
+		(
+			select
+			ShiftCode,RideDate,LineName,LMID,STStartName,STStartID,
+			Price,ifnull(sum(PriceNum),0) PriceNum,VPrice,ifnull(sum(VPriceNum),0) VPriceNum,ifnull(sum(PriceNumTotal),0) PriceNumTotal,
+			ifnull(sum(CouponSum),0) CouponSum,ifnull(sum(CouponTotal),0) CouponTotal,ifnull(sum(ActualSum),0) ActualSum,
+			ifnull(sum(RefundActualSum),0) RefundActualSum,ifnull(sum(RefundNum),0) RefundNum from
+			(
+				select t.*,sum(t3.ActualPrice) RefundActualSum, count(t4.CheckCode) RefundNum from
+				(
+					select t1.ID,left(t1.ShiftCode,3) ShiftCode,t1.RideDate,t1.LineName,t1.LMID,t1.STStartName,t1.STStartID,
+					t1.Price,sum(if(t2.CheckCode is null or t2.IsDiscount=1,0,1)) PriceNum,t1.VPrice, sum(if(t2.IsDiscount=1,1,0)) VPriceNum, count(t2.CheckCode) PriceNumTotal,
+					t1.CouponsSum CouponSum,if(t1.Coupons is null,0,1) CouponTotal,t1.ActualSum
+					from sale_order t1
+					LEFT JOIN sale_order_ticket t2 on t1.ID=t2.SOID and t2.PayStatus=1
+					where t1.PayStatus=1
+					GROUP BY t1.ID
+				) t
+				LEFT JOIN refund_ticket t3 on t.ID=t3.SOID and t3.RTStatus=1
+				LEFT JOIN refund_ticket_detail t4 on t3.ID=t4.RTID
+				GROUP BY t.ID
+			) t
+			GROUP BY RideDate,LMID,STStartID
+			ORDER BY RideDate,LMID,STStartID
+		) t
+		where 1=1 and RideDate >= '2016-01-11'
+		<if test="endDate != null">
+			and RideDate <![CDATA[ <= ]]> #{endDate}
+		</if>
+		<if test="startDate != null">
+			and RideDate >= #{startDate}
+		</if>
+		<if test="keywordList != null">
+			and
+			<foreach collection="keywordList" item="keyword" open="(" close=")" separator="and">
+				( LineName like concat('%',#{keyword},'%') or LMID like concat('%',#{keyword},'%') or STStartName like concat('%',#{keyword},'%') or STStartID like concat('%',#{keyword},'%') or ShiftCode like concat('%',#{keyword},'%') )
+			</foreach>
+		</if>
+	</sql>
+	
+	<select id="findOrderIntegral" resultMap="result_map">
+		select * from sale_order where IsIntegralSett = 0 and RideDate <![CDATA[ < ]]> CURRENT_DATE() and PayStatus = 1 and (Status = 0 or Status = 1 )
+	</select>
+
+	<update id="updateDateOutOrder">
+		update sale_order set status = 6,statusName = '已过期' where status = 0 and RideDate <![CDATA[ < ]]> CURRENT_DATE()
+	</update>
+
+	<update id="updateOrderIntegralStatus">
+		update sale_order set IsIntegralSett = 1 where id = #{id}
+	</update>
+
+	<select id="findMiles" resultType="java.util.HashMap">
+		select RideDate,LineName,Mileage from sale_order where CID=#{cid} and PayStatus=1 and `Status` in (0,1) ORDER BY RideDate DESC
+	</select>
+
+	<update id="updateForSettle">
+		update sale_order set IsSett=1 where IsSett=0 and ReceiveID=#{receiveid} and id in
+		<foreach collection="idList" item="id" open="(" close=")" separator=",">
+			#{id}
+		</foreach>
+	</update>
+
+	<select id="findAdminSettleDetailList" resultType="java.util.HashMap">
+		select *
+		<include refid="findAdminSettleDetailList_where"/>
+		limit #{page.startOfPage},#{page.pageSize}
+	</select>
+
+	<select id="findAdminSettleDetailTotal" resultType="long">
+		select count(1)
+		<include refid="findAdminSettleDetailList_where"/>
+	</select>
+
+	<sql id="findAdminSettleDetailList_where">
+		from
+		(
+		select t1.*,ifnull(sum(t2.Price),0) as PriceTotal,count(t2.CheckCode) as QuantityTotal from sale_order t1
+		LEFT JOIN sale_order_ticket t2 ON t1.ID=t2.SOID and t2.PayStatus=1 and t2.`Status`=0
+		where t1.Rank=2 and t1.PayStatus=1 and t1.`Status` in (0,1) and t1.IsSett = 0 and t1.RideDate <![CDATA[ < ]]> '2019-00-00'
+		GROUP BY t1.ID
+		) t
+		where ReceiveID=#{receiveid}
+	</sql>
+
+	<select id="findAdminSettleList" resultType="java.util.HashMap">
+		select *
+		<include refid="findAdminSettleList_where"/>
+		limit #{page.startOfPage},#{page.pageSize}
+	</select>
+
+	<select id="findAdminSettleTotal" resultType="long">
+		select count(1)
+		<include refid="findAdminSettleList_where"/>
+	</select>
+
+	<sql id="findAdminSettleList_where">
+		from
+		(
+			select ReceiveID,ReceiveName,count(ID) SaleOrderTotal,sum(QuantityTotal) QuantityTotal,ifnull(sum(PriceTotal),0) as PriceTotal from
+			(
+			select t1.*,ifnull(sum(t2.Price),0) as PriceTotal,count(t2.CheckCode) as QuantityTotal from sale_order t1
+			LEFT JOIN sale_order_ticket t2 ON t1.ID=t2.SOID and t2.PayStatus=1 and t2.`Status`=0
+			where t1.Rank=2 and t1.PayStatus=1 and t1.`Status` in (0,1) and t1.IsSett = 0 and t1.RideDate <![CDATA[ < ]]> '2019-00-00'
+			GROUP BY t1.ID
+			) t
+			GROUP BY ReceiveID
+		) t
+		where 1=1
+		<if test="keyword != null">
+			and ( ReceiveID like concat('%', #{keyword} ,'%') or ReceiveName like concat('%', #{keyword} ,'%') )
+		</if>
+	</sql>
+
+	<update id="cancelLockSaleOrder">
+		update sale_order set PayStatus=0, PayStatusName='未支付', Status=3, StatusName='已退款', ReceiveID=#{receiveid}, ReceiveName=#{receivename}, ReceiveDate=#{receivedate} where ID=#{id} and PayStatus=2
+	</update>
+
+	<update id="payLockSaleOrder">
+		update sale_order set PayStatus=1, PayStatusName='已支付', Status=0, StatusName='未取票', ReceiveID=#{receiveid}, ReceiveName=#{receivename}, ReceiveDate=#{receivedate} where ID=#{id} and PayStatus=2
+	</update>
+
+	<select id="findSaleOrderListForAdmin" resultType="java.util.HashMap">
+		select *
+		<include refid="findSaleOrderListForAdmin_where"/>
+		limit #{page.startOfPage},#{page.pageSize}
+	</select>
+
+	<select id="findSaleOrderTotalForAdmin" resultType="long">
+		select count(1)
+		<include refid="findSaleOrderListForAdmin_where"/>
+	</select>
+
+	<sql id="findSaleOrderListForAdmin_where">
+		from
+		(
+		select t1.*, group_concat(DISTINCT concat(t2.CheckCode,'|',t2.SeatNO,'|',t2.PayStatus)) as CheckCodeList, count(t3.CheckCode) as PayQuantity from sale_order t1
+		LEFT JOIN sale_order_ticket t2 on t1.ID=t2.SOID
+		LEFT JOIN sale_order_ticket t3 on t1.ID=t3.SOID and t2.CheckCode=t3.CheckCode and t3.PayStatus=1
+		where Rank=2
+		GROUP BY t1.ID
+		) t
+		where 1=1
+		<if test="keyword != null">
+			and ( LName like concat('%', #{keyword} ,'%') or LMobile like concat('%', #{keyword} ,'%') or CName like concat('%', #{keyword} ,'%') or Mobile like concat('%', #{keyword} ,'%') )
+		</if>
+		<if test="type != null">
+			and PayStatus=#{type}
+		</if>
+		<if test="rideDate != null">
+			and RideDate=#{rideDate}
+		</if>
+		<if test="makeDate != null">
+			and date(MakeDate)=#{makeDate}
+		</if>
+		order by MakeDate desc
+	</sql>
+
+	<select id="stationStatisticList" resultType="java.util.HashMap">
+		select *
+		<include refid="stationStatisticList_where"/>
+		limit #{page.startOfPage},#{page.pageSize}
+	</select>
+
+	<select id="stationStatisticTotal" resultType="long">
+		select count(1)
+		<include refid="stationStatisticList_where"/>
+	</select>
+
+	<sql id="stationStatisticList_where">
+		from
+		(
+		select t0.ShiftCode,t0.RideDate,t1.PunctualStart,t0.OriginStartTime,t0.LineName,t1.CurrStationName,t0.OriginSTName,t0.STArriveName,t1.ConsignQuantity,t1.ConsignSum,t1.PassengerQuantity,t1.PassengerSum,count(t3.CheckCode) as Total from shift_start t1
+		LEFT JOIN shift t0 on t0.ID=t1.ShiftID
+		LEFT JOIN sale_order t2 on
+			t0.ShiftCode=t2.ShiftCode and
+			t1.CurrStationID=t2.STStartID and
+			t0.RideDate=t2.RideDate
+		LEFT JOIN sale_order_ticket t3 on
+			t2.ID=t3.SOID and
+			t3.PayStatus=1 and
+			t3.Status=0 and
+			t3.IsOnTrain=1
+		where t0.RideDate >= '2016-01-11'
+			and t1.CurrStationID in
+			<foreach collection="stationidList" open="(" close=")" separator="," item="stationid">
+				#{stationid}
+			</foreach>
+			<if test="endDate != null">
+				and t0.RideDate <![CDATA[ <= ]]> #{endDate}
+			</if>
+			<if test="startDate != null">
+				and t0.RideDate >= #{startDate}
+			</if>
+			<if test="keyword != null">
+				and t0.ShiftCode like concat('%',#{keyword},'%')
+			</if>
+		GROUP BY t1.ID
+		ORDER BY t0.RideDate,t0.ShiftCode,t1.CurrStationID
+		) t
+	</sql>
+
+	<insert id="save" parameterType="SaleOrder" useGeneratedKeys="true"
+		keyColumn="ID" keyProperty="id">
+		insert
+		into
+		sale_order
+		(
+		<include refid="columns" />
+		)
+		values
+		(
+		<include refid="propertys" />
+		)
+	</insert>
+	<update id="update" parameterType="SaleOrder">
+		update
+		sale_order
+		set
+		`ID`=#{id},
+		`TicketCode`=#{ticketCode},
+		`CID`=#{cID},
+		`CName`=#{cName},
+		`Mobile`=#{mobile},
+		`RideDate`=#{rideDate},
+		`lmid`=#{lmid},
+		`LineName`=#{lineName},
+		`STStartID`=#{sTStartID},
+		`STStartName`=#{sTStartName},
+		`STArriveID`=#{sTArriveID},
+		`STArriveName`=#{sTArriveName},
+		`StartTime`=#{startTime},
+		`ArriveTime`=#{arriveTime},
+		`Price`=#{price},
+		`Quantity`=#{quantity},
+		`TotalSum`=#{totalSum},
+		`Coupons`=#{coupons},
+		`CouponsSum`=#{couponsSum},
+		`ActualSum`=#{actualSum},
+		`LName`=#{lName},
+		`LMobile`=#{lMobile},
+		`IDCode`=#{iDCode},
+		`PayMode`=#{payMode},
+		`BalancePay`=#{balancePay},
+		`OtherPay`=#{otherPay},
+		`PayStatus`=#{payStatus},
+		`PayStatusName`=#{payStatusName},
+		`Status`=#{status},
+		`StatusName`=#{statusName},
+		`MakeDate`=#{makeDate},
+		`BuyWay`=#{buyWay},
+		`mileage`=#{mileage},
+		`shiftCode`=#{ShiftCode},
+		`discountquantity`=#{discountquantity}
+		where
+		ID=#{id}
+	</update>
+	<update id="updatePay" parameterType="SaleOrder">
+		update
+		sale_order
+		set
+		`codeurl`=#{codeurl},
+		`ticketCode`=#{ticketCode},
+		`outcode`=#{outcode},
+		`PayMode`=#{payMode},
+		`Status`= 0,
+		`StatusName`='未取票',
+		`PayStatus`= 1,
+		`PayStatusName`= '已支付'
+		where
+		ID=#{id} and status = 0
+	</update>
+	<update id="updateRefundStatus">
+		update sale_order set status = #{newstatus},StatusName=#{statusname},paystatus=#{paystatus},PayStatusName=#{paystatusname} where id = #{id} and quantity = (
+			select count(1) from sale_order_ticket where soid =  #{id} and status = #{ticketstatus}
+		)
+	</update>
+	<update id="updateLockPay" parameterType="SaleOrder">
+		update
+		sale_order
+		set
+		`codeurl`=#{codeurl},
+		`ticketCode`=#{ticketCode},
+		`outcode`=#{outcode},
+		`Status`= 0,
+		`PayMode`=#{payMode},
+		`StatusName`='未取票',
+		`PayStatus`= 2,
+		`PayStatusName`= '已锁定'
+		where
+		ID=#{id}
+	</update>
+	<update id="updatePayFeedBack" parameterType="SaleOrder">
+		update
+			sale_order
+		set
+			`payfeedback`=#{payfeedback}
+		where
+		ID=#{id}
+	</update>
+	<update id="updateStatus" parameterType="SaleOrder">
+		update
+		sale_order
+		set
+		`Status`=#{status},
+		`StatusName`=#{statusName},
+		IsAbnormal=#{isabnormal},
+		Memo=#{memo},
+		GetWay=0,
+		SID=#{sid},
+		SName=#{sname},
+		TakeDate=#{takedate}
+		where
+		ID=#{id}
+	</update>
+	
+	<update id="updateOrderReturned" parameterType="SaleOrder">
+		update
+			sale_order
+		set
+			`Status`=#{status},
+			`StatusName`=#{statusName}
+		where
+			ID=#{id}
+		<if test="status==4">
+			and status = 0
+			and paystatus = 0
+		</if>
+		<if test="status==2">
+			paystatus = 1
+		</if>
+	</update>
+	
+	<select id="find" parameterType="java.lang.String" resultMap="result_map">
+		select
+		*
+		from
+		sale_order
+		where
+		ID=#{id}
+	</select>
+	<select id="getSaleOrderByTicketCode" parameterType="java.lang.String"
+		resultMap="result_map">
+		select
+		*
+		from
+		sale_order
+		where
+		TicketCode=#{ticketcode} and PayStatus>0
+	</select>
+	<select id="getAllSaleOrderByTicketCode" parameterType="java.lang.String"
+		resultMap="result_map">
+		select
+		*
+		from
+		sale_order
+		where
+		TicketCode=#{ticketcode} and PayStatus>0
+	</select>
+	<select id="getSoldQuantity" resultType="long" parameterType="map">
+		select
+		ifnull(sum(Quantity),0)
+		from
+		sale_order
+		where
+		lmid=#{lmid} and
+		ShiftCode=#{shiftcode} and RideDate=#{ticketdate} and STStartID=#{stid} and PayStatus>0
+	</select>
+	<select id="getNoTakeQuantity" resultType="long" parameterType="map">
+		select
+		sum(Quantity)
+		from
+		sale_order
+		where
+		lmid=#{lmid} and
+		ShiftCode=#{shiftcode} and RideDate=#{ridedate} and STStartID=#{ststartid} and PayStatus>0
+		and
+		Status=0
+	</select>
+	<select id="getAlreadyTake" resultMap="result_map"
+		parameterType="map">
+		select
+		*
+		from
+		sale_order
+		where
+		lmid=#{lmid} and ShiftCode=#{shiftcode}
+		and RideDate=#{ridedate} and STStartID=#{ststartid} and PayStatus>0
+	</select>
+	<select id="searchSaleOrder" parameterType="map" resultMap="result_map">
+		select
+		*
+		from
+		sale_order
+		<include refid="searchSaleOrderWhere"></include>
+		order by id desc limit 10 
+	</select>
+	<sql id="searchSaleOrderWhere">
+		<where>
+			<if test="isfull != 1">
+				Status<![CDATA[<=]]>2 and
+			</if>
+			(TicketCode like '%${keywords}%' or
+			LMobile like '%${keywords}%'
+			or
+			IDCode like '%${keywords}%' or ID like '%${keywords}%' )
+		</where>
+	</sql>
+	<select id="getAbnormalSaleOrderList" resultMap="result_map"
+		parameterType="map">
+		select
+		*
+		from
+		sale_order
+		<include refid="findSaleOrderAbnormal"></include>
+		limit
+		#{startOfPage},#{pageSize}
+	</select>
+	<select id="totalCountAbnormal" resultType="long" parameterType="map">
+		select
+		count(*)
+		from
+		sale_order
+		<include refid="findSaleOrderAbnormal"></include>
+	</select>
+	<sql id="findSaleOrderAbnormal">
+		<where>
+			STStartID =
+			#{currstationid} and IsAbnormal=1 and Status = 1 
+		</where>
+	</sql>
+	<select id="getOrderlist" resultType="map" parameterType="Page">
+		select
+		id,
+		ststartname,
+		starrivename,
+		ridedate,
+		starttime,
+		quantity,
+		status,
+		paystatus,
+		linename
+		from
+		sale_order
+		<include refid="getOrderlist_where"></include>
+		order by
+			makedate
+		desc
+		limit
+		#{startOfPage},#{pageSize}
+	</select>
+	<select id="getOrderlistCount" resultType="long" parameterType="Page">
+		select
+		count(1)
+		from
+		sale_order
+		<include refid="getOrderlist_where"></include>
+	</select>
+	<select id="getNotPayOrder" resultMap="result_map"
+		parameterType="map">
+		select
+		id,
+		ststartid,
+		lmid,
+		ridedate,
+		quantity,
+		shiftCode
+		from
+		sale_order
+		where
+		paystatus = 0
+		and
+		status = 0
+		and makedate <![CDATA[ <= ]]>
+		#{begintime}
+	</select>
+	
+	<select id="findOrderList" resultMap="result_map" parameterType="Page">
+		select
+			so.*
+		from
+			sale_order so
+		<include refid="findOrderList_where"></include>
+		order by
+		so.makedate
+		desc
+		limit
+			#{startOfPage},#{pageSize}
+	</select>
+	<select id="findOrderListCount"  resultType="long" parameterType="Page">
+		select 
+			count(1)
+		from 
+			sale_order as so
+			<include refid="findOrderList_where"></include>
+	</select>
+	
+	<sql id="findOrderList_where">
+		where 
+			1=1
+		and
+		so.payStatus != 0
+		<if test="param!=null">
+			<if test="param.begindate!=null and param.begindate!= '' and param.enddate!=null and param.enddate!= '' ">
+				and
+				so.MakeDate between #{param.begindate} and concat(#{param.enddate},' 23:59')
+			</if>
+			<if test="param.rideDate!=null and param.rideDate!= ''">
+				and
+				so.rideDate between #{param.rideDate} and #{param.rideDate}
+			</if>
+			<if test="param.status!=null">
+				and
+				so.status = #{param.status}
+			</if>
+			<if test="param.rank!=null">
+				and
+				so.rank = #{param.rank}
+			</if>
+			<if test="param.mobile!=null and param.mobile!= '' ">
+				and(
+				so.LMobile like '%${param.mobile}%'
+					or
+				so.Mobile like '%${param.mobile}%'
+					or
+				so.IDCode like '%${param.mobile}%'
+					or
+				so.ID like '%${param.mobile}%'
+					or
+				so.ShiftCode like '%${param.mobile}%'
+				)
+			</if>
+		</if>
+		<if test="admin!=null and admin.isAdmin!=1">
+			and `lmid` in 
+			(
+				<include refid="com.hengyu.ticket.dao.AdminDao.admin_power_lines"></include>
+			)
+		</if>
+	</sql>
+	
+	<sql id="getOrderlist_where">
+		where 
+			Mobile = #{param.mobile}
+		and
+			status <![CDATA[<>]]> 4
+		and
+			(PayStatus <![CDATA[<>]]> 0 or status in(1,2,3,5) )
+	</sql>
+	<update id="abnormalUpdateSaleOrderShiftCode" parameterType="SaleOrder">
+		update
+			sale_order
+		set
+			`ShiftCode`=#{ShiftCode},
+			`Memo`='订单改签'
+		where
+			TicketCode=#{ticketcode}
+	</update>
+	<update id="saleOrderRefund" parameterType="map">
+		update
+		sale_order
+		set
+		PayStatus=#{paystatus},
+		PayStatusName=#{paystatusname},
+		Status=#{status},
+		StatusName=#{statusName},
+		Memo=#{memo},
+		SID=#{sid},
+		SName=#{sname},
+		TakeDate=#{takedate},
+		Quantity=#{quantity}
+		where
+		ID=#{id}
+	</update>
+	<update id="saleOrderReceive" parameterType="map">
+		update
+		sale_order
+		set
+		`PayStatus`=#{paystatus},
+		`PayStatusName`=#{paystatusname},
+		Memo=#{memo},
+		ReceiveID=#{receiveid},
+		ReceiveName=#{receivename},
+		ReceiveDate=#{receivedate},
+		Quantity=#{quantity}
+		where
+		ID=#{id}
+	</update>
+
+	<sql id="columns">
+		`ID`,
+		`TicketCode`,
+		`CID`,
+		`CName`,
+		`Mobile`,
+		`RideDate`,
+		`lmid`,
+		`LineName`,
+		`STStartID`,
+		`STStartName`,
+		`STArriveID`,
+		`STArriveName`,
+		`StartTime`,
+		`ArriveTime`,
+		`Price`,
+		`Quantity`,
+		`TotalSum`,
+		`Coupons`,
+		`CouponsSum`,
+		`ActualSum`,
+		`LName`,
+		`LMobile`,
+		`IDCode`,
+		`PayMode`,
+		`BalancePay`,
+		`OtherPay`,
+		`PayStatus`,
+		`PayStatusName`,
+		`Status`,
+		`StatusName`,
+		`MakeDate`,
+		`BuyWay`,
+		`shiftCode`,
+		isabnormal,
+		memo,
+		getway,
+		sid,
+		sname,
+		mileage,
+		discountquantity,
+		vprice,
+		rank,
+		issett,
+		takedate,
+		`OutCode`,
+		`isintegralsett`,
+		`CodeUrl`
+	</sql>
+	<sql id="propertys">
+		#{id},
+		#{ticketCode},
+		#{cID},
+		#{cName},
+		#{mobile},
+		#{rideDate},
+		#{lmid},
+		#{lineName},
+		#{sTStartID},
+		#{sTStartName},
+		#{sTArriveID},
+		#{sTArriveName},
+		#{startTime},
+		#{arriveTime},
+		#{price},
+		#{quantity},
+		#{totalSum},
+		#{coupons},
+		#{couponsSum},
+		#{actualSum},
+		#{lName},
+		#{lMobile},
+		#{iDCode},
+		#{payMode},
+		#{balancePay},
+		#{otherPay},
+		#{payStatus},
+		#{payStatusName},
+		#{status},
+		#{statusName},
+		#{makeDate},
+		#{buyWay},
+		#{ShiftCode},
+		#{isabnormal},
+		#{memo},
+		#{getway},
+		#{sid},
+		#{sname},
+		#{mileage},
+		#{discountquantity},
+		#{vprice},
+		#{rank},
+		#{issett},
+		#{takedate},
+		#{outcode},
+		#{isintegralsett},
+		#{codeurl}
+	</sql>
+	<resultMap id="result_map" type="SaleOrder">
+		<id column="ID" property="id"  />
+		<result column="TicketCode" property="ticketCode"  />
+		<result column="CID" property="cID"  />
+		<result column="CName" property="cName"  />
+		<result column="Mobile" property="mobile"  />
+		<result column="RideDate" property="rideDate"  />
+		<result column="lmid" property="lmid" />
+		<result column="LineName" property="lineName"  />
+		<result column="STStartID" property="sTStartID"  />
+		<result column="STStartName" property="sTStartName"  />
+		<result column="STArriveID" property="sTArriveID"  />
+		<result column="STArriveName" property="sTArriveName"  />
+		<result column="StartTime" property="startTime"  />
+		<result column="ArriveTime" property="arriveTime"  />
+		<result column="Price" property="price" javaType="java.math.BigDecimal" />
+		<result column="Quantity" property="quantity" javaType="java.lang.Integer" />
+		<result column="TotalSum" property="totalSum" javaType="java.math.BigDecimal" />
+		<result column="Coupons" property="coupons"  />
+		<result column="CouponsSum" property="couponsSum" javaType="java.math.BigDecimal" />
+		<result column="ActualSum" property="actualSum" javaType="java.math.BigDecimal" />
+		<result column="LName" property="lName"  />
+		<result column="LMobile" property="lMobile"  />
+		<result column="IDCode" property="iDCode"  />
+		<result column="PayMode" property="payMode"  />
+		<result column="BalancePay" property="balancePay" javaType="java.math.BigDecimal" />
+		<result column="vprice" property="vprice" javaType="java.math.BigDecimal" />
+		<result column="OtherPay" property="otherPay" javaType="java.math.BigDecimal" />
+		<result column="PayStatus" property="payStatus" javaType="java.lang.Integer" />
+		<result column="PayStatusName" property="payStatusName"  />
+		<result column="Status" property="status" javaType="java.lang.Integer" />
+		<result column="StatusName" property="statusName"  />
+		<result column="MakeDate" property="makeDate"  />
+		<result column="BuyWay" property="buyWay"  />
+		<result column="ShiftCode" property="shiftNum"  />
+		<result column="Codeurl" property="codeurl"  />
+		<result column="Outcode" property="outcode"  />
+		<result column="PayFeedBack" property="payfeedback"  />
+		<result column="rank" property="rank"  />
+		<result column="Issett" property="issett"  />
+		
+		<result column="discountquantity" property="discountquantity" />
+		<result column="IsAbnormal" property="isabnormal" />
+		<result column="Memo" property="memo"  />
+		<result column="GetWay" property="getway"/>
+		<result column="SID" property="sid"  />
+		<result column="SName" property="sname"  />
+		<result column="TakeDate" property="takedate"  />
+		<result column="mileage" property="mileage"/>
+		<result column="isintegralsett" property="isintegralsett"/>
+		<result column="originstarttime" property="originstarttime"/>
+	</resultMap>
+</mapper>

@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hengyu.ticket.dao.BaseResourceDao">
+  <insert id="save" parameterType="BaseResource">
+	insert
+	into
+		base_resource
+		(<include refid="columns"/>)
+	values
+		(<include refid="propertys"/>)
+  </insert>
+  <delete id="delete" parameterType="java.lang.Integer">
+	delete
+	from
+		base_resource
+	where
+		ID=#{id}
+  </delete>
+  <update id="update" parameterType="BaseResource">
+	update
+		base_resource
+	set
+		`TagName`=#{tagname},
+		`PYName`=#{pyname},
+		`TagSubValue`=#{tagsubvalue},
+		`TagOrder`=#{tagorder},
+		`shortname`=#{shortname},
+		`IsDel`=#{isdel}
+	where
+		ID=#{id}
+  </update>
+  <select id="find" parameterType="java.lang.Integer" resultMap="result_map">
+	select
+		*
+	from
+		base_resource
+	where
+		ID=#{id}
+  </select>
+  <select id="findlist" parameterType="Page" resultMap="result_map">
+	select
+		*
+	from
+		base_resource
+	<include refid="findlist_where"></include>
+	order by 
+		TagName,tagorder 
+	desc
+	limit
+		#{startOfPage},#{pageSize}
+  </select>
+  <select id="findlistCount" parameterType="Page" resultType="long">
+	select
+		count(1)
+	from
+		base_resource
+	<include refid="findlist_where"></include>
+  </select>
+  
+  <sql id="findlist_where">
+  	where 1=1
+  	and(
+	  		isdel is null 
+	  	or 
+	  		isdel = 0
+  	)
+	<if test="param!=null">
+		<if test="param.tagname!=null and param.tagname!='' ">
+			and tagname = #{param.tagname}
+		</if>
+		<if test="param.tagsubvalue!=null and param.tagsubvalue!='' ">
+			and (
+				tagsubvalue like '%${param.tagsubvalue}%'
+				or
+				shortname like '%${param.tagsubvalue}%'
+				or
+				pyname like '%${param.tagsubvalue}%'
+			)
+		</if>
+	</if>
+  </sql>
+  
+  
+  <select id="count" resultType="java.lang.Integer">
+	select
+		count(1)
+	from
+		base_resource
+  </select>
+  <sql id="columns">
+	`TagName`,
+	`pyname`,
+	`TagSubValue`,
+	`TagOrder`,
+	`shortname`,
+	`IsDel`
+  </sql>
+  <sql id="propertys">
+	#{tagname},
+	#{pyname},
+	#{tagsubvalue},
+	#{tagorder},
+	#{shortname},
+	#{isdel}
+  </sql>
+  <resultMap id="result_map" type="BaseResource">
+    <id column="ID" property="id" javaType="java.lang.Integer"/>
+    <result column="pyname" property="pyname" javaType="java.lang.String"/>
+    <result column="TagName" property="tagname" javaType="java.lang.String"/>
+    <result column="TagSubValue" property="tagsubvalue" javaType="java.lang.String"/>
+    <result column="TagOrder" property="tagorder" javaType="java.lang.Integer"/>
+    <result column="IsDel" property="isdel" javaType="java.lang.Integer"/>
+    <result column="shortname" property="shortname"/>
+  </resultMap>
+</mapper>

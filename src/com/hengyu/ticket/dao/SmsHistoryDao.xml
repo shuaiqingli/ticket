@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hengyu.ticket.dao.SmsHistoryDao">
+  <insert id="save" parameterType="SmsHistory">
+	insert
+	into
+		sms_history
+		(<include refid="columns"/>)
+	values
+		(<include refid="propertys"/>)
+  </insert>
+  <update id="update" parameterType="SmsHistory">
+	update
+		sms_history
+	set
+		`Mobile`=#{mobile},
+		`VerifyCode`=#{verifyCode},
+		`Content`=#{content},
+		`MakeDate`=#{makeDate}
+	where
+		ID=#{id}
+  </update>
+  <select id="findLastByMobile" parameterType="java.lang.String" resultMap="result_map">
+	<![CDATA[
+		select
+			*
+		from
+			sms_history
+		where
+			`ID` 
+ 		in(
+			select max(id) from  sms_history where
+			`Mobile` = #{mobile}
+		)
+	]]>
+  </select>
+  <sql id="columns">
+	`Mobile`,
+	`VerifyCode`,
+	`Content`,
+	`MakeDate`
+  </sql>
+  <sql id="propertys">
+	#{mobile},
+	#{verifyCode},
+	#{content},
+	#{makeDate}
+  </sql>
+  <resultMap id="result_map" type="SmsHistory">
+    <id column="ID" property="id" javaType="java.lang.Integer"/>
+    <result column="Mobile" property="mobile" javaType="java.lang.String"/>
+    <result column="VerifyCode" property="verifyCode" javaType="java.lang.String"/>
+    <result column="Content" property="content" javaType="java.lang.String"/>
+    <result column="MakeDate" property="makeDate" javaType="java.lang.String"/>
+  </resultMap>
+</mapper>
