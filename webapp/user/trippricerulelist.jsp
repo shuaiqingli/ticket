@@ -18,7 +18,7 @@
 				</span>行程价格</h2>
 			</div>
 			<div class="row">
-				<div class="span5" style="font: normal 18px &#39;黑体&#39;;margin-top: 5px;">
+				<div class="span5" style="font: normal 18px '黑体';margin-top: 5px;">
 					&nbsp;&nbsp;&nbsp;${lm.lineID }（ ${lm.cityStartName }${lm.STStartName } - ${lm.cityArriveName }${lm.STArriveName } ）
 				</div>
 			</div>

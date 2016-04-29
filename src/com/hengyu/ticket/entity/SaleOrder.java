@@ -16,72 +16,75 @@ public class SaleOrder {
 
     // ------------------字段-----------------
 
+    private Integer ticketlineid;
     // 编号
     private String id;
+    //班次号
+    private Long shiftid;
     // 取票码
-    private String ticketCode;
+    private String ticketcode;
     // 客户编号
-    private String cID;
+    private String cid;
     // 客户姓名
-    private String cName;
+    private String cname;
     // 客户手机号码
     private String mobile;
     // 出发日期
-    private String rideDate;
+    private String ridedate;
     // 线路编号
     private Integer lmid;
     // 线路名称
-    private String lineName;
+    private String linename;
     // 出发站点编号
-    private String sTStartID;
+    private String ststartid;
     // 出发站点名称
-    private String sTStartName;
+    private String ststartname;
     // 到达站点编号
-    private String sTArriveID;
+    private String starriveid;
     // 到达站点名称
-    private String sTArriveName;
+    private String starrivename;
     // 发车时间
-    private String startTime;
+    private String starttime;
     // 到达时间
-    private String arriveTime;
+    private String arrivetime;
     // 单价
     private BigDecimal price;
     // 数量
     private Integer quantity;
     // 订单总价
-    private BigDecimal totalSum;
+    private BigDecimal totalsum;
     // 优惠券编号
     private String coupons;
     // 优惠金额
-    private BigDecimal couponsSum;
+    private BigDecimal couponssum;
     // 实付金额
-    private BigDecimal actualSum;
+    private BigDecimal actualsum;
     // 联系人姓名
-    private String lName;
+    private String lname;
     // 联系人手机号码
-    private String lMobile;
+    private String lmobile;
     // 联系人身份证
-    private String iDCode;
+    private String idcode;
     // 支付方式 Ali,wx，bal（余额）
-    private String payMode;
+    private String paymode;
     // 余额支付
-    private BigDecimal balancePay;
+    private BigDecimal balancepay;
     // 其他支付
-    private BigDecimal otherPay;
+    private BigDecimal otherpay;
     // 支付状态
-    private Integer payStatus;
+    private Integer paystatus;
     // 支付状态名称
-    private String payStatusName;
+    private String paystatusname;
     // 订单状态0未取票1已取票2退款中3已退款4.已取消
     private Integer status;
     // 状态名称
-    private String statusName;
+    private String statusname;
     // 订单日期
-    private String makeDate;
+    private String makedate;
     // 下单方式，wx，android，ios
-    private String buyWay;
+    private String buyway;
     // 线路编号
-    private String shiftNum;
+    private String shiftcode;
     // 外部订单号
     private String outcode;
     // 微信支付加密数据
@@ -128,6 +131,12 @@ public class SaleOrder {
 
     //始发时间
     private String originstarttime;
+    //订单总数
+    private Integer ordercount;
+    //退票数量
+    private Integer refundcount;
+    //客户注册日期
+    private String customermakedate;
 
     // ----------------构造方法----------------
 
@@ -138,23 +147,6 @@ public class SaleOrder {
     // -------------- get/set方法 --------------
 
 
-    public String getOriginstarttime() {
-        return originstarttime;
-    }
-
-    public void setOriginstarttime(String originstarttime) {
-        this.originstarttime = originstarttime;
-    }
-
-    /**
-     * 获取cID
-     *
-     * @return String
-     */
-    public String getCID() {
-        return cID;
-    }
-
     public String getId() {
         return id;
     }
@@ -163,75 +155,44 @@ public class SaleOrder {
         this.id = id;
     }
 
-    public String getTicketCode() {
-        return ticketCode;
+    public String getTicketcode() {
+        return ticketcode;
     }
 
-    public void setTicketCode(String ticketCode) {
-        this.ticketCode = ticketCode;
+    public void setTicketcode(String ticketcode) {
+        this.ticketcode = ticketcode;
     }
 
-    /**
-     * 设置cID
-     *
-     * @param cID
-     */
-    public void setCID(String cID) {
-        this.cID = cID;
+    public String getCid() {
+        return cid;
     }
 
-    /**
-     * 获取cName (客户编号)
-     *
-     * @return String
-     */
-    public String getCName() {
-        return cName;
+    public void setCid(String cid) {
+        this.cid = cid;
     }
 
-    /**
-     * 设置cName (客户编号)
-     *
-     * @param cName
-     */
-    public void setCName(String cName) {
-        this.cName = cName;
+    public String getCname() {
+        return cname;
     }
 
-    /**
-     * 获取mobile (客户手机号码)
-     *
-     * @return String
-     */
+    public void setCname(String cname) {
+        this.cname = cname;
+    }
+
     public String getMobile() {
         return mobile;
     }
 
-    /**
-     * 设置mobile (客户手机号码)
-     *
-     * @param mobile
-     */
     public void setMobile(String mobile) {
         this.mobile = mobile;
     }
 
-    /**
-     * 获取rideDate (出发日期)
-     *
-     * @return String
-     */
-    public String getRideDate() {
-        return rideDate;
+    public String getRidedate() {
+        return ridedate;
     }
 
-    /**
-     * 设置rideDate (出发日期)
-     *
-     * @param rideDate
-     */
-    public void setRideDate(String rideDate) {
-        this.rideDate = rideDate;
+    public void setRidedate(String ridedate) {
+        this.ridedate = ridedate;
     }
 
     public Integer getLmid() {
@@ -242,462 +203,220 @@ public class SaleOrder {
         this.lmid = lmid;
     }
 
-    /**
-     * 获取lineName (线路名称)
-     *
-     * @return String
-     */
     public String getLinename() {
-        return lineName;
+        return linename;
     }
 
-    /**
-     * 设置lineName (线路名称)
-     *
-     * @param lineName
-     */
-    public void setLineName(String lineName) {
-        this.lineName = lineName;
+    public void setLinename(String linename) {
+        this.linename = linename;
     }
 
-    /**
-     * 获取sTStartID (出发站点编号)
-     *
-     * @return String
-     */
-    public String getSTStartID() {
-        return sTStartID;
+    public String getStstartid() {
+        return ststartid;
     }
 
-    /**
-     * 设置sTStartID (出发站点编号)
-     *
-     * @param sTStartID
-     */
-    public void setSTStartID(String sTStartID) {
-        this.sTStartID = sTStartID;
+    public void setStstartid(String ststartid) {
+        this.ststartid = ststartid;
     }
 
-    /**
-     * 获取sTStartName (出发站点名称)
-     *
-     * @return String
-     */
     public String getStstartname() {
-        return sTStartName;
+        return ststartname;
     }
 
-    /**
-     * 设置sTStartName (出发站点名称)
-     *
-     * @param sTStartName
-     */
-    public void setSTStartName(String sTStartName) {
-        this.sTStartName = sTStartName;
+    public void setStstartname(String ststartname) {
+        this.ststartname = ststartname;
     }
 
-    /**
-     * 获取sTArriveID (到达站点编号)
-     *
-     * @return String
-     */
     public String getStarriveid() {
-        return sTArriveID;
+        return starriveid;
     }
 
-    /**
-     * 设置sTArriveID (到达站点编号)
-     *
-     * @param sTArriveID
-     */
-    public void setSTArriveID(String sTArriveID) {
-        this.sTArriveID = sTArriveID;
+    public void setStarriveid(String starriveid) {
+        this.starriveid = starriveid;
     }
 
-    /**
-     * 获取sTArriveName (到达站点名称)
-     *
-     * @return String
-     */
     public String getStarrivename() {
-        return sTArriveName;
+        return starrivename;
     }
 
-    /**
-     * 设置sTArriveName (到达站点名称)
-     *
-     * @param sTArriveName
-     */
-    public void setSTArriveName(String sTArriveName) {
-        this.sTArriveName = sTArriveName;
+    public void setStarrivename(String starrivename) {
+        this.starrivename = starrivename;
     }
 
-    /**
-     * 获取startTime (发车时间)
-     *
-     * @return String
-     */
-    public String getStartTime() {
-        return startTime;
+    public String getStarttime() {
+        return starttime;
     }
 
-    /**
-     * 设置startTime (发车时间)
-     *
-     * @param startTime
-     */
-    public void setStartTime(String startTime) {
-        this.startTime = startTime;
+    public void setStarttime(String starttime) {
+        this.starttime = starttime;
     }
 
-    /**
-     * 获取arriveTime (到达时间)
-     *
-     * @return String
-     */
-    public String getArriveTime() {
-        return arriveTime;
+    public String getArrivetime() {
+        return arrivetime;
     }
 
-    /**
-     * 设置arriveTime (到达时间)
-     *
-     * @param arriveTime
-     */
-    public void setArriveTime(String arriveTime) {
-        this.arriveTime = arriveTime;
+    public void setArrivetime(String arrivetime) {
+        this.arrivetime = arrivetime;
     }
 
-    /**
-     * 获取price (单价)
-     *
-     * @return String
-     */
     public BigDecimal getPrice() {
         return price;
     }
 
-    /**
-     * 设置price (单价)
-     *
-     * @param price
-     */
     public void setPrice(BigDecimal price) {
         this.price = price;
     }
 
-    /**
-     * 获取quantity (数量)
-     *
-     * @return Integer
-     */
     public Integer getQuantity() {
         return quantity;
     }
 
-    /**
-     * 设置quantity (数量)
-     *
-     * @param quantity
-     */
     public void setQuantity(Integer quantity) {
         this.quantity = quantity;
     }
 
-    /**
-     * 获取totalSum (订单总价)
-     *
-     * @return String
-     */
-    public BigDecimal getTotalSum() {
-        return totalSum;
+    public BigDecimal getTotalsum() {
+        return totalsum;
     }
 
-    /**
-     * 设置totalSum (订单总价)
-     *
-     * @param totalSum
-     */
-    public void setTotalSum(BigDecimal totalSum) {
-        this.totalSum = totalSum;
+    public void setTotalsum(BigDecimal totalsum) {
+        this.totalsum = totalsum;
     }
 
-    /**
-     * 获取coupons (优惠券编号)
-     *
-     * @return String
-     */
     public String getCoupons() {
         return coupons;
     }
 
-    /**
-     * 设置coupons (优惠券编号)
-     *
-     * @param coupons
-     */
     public void setCoupons(String coupons) {
         this.coupons = coupons;
     }
 
-    /**
-     * 获取couponsSum (优惠金额)
-     *
-     * @return String
-     */
-    public BigDecimal getCouponsSum() {
-        return couponsSum;
+    public BigDecimal getCouponssum() {
+        return couponssum;
     }
 
-    /**
-     * 设置couponsSum (优惠金额)
-     *
-     * @param couponsSum
-     */
-    public void setCouponsSum(BigDecimal couponsSum) {
-        this.couponsSum = couponsSum;
+    public void setCouponssum(BigDecimal couponssum) {
+        this.couponssum = couponssum;
     }
 
-    /**
-     * 获取actualSum (实付金额)
-     *
-     * @return String
-     */
-    public BigDecimal getActualSum() {
-        return actualSum;
+    public BigDecimal getActualsum() {
+        return actualsum;
     }
 
-    /**
-     * 设置actualSum (实付金额)
-     *
-     * @param actualSum
-     */
-    public void setActualSum(BigDecimal actualSum) {
-        this.actualSum = actualSum;
+    public void setActualsum(BigDecimal actualsum) {
+        this.actualsum = actualsum;
     }
 
-    /**
-     * 获取lName (联系人姓名)
-     *
-     * @return String
-     */
-    public String getLName() {
-        return lName;
+    public String getLname() {
+        return lname;
     }
 
-    /**
-     * 设置lName (联系人姓名)
-     *
-     * @param lName
-     */
-    public void setLName(String lName) {
-        this.lName = lName;
+    public void setLname(String lname) {
+        this.lname = lname;
     }
 
-    /**
-     * 获取lMobile (联系人手机号码)
-     *
-     * @return String
-     */
-    public String getLMobile() {
-        return lMobile;
+    public String getLmobile() {
+        return lmobile;
     }
 
-    /**
-     * 设置lMobile (联系人手机号码)
-     *
-     * @param lMobile
-     */
-    public void setLMobile(String lMobile) {
-        this.lMobile = lMobile;
+    public void setLmobile(String lmobile) {
+        this.lmobile = lmobile;
     }
 
-    /**
-     * 获取iDCode (联系人身份证)
-     *
-     * @return String
-     */
-    public String getIDCode() {
-        return iDCode;
+    public String getIdcode() {
+        return idcode;
     }
 
-    /**
-     * 设置iDCode (联系人身份证)
-     *
-     * @param iDCode
-     */
-    public void setIDCode(String iDCode) {
-        this.iDCode = iDCode;
+    public void setIdcode(String idcode) {
+        this.idcode = idcode;
     }
 
-    /**
-     * 获取payMode (支付方式 Ali,wx，bal（余额）)
-     *
-     * @return String
-     */
-    public String getPayMode() {
-        return payMode;
+    public String getPaymode() {
+        return paymode;
     }
 
-    /**
-     * 设置payMode (支付方式 Ali,wx，bal（余额）)
-     *
-     * @param payMode
-     */
-    public void setPayMode(String payMode) {
-        this.payMode = payMode;
+    public void setPaymode(String paymode) {
+        this.paymode = paymode;
     }
 
-    /**
-     * 获取balancePay (余额支付)
-     *
-     * @return String
-     */
-    public BigDecimal getBalancePay() {
-        return balancePay;
+    public BigDecimal getBalancepay() {
+        return balancepay;
     }
 
-    /**
-     * 设置balancePay (余额支付)
-     *
-     * @param balancePay
-     */
-    public void setBalancePay(BigDecimal balancePay) {
-        this.balancePay = balancePay;
+    public void setBalancepay(BigDecimal balancepay) {
+        this.balancepay = balancepay;
     }
 
-    /**
-     * 获取otherPay (其他支付)
-     *
-     * @return String
-     */
-    public BigDecimal getOtherPay() {
-        return otherPay;
+    public Long getShiftid() {
+        return shiftid;
     }
 
-    /**
-     * 设置otherPay (其他支付)
-     *
-     * @param otherPay
-     */
-    public void setOtherPay(BigDecimal otherPay) {
-        this.otherPay = otherPay;
+    public void setShiftid(Long shiftid) {
+        this.shiftid = shiftid;
     }
 
-    /**
-     * 获取payStatus (支付状态)
-     *
-     * @return Integer
-     */
-    public Integer getPayStatus() {
-        return payStatus;
+    public BigDecimal getOtherpay() {
+        return otherpay;
     }
 
-    /**
-     * 设置payStatus (支付状态)
-     *
-     * @param payStatus
-     */
-    public void setPayStatus(Integer payStatus) {
-        this.payStatus = payStatus;
+    public void setOtherpay(BigDecimal otherpay) {
+        this.otherpay = otherpay;
     }
 
-    /**
-     * 获取payStatusName (支付状态名称)
-     *
-     * @return String
-     */
-    public String getPayStatusName() {
-        return payStatusName;
+    public Integer getPaystatus() {
+        return paystatus;
     }
 
-    /**
-     * 设置payStatusName (支付状态名称)
-     *
-     * @param payStatusName
-     */
-    public void setPayStatusName(String payStatusName) {
-        this.payStatusName = payStatusName;
+    public void setPaystatus(Integer paystatus) {
+        this.paystatus = paystatus;
     }
 
-    /**
-     * 获取status (订单状态0未取票1已取票2退款中3已退款4.已取消)
-     *
-     * @return Integer
-     */
+    public String getPaystatusname() {
+        return paystatusname;
+    }
+
+    public void setPaystatusname(String paystatusname) {
+        this.paystatusname = paystatusname;
+    }
+
     public Integer getStatus() {
         return status;
     }
 
-    /**
-     * 设置status (订单状态0未取票1已取票2退款中3已退款4.已取消)
-     *
-     * @param status
-     */
     public void setStatus(Integer status) {
         this.status = status;
     }
 
-    /**
-     * 获取statusName (状态名称)
-     *
-     * @return String
-     */
-    public String getStatusName() {
-        return statusName;
+    public String getStatusname() {
+        return statusname;
     }
 
-    /**
-     * 设置statusName (状态名称)
-     *
-     * @param statusName
-     */
-    public void setStatusName(String statusName) {
-        this.statusName = statusName;
+    public void setStatusname(String statusname) {
+        this.statusname = statusname;
     }
 
-    /**
-     * 获取makeDate (订单日期)
-     *
-     * @return String
-     */
-    public String getMakeDate() {
-        return makeDate;
+    public String getMakedate() {
+        return makedate;
     }
 
-    /**
-     * 设置makeDate (订单日期)
-     *
-     * @param makeDate
-     */
-    public void setMakedate(String makeDate) {
-        this.makeDate = makeDate;
+    public void setMakedate(String makedate) {
+        this.makedate = makedate;
     }
 
-    /**
-     * 获取buyWay (下单方式，wx，android，ios)
-     *
-     * @return String
-     */
-    public String getBuyWay() {
-        return buyWay;
+    public String getBuyway() {
+        return buyway;
     }
 
-    /**
-     * 设置buyWay (下单方式，wx，android，ios)
-     *
-     * @param buyWay
-     */
-    public void setBuyWay(String buyWay) {
-        this.buyWay = buyWay;
+    public void setBuyway(String buyway) {
+        this.buyway = buyway;
     }
 
-    public String getShiftNum() {
-        return shiftNum;
+    public String getShiftcode() {
+        return shiftcode;
     }
 
-    public void setShiftNum(String shiftNum) {
-        this.shiftNum = shiftNum;
+    public void setShiftcode(String shiftcode) {
+        this.shiftcode = shiftcode;
     }
 
     public String getOutcode() {
@@ -724,12 +443,36 @@ public class SaleOrder {
         this.codeurl = codeurl;
     }
 
-    public String getMemo() {
-        return memo;
+    public Integer getDiscountquantity() {
+        return discountquantity;
     }
 
-    public void setMemo(String memo) {
-        this.memo = memo;
+    public void setDiscountquantity(Integer discountquantity) {
+        this.discountquantity = discountquantity;
+    }
+
+    public BigDecimal getVprice() {
+        return vprice;
+    }
+
+    public void setVprice(BigDecimal vprice) {
+        this.vprice = vprice;
+    }
+
+    public Integer getRank() {
+        return rank;
+    }
+
+    public void setRank(Integer rank) {
+        this.rank = rank;
+    }
+
+    public Integer getIssett() {
+        return issett;
+    }
+
+    public void setIssett(Integer issett) {
+        this.issett = issett;
     }
 
     public Integer getIsabnormal() {
@@ -738,6 +481,22 @@ public class SaleOrder {
 
     public void setIsabnormal(Integer isabnormal) {
         this.isabnormal = isabnormal;
+    }
+
+    public String getMemo() {
+        return memo;
+    }
+
+    public void setMemo(String memo) {
+        this.memo = memo;
+    }
+
+    public Integer getGetway() {
+        return getway;
+    }
+
+    public void setGetway(Integer getway) {
+        this.getway = getway;
     }
 
     public String getSid() {
@@ -764,52 +523,12 @@ public class SaleOrder {
         this.takedate = takedate;
     }
 
-    public Integer getGetway() {
-        return getway;
-    }
-
-    public void setGetway(Integer getway) {
-        this.getway = getway;
-    }
-
-    public String getBegindate() {
-        return begindate;
-    }
-
-    public void setBegindate(String begindate) {
-        this.begindate = begindate;
-    }
-
-    public String getEnddate() {
-        return enddate;
-    }
-
-    public void setEnddate(String enddate) {
-        this.enddate = enddate;
-    }
-
     public Integer getMileage() {
         return mileage;
     }
 
     public void setMileage(Integer mileage) {
         this.mileage = mileage;
-    }
-
-    public Integer getDiscountquantity() {
-        return discountquantity;
-    }
-
-    public void setDiscountquantity(Integer discountquantity) {
-        this.discountquantity = discountquantity;
-    }
-
-    public BigDecimal getVprice() {
-        return vprice;
-    }
-
-    public void setVprice(BigDecimal vprice) {
-        this.vprice = vprice;
     }
 
     public String getSeatnos() {
@@ -828,20 +547,20 @@ public class SaleOrder {
         this.sots = sots;
     }
 
-    public Integer getRank() {
-        return rank;
+    public String getBegindate() {
+        return begindate;
     }
 
-    public void setRank(Integer rank) {
-        this.rank = rank;
+    public void setBegindate(String begindate) {
+        this.begindate = begindate;
     }
 
-    public Integer getIssett() {
-        return issett;
+    public String getEnddate() {
+        return enddate;
     }
 
-    public void setIssett(Integer issett) {
-        this.issett = issett;
+    public void setEnddate(String enddate) {
+        this.enddate = enddate;
     }
 
     public String getStationaddr() {
@@ -876,96 +595,59 @@ public class SaleOrder {
         this.isintegralsett = isintegralsett;
     }
 
-    public String getcID() {
-        return cID;
+    public String getOriginstarttime() {
+        return originstarttime;
     }
 
-    public void setcID(String cID) {
-        this.cID = cID;
-    }
-
-    public String getcName() {
-        return cName;
-    }
-
-    public void setcName(String cName) {
-        this.cName = cName;
-    }
-
-    public String getLineName() {
-        return lineName;
-    }
-
-    public String getsTStartID() {
-        return sTStartID;
-    }
-
-    public void setsTStartID(String sTStartID) {
-        this.sTStartID = sTStartID;
-    }
-
-    public String getsTStartName() {
-        return sTStartName;
-    }
-
-    public void setsTStartName(String sTStartName) {
-        this.sTStartName = sTStartName;
-    }
-
-    public String getsTArriveID() {
-        return sTArriveID;
-    }
-
-    public void setsTArriveID(String sTArriveID) {
-        this.sTArriveID = sTArriveID;
-    }
-
-    public String getsTArriveName() {
-        return sTArriveName;
-    }
-
-    public void setsTArriveName(String sTArriveName) {
-        this.sTArriveName = sTArriveName;
-    }
-
-    public String getlName() {
-        return lName;
-    }
-
-    public void setlName(String lName) {
-        this.lName = lName;
-    }
-
-    public String getlMobile() {
-        return lMobile;
-    }
-
-    public void setlMobile(String lMobile) {
-        this.lMobile = lMobile;
-    }
-
-    public String getiDCode() {
-        return iDCode;
-    }
-
-    public void setiDCode(String iDCode) {
-        this.iDCode = iDCode;
-    }
-
-    public void setMakeDate(String makeDate) {
-        this.makeDate = makeDate;
+    public void setOriginstarttime(String originstarttime) {
+        this.originstarttime = originstarttime;
     }
 
     public int getDaysForAdvance() throws ParseException {
-        if(makeDate == null || rideDate == null) return 0;
+        if(makedate == null || ridedate == null) return 0;
         SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd");
-        Date makeDateTemp = sdf.parse(makeDate.substring(0, 10));
-        Date rideDateTemp = sdf.parse(rideDate.substring(0, 10));
+        Date makeDateTemp = sdf.parse(makedate.substring(0, 10));
+        Date rideDateTemp = sdf.parse(ridedate.substring(0, 10));
         Calendar cal = Calendar.getInstance();
         cal.setTime(makeDateTemp);
         long makeDateTime = cal.getTimeInMillis();
         cal.setTime(rideDateTemp);
         long rideDateTime = cal.getTimeInMillis();
         return Integer.parseInt(String.valueOf((rideDateTime-makeDateTime)/(1000*3600*24)));
+    }
+
+    public Integer getOrdercount() {
+        if(ordercount!=null&&ordercount<=0){
+            return null;
+        }
+        return ordercount;
+    }
+
+    public void setOrdercount(Integer ordercount) {
+        this.ordercount = ordercount;
+    }
+
+    public String getCustomermakedate() {
+        return customermakedate;
+    }
+
+    public void setCustomermakedate(String customermakedate) {
+        this.customermakedate = customermakedate;
+    }
+
+    public Integer getTicketlineid() {
+        return ticketlineid;
+    }
+
+    public void setTicketlineid(Integer ticketlineid) {
+        this.ticketlineid = ticketlineid;
+    }
+
+    public Integer getRefundcount() {
+        return refundcount;
+    }
+
+    public void setRefundcount(Integer refundcount) {
+        this.refundcount = refundcount;
     }
 }

@@ -66,6 +66,8 @@ public class SaleOrderTicket{
 	private Integer lmid;
 	//优惠价格
 	private BigDecimal vprice;
+    //班次id
+    private Long shiftid;
 	
 //	取票日期
 	private String sdate;
@@ -78,9 +80,17 @@ public class SaleOrderTicket{
 	}
 
 	//-------------- get/set方法 --------------
-	
-	
-	/**
+
+
+    public Long getShiftid() {
+        return shiftid;
+    }
+
+    public void setShiftid(Long shiftid) {
+        this.shiftid = shiftid;
+    }
+
+    /**
 	 *获取checkcode 
 	 * @return String  
 	 */

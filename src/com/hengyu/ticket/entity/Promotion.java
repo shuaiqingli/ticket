@@ -25,7 +25,8 @@ public class Promotion {
 	private String isenablename;
 	private Integer promotionline;
 	private Integer isdel;
-	
+	private Integer isdefault;
+
 	private String weekdaystr;
 	
 	private List<PromotionTime> times;
@@ -38,7 +39,16 @@ public class Promotion {
 
 	// -------------- get/set方法 --------------
 
-	/**
+
+    public Integer getIsdefault() {
+        return isdefault;
+    }
+
+    public void setIsdefault(Integer isdefault) {
+        this.isdefault = isdefault;
+    }
+
+    /**
 	 * 获取id
 	 * 
 	 * @return Integer

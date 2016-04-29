@@ -29,7 +29,7 @@
 			sms_history
 		where
 			`ID` 
- 		in(
+ 		=(
 			select max(id) from  sms_history where
 			`Mobile` = #{mobile}
 		)

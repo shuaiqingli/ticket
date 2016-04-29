@@ -38,19 +38,16 @@
 		ID=#{id}
   </select>
   <select id="getPromotionTimeByPID" parameterType="java.lang.String" resultMap="result_map">
-	select
-		*
-	from
-		promotion_time
-	where
-		PID=#{pid}
+	select * from promotion_time
+	where pid = #{pid}
+	order by begintime,endtime
   </select>
   <delete id="delPromotionByPID" parameterType="java.lang.String">
 	delete
 	from
 		promotion_time
 	where
-		PID=#{pid}
+		PID = #{pid}
   </delete>
   <sql id="columns">
 	`PID`,

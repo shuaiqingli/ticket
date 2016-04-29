@@ -43,9 +43,9 @@
 	where
 		ID=#{id}
   </select>
-  <select id="findByUser" parameterType="java.lang.String" resultMap="result_map">
+  <select id="findByUser" resultMap="result_map">
 	select
-		userid,stid,cs.cityname as stname
+		rs.id,userid,stid,cs.cityname as stname
 	from
 		relation_station as rs
 	join city_station as cs on cs.id = rs.stid

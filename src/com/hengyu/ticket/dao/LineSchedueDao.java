@@ -83,4 +83,6 @@ public interface LineSchedueDao {
 	 * @throws Exception
 	 */
 	Long totalCount(Page page) throws Exception;
+
+	int resetDefault(@Param("lmid") Integer lmid) throws Exception;
 }

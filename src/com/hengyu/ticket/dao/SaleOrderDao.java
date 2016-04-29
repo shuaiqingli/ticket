@@ -196,4 +196,18 @@ public interface SaleOrderDao {
 	List<Map> billStatisticList(@Param("startDate") String startDate, @Param("endDate") String endDate, @Param("keywordList") List<String> keywordList, @Param("page") Page page);
 
 	long billStatisticTotal(@Param("startDate") String startDate, @Param("endDate") String endDate, @Param("keywordList") List<String> keywordList);
+
+	/**
+	 * 根据取票码获取订单(可能取票码不是唯一 慎用)
+	 * @param ticketcode
+	 * @return
+	 */
+	public abstract SaleOrder findByTicketCode(String ticketcode);
+	
+	/**
+	 * 根据线路编号,出行日期,出发站ID,到达站ID,班次ID,以及发车时间
+	 * @param map
+	 * @return 已售了多少票
+	 */
+	public abstract Integer findSoldNumByMap(Map<String, Object> map);
 }

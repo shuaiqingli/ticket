@@ -5,10 +5,13 @@ import com.hengyu.ticket.dao.MakeConfDao;
 import com.hengyu.ticket.entity.CityStation;
 import com.hengyu.ticket.entity.MakeConf;
 import com.hengyu.ticket.entity.Page;
+
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -119,6 +122,14 @@ public class CityStationService {
 		return cityStationDao.getStartStationByCityid(begincityid,endcityid,sort);
 	}
 
+	public List getStartStationList(String begincityid,String endcityid, String endstationid) throws Exception {
+		return cityStationDao.getStartStationList(begincityid, endcityid, endstationid);
+	}
+
+	public List getEndStationList(String endcityid,String begincityid, String beginstationid) throws Exception {
+		return cityStationDao.getEndStationList(endcityid, begincityid, beginstationid);
+	}
+
 	public void setCityStationDao(CityStationDao cityStationDao) {
 		this.cityStationDao = cityStationDao;
 	}
@@ -140,5 +151,36 @@ public class CityStationService {
 
 	public List<CityStation> findByParent(String pid) throws Exception{
 		return cityStationDao.findByParent(pid);
+	}
+
+	/**
+	 * 根据ID查询城市名称和ID(在ParentId为null情况)实则参数的ParentID为查询的主键ID
+	 * @param ParentID
+	 * @return id和city_name
+	 */
+	public Map<String, Object> findCityNameAndIdByParentId(String ParentID) {
+		return cityStationDao.findCityNameAndIdByParentId(ParentID);
+	}
+
+	/**
+	 * 根据城市站点管理对象查询城市名称和城市ID
+	 * @param cityStation
+	 * @return map的key为id和city_name
+	 */
+	public Map<String, Object> findCityNameAndIdByCityStation(CityStation cityStation) {
+		Map<String,Object> map = new HashMap<>();
+		if(cityStation!=null){
+			//根据现有数据发现,id查询到的数据如果ParentID为空那么就是城市名称和城市ID,如果不为空 那么拿到ParentID再去查这个ID的ParentID为空的那个数据
+			String parentid = cityStation.getParentid();
+			if(StringUtils.isNotEmpty(parentid)){
+				Map<String,Object> resultMap = findCityNameAndIdByParentId(parentid);
+				map.put("city_id",resultMap.get("id"));
+				map.put("city_name",resultMap.get("city_name"));
+			}else{
+				map.put("city_id",cityStation.getId());
+				map.put("city_name",cityStation.getCityname());
+			}
+		}
+		return map;
 	}
 }

@@ -95,7 +95,7 @@ function saveOrPreview(type) {
             if (type == 1) {
                 if (typeof(data) == 'number' && data == 1) {
                     layer.msg("操作成功");
-                    location.href = basePath + '/user/approveLineScheduleList.do?id='+$('input[name="lineid"]').val()+'&date='+$(".date").attr("date");;
+                    location.href = basePath + '/user/shiftManage?lmid='+$('input[name="lineid"]').val()+'&date='+$(".date").attr("date");;
                 } else {
                     layer.msg('操作失败');
                 }

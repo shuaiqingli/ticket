@@ -9,9 +9,16 @@ import java.util.List;
 public class LineManage implements Cloneable {
 
     // ------------------字段-----------------
+    //1. 可使用代金券 2. 不可使用代金券
+    private Integer couponflag;
 
     // 编号
     private Integer id;
+
+    //退款状态 0 可以退款 1不可以退款
+    private Integer refundstatus;
+    //退款提示备注
+    private String refundremark;
 
     // 线路编号
     private String lineid;
@@ -126,6 +133,23 @@ public class LineManage implements Cloneable {
     }
 
     // -------------- get/set方法 --------------
+
+
+    public Integer getRefundstatus() {
+        return refundstatus;
+    }
+
+    public void setRefundstatus(Integer refundstatus) {
+        this.refundstatus = refundstatus;
+    }
+
+    public String getRefundremark() {
+        return refundremark;
+    }
+
+    public void setRefundremark(String refundremark) {
+        this.refundremark = refundremark;
+    }
 
     @Override
     public Object clone() throws CloneNotSupportedException {
@@ -490,5 +514,13 @@ public class LineManage implements Cloneable {
 
     public void setBalanceticketwarn(Integer balanceticketwarn) {
         this.balanceticketwarn = balanceticketwarn;
+    }
+
+    public Integer getCouponflag() {
+        return couponflag;
+    }
+
+    public void setCouponflag(Integer couponflag) {
+        this.couponflag = couponflag;
     }
 }

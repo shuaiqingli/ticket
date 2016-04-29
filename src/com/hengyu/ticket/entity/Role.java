@@ -26,35 +26,35 @@ public class Role{
 	//-------------- get/set方法 --------------
 
 
-	 public Integer getId() {
-		 return id;
-	 }
+     public Integer getId() {
+         return id;
+     }
 
-	 public void setId(Integer id) {
-		 this.id = id;
-	 }
+     public void setId(Integer id) {
+         this.id = id;
+     }
 
-	 public String getRolename() {
-		 return rolename;
-	 }
+     public String getRolename() {
+         return rolename;
+     }
 
-	 public void setRolename(String rolename) {
-		 this.rolename = rolename;
-	 }
+     public void setRolename(String rolename) {
+         this.rolename = rolename;
+     }
 
-	 public List<FuncMode> getMenus() {
-		 return menus;
-	 }
+     public List<FuncMode> getMenus() {
+         return menus;
+     }
 
-	 public void setMenus(List<FuncMode> menus) {
-		 this.menus = menus;
-	 }
+     public void setMenus(List<FuncMode> menus) {
+         this.menus = menus;
+     }
 
-	 public List<RolePower> getRolepowers() {
-		 return rolepowers;
-	 }
+     public List<RolePower> getRolepowers() {
+         return rolepowers;
+     }
 
-	 public void setRolepowers(List<RolePower> rolepowers) {
-		 this.rolepowers = rolepowers;
-	 }
+     public void setRolepowers(List<RolePower> rolepowers) {
+         this.rolepowers = rolepowers;
+     }
  }

@@ -41,7 +41,7 @@ public interface FuncModeDao {
 	
 	/**
 	 * 按角色编号获取菜单
-	 * @param role
+	 * @param roleid
 	 * @return
 	 * @throws Exception
 	 */

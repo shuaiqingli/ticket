@@ -21,6 +21,7 @@
 
 	<!-- 扫描控制器类 -->
 	<context:component-scan base-package="com.hengyu.ticket.service" />
+	<context:component-scan base-package="com.hengyu.ticket.quartz" />
 
 	<!-- 加载配置文件 -->
 	<bean
@@ -81,13 +82,9 @@
 				</bean>
 			</array>
 		</property>
-		<property name="configurationProperties">
-			<props>
-<!-- 				<prop key="cacheEnabled">true</prop> -->
-			</props>
-		</property>
 		<property name="mapperLocations" value="com.hengyu.ticket.dao.*.xml"/>
 		<property name="typeAliasesPackage" value="com.hengyu.ticket.entity"/>
+        <property name="configLocation" value="classpath:mybatis_cnf.xml"></property>
 	</bean>
 
 	<!-- 配置 mapperScannerConfigurer 扫描配置文件 -->
@@ -132,7 +129,7 @@
 		<aop:advisor pointcut="execution(* com.hengyu.ticket.service.*.*(..))"
 			advice-ref="txAdvice" />
 	</aop:config>
-	
-<!-- 	<import resource="classpath:quartz.xml"/> -->
+
+ 	<import resource="classpath:quartz.xml"/>
 	<import resource="classpath:config.xml"/>
 </beans>

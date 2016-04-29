@@ -23,6 +23,8 @@ public class LineSchedue {
 
     private Integer isdel;
 
+    private Integer isdefault;
+
     //规则详情
     private List<LineScheduDetail> schedules;
 
@@ -35,6 +37,14 @@ public class LineSchedue {
 
     //-------------- get/set方法 --------------
 
+
+    public Integer getIsdefault() {
+        return isdefault;
+    }
+
+    public void setIsdefault(Integer isdefault) {
+        this.isdefault = isdefault;
+    }
 
     public Integer getIsdel() {
         return isdel;

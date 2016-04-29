@@ -32,4 +32,6 @@ public interface IntegralRuleDao {
 
     int delIntegralRule(@Param("id") Integer id);
 
+    IntegralRule findIntegralRuleForOrder(Map<String,Object> param);
+
 }

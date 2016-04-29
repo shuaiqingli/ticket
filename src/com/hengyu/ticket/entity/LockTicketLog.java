@@ -12,11 +12,12 @@ public class LockTicketLog implements Serializable {
     private String username;
     private Integer lmid;
     private String linename;
-    private String shiftnum;
+    private String shiftcode;
     private String ridedate;
     private Integer quantity;
     private String seats;
     private String makedate;
+    private Integer shiftid;
 
     public Integer getId() {
         return id;
@@ -66,14 +67,6 @@ public class LockTicketLog implements Serializable {
         this.linename = linename;
     }
 
-    public String getShiftnum() {
-        return shiftnum;
-    }
-
-    public void setShiftnum(String shiftnum) {
-        this.shiftnum = shiftnum;
-    }
-
     public String getRidedate() {
         return ridedate;
     }
@@ -104,5 +97,21 @@ public class LockTicketLog implements Serializable {
 
     public void setMakedate(String makedate) {
         this.makedate = makedate;
+    }
+
+    public Integer getShiftid() {
+        return shiftid;
+    }
+
+    public void setShiftid(Integer shiftid) {
+        this.shiftid = shiftid;
+    }
+
+    public String getShiftcode() {
+        return shiftcode;
+    }
+
+    public void setShiftcode(String shiftcode) {
+        this.shiftcode = shiftcode;
     }
 }

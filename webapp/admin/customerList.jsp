@@ -28,6 +28,8 @@
                             <c:if test="${param.rank=='2'}">selected</c:if> >站务
                     </option>
                 </select>
+                <input type="text" name="startDate" value="${param.startDate}" placeholder="开始日期" style="height:30px;" >
+                <input type="text" name="endDate" value="${param.endDate}" placeholder="结束日期" style="height:30px;" >
                 <input type="text" name="cname" value="${param.cname }"
                        placeholder="手机/名称" style="height:30px;">
                 <a class="btn"

@@ -130,7 +130,7 @@ public class StatisticControl {
         page.setPageSize(1000000);
         List dataList = statisticService.billStatistic(StringUtils.isBlank(startDate) ? null : startDate, StringUtils.isBlank(endDate) ? null : endDate, StringUtils.isBlank(keyword) ? null : Arrays.asList(keyword.split("\\|")), page);
         String[] titles = new String[]{"出发日期", "线路ID", "线路名称", "线路编码", "站点ID", "站点名称", "原价金额", "原价数量", "优惠价金额", "优惠价数量", "总数量", "代金券总金额", "代金券数量", "实收总金额", "退票数量", "退票总金额"};
-        String[] columns = new String[]{"RideDate", "LMID", "LineName", "ShiftNum", "STStartID", "STStartName", "Price", "PriceNum", "VPrice", "VPriceNum", "PriceNumTotal", "CouponSum", "CouponTotal", "ActualSum", "RefundNum", "RefundActualSum"};
+        String[] columns = new String[]{"RideDate", "LMID", "LineName", "ShiftCode", "STStartID", "STStartName", "Price", "PriceNum", "VPrice", "VPriceNum", "PriceNumTotal", "CouponSum", "CouponTotal", "ActualSum", "RefundNum", "RefundActualSum"};
         XSSFWorkbook book = ExcelHanlder.exportExcel(titles, columns, "对账统计", dataList, null);
         String name = "对账统计.xlsx";
         byte[] bytes = request.getHeader("User-Agent").contains("MSIE") ? name.getBytes() : name.getBytes("UTF-8");

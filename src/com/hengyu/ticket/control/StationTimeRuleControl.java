@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import java.text.MessageFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -117,6 +118,9 @@ public class StationTimeRuleControl {
         }
         Assert.notEmpty(rule.getRules(), "请添加规则！");
         SimpleDateFormat tf = DateHanlder.getTimeFromat();
+
+
+
         for (StationTimeRule r : rule.getRules()) {
             String begintime = r.getBegintime();
             String endtime = r.getEndtime();
@@ -129,7 +133,16 @@ public class StationTimeRuleControl {
             int j = 0;
             boolean isStartStation = false;
             boolean isEndStation = false;
+
+            List<LineManageStation> tempStations = new ArrayList<>();
+
             for (LineManageStation s : r.getStations()) {
+                    if(s.getIsdel()==null||s.getIsdel()==0){
+                        tempStations.add(s);
+                    }
+            }
+
+            for (LineManageStation s : tempStations) {
                 if (j > 0) {
                     LineManageStation lms = r.getStations().get(j - 1);
                     Assert.isTrue(s.getRequiretime()>lms.getRequiretime(), MessageFormat.format("{0}站点间隔时间填写不正确！",s.getStname()));

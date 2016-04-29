@@ -1,6 +1,7 @@
 package com.hengyu.ticket.api.app;
 
 import java.io.Writer;
+import java.math.BigDecimal;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -14,8 +15,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import com.alibaba.fastjson.JSON;
 import com.hengyu.ticket.entity.API;
 import com.hengyu.ticket.entity.SaleOrder;
+import com.hengyu.ticket.service.SaleOrderDifferenceService;
 import com.hengyu.ticket.service.SaleOrderService;
 import com.hengyu.ticket.util.APIUtil;
+import com.hengyu.ticket.util.DateUtil;
+import com.hengyu.ticket.util.ValidationUtil;
 import com.hengyu.ticket.util.WeixinHanlder;
 
 
@@ -30,7 +34,8 @@ public class WXPay {
 	@Autowired
 	private SaleOrderService sos;
 
-	
+	@Autowired
+	private SaleOrderDifferenceService sods;
 	//微信预支付信息
 	@SuppressWarnings("unchecked")
 	@RequestMapping("wx/pay")
@@ -46,11 +51,14 @@ public class WXPay {
 			}else{
 				Map<String, String> pay;
 				if(type!=null&&type.equals("APP")){
-					pay = WeixinHanlder.appPay(so.getLinename(),id, so.getActualSum(), rq.getLocalAddr(), null,type);
+					pay = WeixinHanlder.appPay(so.getLinename(),id, so.getActualsum(), rq.getLocalAddr(), null,type);
 				}else{
 					Assert.hasText(openid,"微信唯一编号不能为空！");
-					pay = WeixinHanlder.pay(so.getLinename(), id, so.getActualSum(), rq.getLocalAddr(), openid, null,null);
+					pay = WeixinHanlder.pay(so.getLinename(), id, so.getActualsum(), rq.getLocalAddr(), openid, null,null);
 				}
+                if(pay.containsKey("error")){
+                    api.setCode(500);
+                }
 				api.getDatas().add(pay);
 				so.setPayfeedback(JSON.toJSONString(pay));
 			}
@@ -58,4 +66,25 @@ public class WXPay {
 		}
 	}
 	
+	@RequestMapping("wx/scanCode")
+	public void scanCode(String openid,HttpServletRequest req,Writer w) throws Exception{
+		String payamt = req.getParameter("pay_amt");
+		Assert.isTrue(ValidationUtil.isAmount(payamt),"金额不正确");
+		String soid = req.getParameter("soid");
+		SaleOrder order = sos.find(soid);
+		Assert.notNull(order,"补差价--订单不存在");
+		String sid = req.getParameter("sid");
+		String sname = req.getParameter("sname");
+		String memo = req.getParameter("memo");
+		String makeDate = DateUtil.getCurrentDateTime();
+		String body = req.getParameter("body");
+		String pay_source = req.getParameter("pay_source");//预留字段 支付来源
+		if(StringUtils.isEmpty(body)){
+			body = "欢迎使用捷乘扫码支付!!!";
+		}
+		String inside_id = sods.saveRequestPayData(payamt, soid, makeDate, sid, sname, memo,"WX");
+		BigDecimal money = sods.getPayAmt(inside_id);
+		Map<String, String> pay = WeixinHanlder.pay(body, inside_id,money, req.getLocalAddr(), openid, "http://bisouyi.tunnel.qydev.com/ticket/wx/scanCodeNotify", "NATIVE");
+		System.out.println(pay.toString());
+	}
 }

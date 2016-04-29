@@ -82,8 +82,11 @@ public class PlateControl {
 				p.setCarmodelname(br.getTagsubvalue());
 			}
 			if(p.getId()!=null){
+				Plate savedPalte = plateService.find(p.getId());
+				Assert.isTrue(savedPalte.getPlatenum().equals(p.getPlatenum()) || plateService.findByPlateNum(p.getPlatenum()) == null, "车牌已存在" );
 				result = plateService.update(p);
 			}else{
+				Assert.isNull(plateService.findByPlateNum(p.getPlatenum()), "车牌已存在");
 				result = plateService.save(p);
 			}
 		}

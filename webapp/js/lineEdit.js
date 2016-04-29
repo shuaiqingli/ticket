@@ -4,7 +4,147 @@ $(function () {
         $('.nav-tabs li').eq(tabIndex).addClass("active").siblings().removeClass("active");
         $('.tab-content .tab-pane').eq(tabIndex).addClass("active").siblings().removeClass("active");
     }
+
+    $('.newScheduleRule').bind("click", function () {
+        editScheduleRule(basePath+"/user/lineScheduleRule?lineid="+$lineid);
+    })
+
+    $('#scheduleRuleList').find("tr").not($('.schedules,.btn-group,a')).click(function () {
+        var index = $(this).next().attr("index");
+        if (index != '') {
+            var cls = '.schedules' + index;
+            console.debug(cls);
+            $(cls).slideToggle(0);
+        }
+    });
+
+    $('.newSaleRule').bind("click", function () {
+        newSaleRule(basePath+"/user/lineSaleRule?lmid="+lmid);
+    })
 });
+
+function newSaleRule(url) {
+    var $iframe = null;
+    var $index = null;
+    layer.open({
+        type: 2,
+        title: '编辑售票规则',
+        btn: ['确定', '取消'],
+        shadeClose: true,
+        move: 0,
+        shade: 0.8,
+        area: ['980px', '75%'],
+        offset: '100px',
+        content: url,
+        success: function (layero, index) {
+            $index = index;
+            $iframe = layero.find('iframe');
+        },
+        yes: function () {
+            var e = $iframe.contents();
+            var details = e.find('.detail');
+            var params = {};
+            params.lmid = lmid;
+            params.id = e.find('.rule').find('.id').val();
+            params.tplname = e.find('.ptname').val();
+            params.strid = e.find('.strid').val();
+            params.ticketquantity = e.find('.ticketquantity').val()||0;
+            params.lockquantity = e.find('.lockquantity').val()||0;
+            params.isdefault = e.find('.isdefault').prop('checked')?1:0;
+            params.isstart = e.find('.isstart').val()||0;
+            params.startseat = e.find('.startseat').val()||0;
+            var prefix = "tps";
+
+            if(!e.find('.seatnoExists').prop('checked')){
+                params.isstart = 0;
+                params.startseat = 0;
+            }
+
+            details.each(function(i,v){
+                var $v = $(v);
+                params[prefix+'['+i+'].lmid'] = lmid;
+                params[prefix+'['+i+'].id'] = $v.find('.id').val();
+                params[prefix+'['+i+'].ststartname'] = $v.find('.ststartname').val();
+                params[prefix+'['+i+'].starrivename'] = $v.find('.starrivename').val();
+                params[prefix+'['+i+'].ststartid'] = $v.find('.ststartid').val();
+                params[prefix+'['+i+'].starriveid'] = $v.find('.starriveid').val();
+                params[prefix+'['+i+'].limitsale'] = $v.find('.quantity').val();
+                params[prefix+'['+i+'].limitcoupons'] = $v.find('.couponquantity').val();
+                params[prefix+'['+i+'].price'] = $v.find('.price').val();
+            });
+
+            console.debug(params);
+            //return;
+            ajax(params, basePath + "/user/editTripPriceRule", function (data) {
+                if (data >= 1) {
+                    location.href = location.href.split('#')[0] + '&date=' + new Date() + '#5';
+                } else {
+                    layer.alert("操作失败！");
+                }
+            });
+            throw "";
+        }
+    });
+}
+function editScheduleRule(url) {
+    var $iframe = null;
+    var $index = null;
+    layer.open({
+        type: 2,
+        title: '编辑排班',
+        btn: ['确定', '取消'],
+        shadeClose: true,
+        move: 0,
+        shade: 0.8,
+        area: ['900px', '75%'],
+        offset: '100px',
+        content: url,
+        success: function (layero, index) {
+            $index = index;
+            $iframe = layero.find('iframe');
+        },
+        yes: function () {
+            var e = $iframe.contents();
+            var scheduname = e.find("[name=scheduname]").val();
+            if (scheduname == '' || scheduname == undefined) {
+                layer.msg("排班名称不能为空！")
+                throw "";
+            }
+            var schedules = e.find('.scheduleDetail').not(e.find('.scheduleDetail').first());
+            if (schedules.length == 0) {
+                layer.msg("排班不能为空！")
+                throw "";
+            }
+            var params = {};
+            params.scheduname = scheduname;
+            params.lmid = $id;
+            params.lineid = $lineid;
+            params.id = e.find(".sched_id").val();
+            params.isdefault = e.find(".isdefault").prop("checked") ? 1 : 0;
+            var prefix = "schedules";
+            schedules.each(function (i, v) {
+                params[prefix + "[" + i + "].lsuid"] = params.id;
+                params[prefix + "[" + i + "].id"] = $(v).find('.id').val();
+                params[prefix + "[" + i + "].shiftcode"] = $(v).find('.shiftcode').text().trim();
+                params[prefix + "[" + i + "].starttime"] = $(v).find('.starttime').val();
+                params[prefix + "[" + i + "].isdel"] = $(v).find('.isdel').val();
+            });
+            //console.debug(params);return;
+            ajax(params, basePath + "/user/editlineschedule.do", function (data) {
+                console.debug(data);
+                console.debug(data >= 1);
+                console.debug(data == "1");
+                if (data >= 1) {
+                    location.href = location.href.split('#')[0] + '&date=' + new Date() + '#4';
+                } else {
+                    layer.alert("操作失败！")
+                }
+            });
+            throw "";
+        }
+    });
+}
+
 
 function chooseDriver() {
     var groupid = $('input[name="groupid"]').val();
@@ -26,7 +166,11 @@ function chooseDriver() {
             $iframe.contents().find('.check_single:checked').each(function () {
                 driveridList.push($(this).val());
             });
-            if (driveridList.length > 0 && typeof type == 'string') {
+            // console.debug(driveridList );
+            // console.debug('**********    ' + type);
+            // alert(driveridList.length > 0 && typeof type == 'string')
+            type = 2;
+            if (driveridList.length > 0) {
                 $.ajax({
                     type: 'POST',
                     url: basePath + '/user/bindDriverListToLine.do',

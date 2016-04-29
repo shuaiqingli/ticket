@@ -323,14 +323,31 @@ $(function(){
 })
 
 function refund(params){
-	ajax(params,basePath+"/user/refundTicket",function(json){
-		if(json>=1){
+	 ajax(params,basePath+"/user/refundTicket",function(json){
+		var resultType = json.resultType;
+		var rtid = json.refund_nos;
+		/* var urls = basePath+"/web/public/alipay/fast_refund";
+		var datas = '{rtid:"'+rtid+'"}'; */
+		if(resultType==2){
+			window.location.href=basepath+"/web/public/alipay/fast_refund.do?rtid="+rtid;
+			//syncAjax(urls,datas);
+		}else if(resultType==1){
 			layer.msg('操作成功！');
 			location.reload();
 		}else{
 			layer.msg('操作失败！');
 		}
 	});
+}
+function syncAjax(urls,datas){
+	 $.post(
+			 urls,
+             datas,
+             function(data) {
+				 alert(data);
+             },
+         'html'
+         );
 }
 
 $('._date').datetimepicker({

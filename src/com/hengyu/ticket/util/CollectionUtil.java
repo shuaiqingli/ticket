@@ -1,8 +1,21 @@
 package com.hengyu.ticket.util;
 
+import java.lang.reflect.Field;
 import java.util.*;
 
 public class CollectionUtil {
+
+    public static Map<String, Object> objectToMap(Object obj) throws IllegalAccessException {
+        Map<String, Object> map = new HashMap<String, Object>();
+        if (null != obj) {
+            Field[] declaredFields = obj.getClass().getDeclaredFields();
+            for (Field field : declaredFields) {
+                field.setAccessible(true);
+                map.put(field.getName(), field.get(obj));
+            }
+        }
+        return map;
+    }
 
     /**
      * 列表去重
@@ -90,5 +103,19 @@ public class CollectionUtil {
 
     public static boolean isEmpty(Collection collection) {
         return (collection == null || collection.isEmpty());
+    }
+    
+    /**
+     * 去掉逗号
+     * @param set
+     * @return
+     */
+    public static <T> String removeComma(Set<T> set){
+    	StringBuffer sb = new StringBuffer();
+    	Iterator<T> it = set.iterator();
+    	while(it.hasNext()){
+    		sb.append(it.next());
+    	}
+    	return sb.toString();
     }
 }

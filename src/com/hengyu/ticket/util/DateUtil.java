@@ -408,4 +408,12 @@ public final class DateUtil {
 		System.out.println("-----" + getCurrentLongDateTimeString());
 		System.out.println("-----" + getBeforeLongDateTimeString());
 	}
+
+	//yyyy-mm-dd
+	public static int getWeeknum(String date){
+		Integer[] weeknums = new Integer[]{64, 1, 2, 4, 8, 16, 32};
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(stringToDate(date));
+		return weeknums[cal.get(Calendar.DAY_OF_WEEK) - 1];
+	}
 }

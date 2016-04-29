@@ -60,6 +60,9 @@ public class LineManageControl {
     private StationTimeRuleService stationTimeRuleService;
     @Autowired
     private LineSchedueService lineSchedueService;
+    @Autowired
+    private PromotionService promotionService;
+
 
     @ModelAttribute
     public void before(LineManage lm, Model m) throws Exception {
@@ -118,6 +121,16 @@ public class LineManageControl {
         List<LineSchedue> scheduleList = lineSchedueService.findList(lm.getId());
         if(scheduleList!=null){
             m.addAttribute("schedules",scheduleList);
+        }
+
+        List<TripPriceList> tplRule = tpls.findByLMID(lm.getId());
+        if(tplRule!=null){
+            m.addAttribute("tplRule",tplRule);
+        }
+
+        List<Promotion> promotions = promotionService.findByLMID(lm.getId());
+        if(promotions!=null){
+            m.addAttribute("promotions",promotions);
         }
 
         return "user/lineEdit";
@@ -237,13 +250,6 @@ public class LineManageControl {
             m.addAttribute("date", date);
         }
         return "user/approve_line_schedule";
-    }
-
-    //审核过的班次日期
-    @RequestMapping("findApprovedShiftDates")
-    public void findApprovedShiftDates(Integer lmid, String begindate, String enddate, Writer w) throws Exception {
-        List<String> dates = sss.findApproveShiftDates(lmid, begindate, enddate);
-        APIUtil.toJSONString(dates, w);
     }
 
     //绑定司机到线路

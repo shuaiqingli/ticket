@@ -1,6 +1,9 @@
 package com.hengyu.ticket.service;
 import com.hengyu.ticket.dao.LineManageStationDao;
+import com.hengyu.ticket.dao.ShiftDao;
 import com.hengyu.ticket.entity.LineManageStation;
+import com.hengyu.ticket.entity.ScheduleTask;
+import com.hengyu.ticket.util.DateHanlder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -8,6 +11,8 @@ import com.hengyu.ticket.dao.StationTimeRuleDao;
 import com.hengyu.ticket.entity.StationTimeRule;
 import org.springframework.util.Assert;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -22,6 +27,10 @@ public class StationTimeRuleService{
 	private StationTimeRuleDao stationTimeRuleDao;
 	@Autowired
 	private LineManageStationDao lineManageStationDao;
+	@Autowired
+    private ShiftDao shiftDao;
+    @Autowired
+    private TripPriceListService tripPriceListService;
 	
 	/**
 	 * 保存一个对象
@@ -56,6 +65,15 @@ public class StationTimeRuleService{
 
 	//保存或更新规则
 	public void saveOrUpdateRule(StationTimeRule str,boolean isupdate) throws Exception {
+        if(isupdate){
+            StationTimeRule rule = stationTimeRuleDao.find(str.getId());
+            SimpleDateFormat df = DateHanlder.getDateFromat();
+            List<ScheduleTask> tasks = shiftDao.findScheduleTask(rule.getLmid(), df.format(new Date()),
+                    df.format(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24 * 60)),str.getId());
+            for(ScheduleTask task : tasks){
+                Assert.isTrue(task.getTicketstatus()==0,task.getDate()+"该规则车票已发布不能修改规则！");
+            }
+        }
 		List<StationTimeRule> rules = str.getRules();
 		if(rules==null||rules.isEmpty()){
 			stationTimeRuleDao.deleteStationByRuleID(str.getId());
@@ -88,8 +106,13 @@ public class StationTimeRuleService{
 		}
 		int i = 1;
 		for (LineManageStation station  : stations ) {
+            if(station.getId()!=null&&station.getIsdel()!=null&&station.getIsdel()==1){
+                lineManageStationDao.deleteByID(station.getId());
+                continue;
+            }
 			station.setStrid(rule.getId());
 			station.setSortnum(i);
+            station.setLmid(rule.getLmid());
 			if(station.getId()==null){
 				Assert.isTrue(lineManageStationDao.save(station)==1,"保存途径站点失败！");
 			}else{
@@ -116,7 +139,16 @@ public class StationTimeRuleService{
 
 	public void delete(Integer id) throws Exception {
 		StationTimeRule rule = stationTimeRuleDao.find(id);
-		if(rule.getStations()!=null&&!rule.getStations().isEmpty()){
+        SimpleDateFormat df = DateHanlder.getDateFromat();
+        List<ScheduleTask> tasks = shiftDao.findScheduleTask(rule.getLmid(), df.format(new Date()),
+                df.format(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24 * 60)),rule.getId());
+        if(tasks!=null){
+            for(ScheduleTask task : tasks){
+                Assert.isTrue(false,task.getDate()+ (task.getTicketstatus()==1?"该规则已经发布车票，不能删除！":"该规则已经排班，不能删除！"));
+            }
+        }
+        tripPriceListService.delete(null,id,false);
+        if(rule.getStations()!=null&&!rule.getStations().isEmpty()){
 			Assert.isTrue(stationTimeRuleDao.deleteStationByRuleID(id)>=1,"删除站点失败！");
 		}
 		Assert.isTrue(stationTimeRuleDao.delete(id)>=1,"删除规则失败！");

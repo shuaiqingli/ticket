@@ -1,7 +1,7 @@
-var version = 2.3;
-var debug = false;
+var version = 3.7;
+var debug = 0;
 var public_url = "login.html,register.html,news.html,index.html,password.html,line_address.html";
-public_url += ",option_city.html,ticket_list.html,ticket_detail.html,search_city.html,staticpage.html";
+public_url += ",option_city.html,ticket_list.html,ticket_detail.html,search_city.html,staticpage.html,city_list.html,station_list.html";
 //var basepath = "http://192.168.4.176/ticket/";
 var basepath = "../";
 var isLast = false;
@@ -113,11 +113,13 @@ function init(){
 
 	}
 	try {
+
 		if ($.cookie('openid') == null || $.cookie('openid').length < 10) {
 			$.cookie('openid', null, {
 				path : '/'
 			})
 		}
+
 	} catch (e) {
 		$.cookie('openid', null, {
 			path : '/'
@@ -126,7 +128,7 @@ function init(){
 	}
 	if(isempty($.cookie('openid'))){
 		if(hrefparams&&hrefparams.openid){
-			$.cookie('openid',hrefparams.openid);
+			$.cookie('openid',hrefparams.openid,{path:'/'});
 			if(debug){
 //				alert(hrefparams.openid)
 				console.debug('设置openid成功：' +$.cookie('openid'));
@@ -186,6 +188,7 @@ function init(){
 function logout(){
 	post("web/api/customer/customerLogout", function(json){
 		if(json.datas[0] == 'success'){
+            clearAllCookie()
 			$.cookie('user',null,{path:"/"});
 			//	$.cookie('COOKIE_CUSTOMER_MOBILE',null,{path:"/"});
 			$.cookie('COOKIE_CUSTOMER_PASSWORD',null,{path:"/"});
@@ -374,6 +377,7 @@ function jeach(json, fn) {
  * @param _type
  */
 function ajax(params, url, callback,_async,_type) {
+    //$('.loading').show();
 //	islock = true;
 //	console.debug('>>>>> update islock true');
 	if (url == undefined) {
@@ -463,7 +467,9 @@ function ajax(params, url, callback,_async,_type) {
 				XMLHttpRequest.setRequestHeader('requested-type','APP');
 				XMLHttpRequest.setRequestHeader('device','wx');
 				XMLHttpRequest.setRequestHeader('WEB','JCTICKET');
-				$(".notdata").hide();
+                if(!isempty(params.pageNo)){
+				    $(".notdata").hide();
+                }
 				beforeSend(XMLHttpRequest);
 			},
 			error: function(msg) {
@@ -543,6 +549,31 @@ function ajax(params, url, callback,_async,_type) {
 	}
 };
 
+
+var cookies_key = "COOKIE_CUSTOMER_MOBILE,openid,JSSESSIONID";
+function clearAllCookie(){
+    var keys=document.cookie.match(/[^ =;]+(?=\=)/g);
+    var arr = cookies_key.split(",");
+    console.debug(arr.length);
+    console.debug(keys);
+    if (keys) {
+        for (var i = keys.length; i--;){
+            var key = keys[i];
+            var isremove = true;
+            for (var a in arr){
+                if(arr[a]==key){
+                    isremove = false;
+                }
+            }
+            if(!isremove){
+                continue;
+            }
+            $.cookie(keys[i],null,{path:'/'})
+            $.cookie(keys[i],null,{path:'/wx'})
+            $.cookie(keys[i],null,{path:'/ticket/wx'})
+        }
+    }
+}
 
 
 function post(url, callback) {
@@ -645,22 +676,28 @@ patterns = {
 }
 
 api = {
-	//验证码
-	getVerificationCode:function(mobile,type){
-		ajax({mobile:mobile,type:type}, "public/api/getVerificationCode",function(json){
+    //验证码
+    getVerificationCode: function (mobile, type) {
+        ajax({mobile: mobile, type: type}, "public/api/getVerificationCode", function (json) {
 
-		})
-	},
-	getLineTipContent:function(lmid,date,fn){
-		ajax({lmid:lmid,date:date}, "web/api/saleorder/getLineTipContent",function(json){
-			var content = json.datas[0];
-			if(isempty(content)){
+        })
+    },
+    getLineTipContent: function (lmid, date, fn) {
+        ajax({lmid: lmid, date: date}, "web/api/saleorder/getLineTipContent", function (json) {
+            var content = json.datas[0];
+            if (isempty(content)) {
 //				fn(null);
-			}else{
-				fn(json.datas[0]);
-			}
-		})
-	}
+            } else {
+                fn(json.datas[0]);
+            }
+        })
+    },
+    getLineRefundRemark:function(lmid,fn){
+        ajax({lmid: lmid}, "public/api/getLineRefundRemark", function (json) {
+            var content = json.datas[0];
+            fn(json.datas[0]);
+        })
+    }
 }
 
 
@@ -902,19 +939,18 @@ try {
 	wx.ready(function(){
 //		wx.hideAllNonBaseMenuItem();
 //		wx.hideOptionMenu();
-		if(location.href.indexOf('index.html')){
+		/*if(location.href.indexOf('index.html')){
 			wx.getLocation({
 				type : 'wgs84', // 默认为wgs84的gps坐标，如果要返回直接给openLocation用的火星坐标，可传入'gcj02'
 				success : function(res) {
 					var latitude = res.latitude; // 纬度，浮点数，范围为90 ~ -90
 					var longitude = res.longitude; // 经度，浮点数，范围为180 ~ -180。
-					var c = $.cookie('begin_city');
-					var location = latitude+','+longitude;
-					if(c==null||c==''||c=='null'){
-						ajax({location:location}, "public/api/getCityByLocation", function(json){
+					if(JSON.parse(Client.get('begin_city')) == null){
+						ajax({location:latitude+','+longitude}, "public/api/getCityByLocation", function(json){
 							var result = json.datas[0];
 							if(result!=null){
-								$.cookie('begin_city',JSON.stringify(result));
+								Client.set("begin_city", JSON.stringify(result));
+								window.begin_city = JSON.parse(Client.get('begin_city'));
 								$('.begin_city').find('.cityname').text(result.cityname)
 								location.reload();
 							}
@@ -922,7 +958,7 @@ try {
 					}
 				}
 			});
-		}
+		}*/
 		wx.getLocation({
 			type : 'wgs84', // 默认为wgs84的gps坐标，如果要返回直接给openLocation用的火星坐标，可传入'gcj02'
 			success : function(res) {
@@ -1055,10 +1091,14 @@ function isempty(s){
 	if(typeof s == 'string'){
 		if(s==undefined||s==''||s=='null'||s.trim()==''){
 			return true;
+		}else{
+			return false;
 		}
 	}else if(typeof s == 'object'){
 		if(s.length==0){
 			return true;
+		}else{
+			return false;
 		}
 	}else{
 		return false;
@@ -1182,3 +1222,69 @@ function getuser(){
 		return null;
 	}
 }
+
+function getUrlParam(name) {
+	var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
+	var r = window.location.search.substr(1).match(reg);
+	if (r != null) return unescape(r[2]); return null;
+}
+
+function saveHistory(){
+	try{
+		var detail = JSON.parse($.cookie('ticket_detail'));
+		var history_item = {};
+		var begin_city = {};
+		begin_city.id = detail.citybeginid;
+		begin_city.cityname = detail.citybeginname;
+		var end_city = {};
+		end_city.id = detail.cityendid;
+		end_city.cityname = detail.cityendname;
+		var begin_station = {};
+		begin_station.id = detail.ststartid;
+		begin_station.cityname = detail.ststartname;
+		var end_station = {};
+		end_station.id = detail.starriveid;
+		end_station.cityname = detail.starrivename;
+		history_item.begin_city = begin_city;
+		history_item.end_city = end_city;
+		history_item.begin_station = begin_station;
+		history_item.end_station = end_station;
+		var history = JSON.parse(Client.get('history'));
+		if(null == history){
+			history = [];
+		}
+		if(history.length > 0){
+			for(var i = 0;i < history.length;i++){
+				if(history[i].begin_station.id == begin_station.id && history[i].end_station.id == end_station.id){
+					history.splice(i, 1);
+					break;
+				}
+			}
+		}
+		history.unshift(history_item);
+		if(history.length > 2){
+			history.pop();
+		}
+		Client.set('history',JSON.stringify(history));
+	}catch (e){
+
+	}
+}
+
+window.Client = {
+	get: function (key) {
+		if (window.localStorage) {
+			return localStorage.getItem(key);
+		}
+	},
+	set: function (key, value) {
+		if (window.localStorage) {
+			localStorage.setItem(key, value);
+		}
+	},
+	remove: function (key) {
+		if (window.localStorage) {
+			localStorage.removeItem(key);
+		}
+	}
+};

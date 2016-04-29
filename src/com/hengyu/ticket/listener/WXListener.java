@@ -5,6 +5,7 @@ import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import javax.servlet.annotation.WebListener;
 
+import com.hengyu.ticket.common.Const;
 import com.hengyu.ticket.util.WeixinHanlder;
 
 /**
@@ -21,6 +22,7 @@ public class WXListener implements ServletContextListener {
  
     public void contextInitialized(ServletContextEvent e)  { 
     	ServletContext servletContext = e.getServletContext();
+		Const.CONTEXT_PATH = servletContext.getRealPath("/");
     	try {
 			if (WeixinHanlder.wxConfig.get("wx_enable").equals("true")) {
 				new WeixinHanlder.ThreadAccessToken(servletContext);

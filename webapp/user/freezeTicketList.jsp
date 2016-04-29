@@ -78,7 +78,7 @@
                                 <c:if test="${data.type == 2}">解锁</c:if>
                             </td>
                             <td>${data.linename}</td>
-                            <td>${data.shiftnum}</td>
+                            <td>${data.shiftcode}</td>
                             <td>${data.quantity}</td>
                             <td>${data.seats}</td>
                             <td>${data.ridedate}</td>

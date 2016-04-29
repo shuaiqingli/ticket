@@ -28,6 +28,9 @@ public class Page implements Serializable{
 	private Object admin;//登录用户
 	//时间戳
 	private long timestamp;
+
+    //没有数据显示类型
+    private int notDataType = 0;
     
     public Page() {
     	this(DEFAULT_PAGE_NO, DEFAULT_PAGE_SIZE, 0, new ArrayList());
@@ -144,6 +147,12 @@ public class Page implements Serializable{
 	public void setTimestamp(long timestamp) {
 		this.timestamp = timestamp;
 	}
-	
-	
+
+    public int getNotDataType() {
+        return notDataType;
+    }
+
+    public void setNotDataType(int notDataType) {
+        this.notDataType = notDataType;
+    }
 }

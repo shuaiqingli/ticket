@@ -57,9 +57,10 @@ public class SaleOrderControl {
 	}
 
 	public void export(List<SaleOrder> list, HttpServletResponse resp,HttpServletRequest req) throws Exception {
-		String[] titles = new String[]{"订单号","线路","班次号","出发站","到达站","出发日期","发车时间","取票人","手机号码","数量","实付金额","总价格","下单日期","状态","顾客ID","顾客名称" };
-		String[] columns = new String[]{"id","lineName","shiftNum","sTStartName","sTArriveName","rideDate","startTime","LName",
-				"LMobile","quantity","actualSum","totalSum","makeDate","statusName","CID","CName" };
+		String[] titles = new String[]{"订单号","线路","班次号","出发站","到达站","出发日期","发车时间","取票人","手机号码","数量","退票数量",
+                "下单总数","实付金额","总价格","下单日期","状态","顾客ID","顾客名称","注册日期","取票日期" };
+		String[] columns = new String[]{"id","linename","shiftcode","ststartname","starrivename","ridedate","starttime","lname",
+				"lmobile","quantity","refundcount","ordercount","actualsum","totalsum","makedate","statusname","cid","cname","customermakedate","takedate"};
 		XSSFWorkbook book = ExcelHanlder.exportExcel(titles, columns, "订单信息", list, new ExcelHanlder.ExcelTypeHanlder<SaleOrder>() {
 			@Override
 			public void typeHanlder(SaleOrder data, XSSFRow row) {
@@ -87,7 +88,7 @@ public class SaleOrderControl {
 		Customer c = cs.find(cid);
 		Assert.notNull(c,"没有找到客户！");
 		String[] ids = checkcodes.split(",");
-		int r = sos.updateRefundOrder(ids, 1, 0, 2,"退票中",1,"已付款", c,false,1);
+		int r = sos.updateRefundOrder(ids, 1, 0, 2,"退票中",1,"已付款", c,false,1,false);
 		w.write(String.valueOf(r));
 		w.close();
 	}

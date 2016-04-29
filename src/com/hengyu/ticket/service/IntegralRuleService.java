@@ -28,6 +28,10 @@ public class IntegralRuleService {
     @Autowired
     private IntegralRuleDao integralRuleDao;
 
+    public IntegralRule findIntegralRuleForOrder(Map<String,Object> param){
+        return integralRuleDao.findIntegralRuleForOrder(param);
+    }
+
     public IntegralRule findIntegralRule(Integer id) {
         IntegralRule integralRule = integralRuleDao.findIntegralRule(id);
         Assert.notNull(integralRule, "无效积分规则");

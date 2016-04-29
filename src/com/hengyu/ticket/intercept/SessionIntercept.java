@@ -51,17 +51,18 @@ public class SessionIntercept implements HandlerInterceptor{
 			throw new BaseException(8000);
 		}else{
 			//权限验证
-			if(user instanceof Admin){
-				Admin admin = (Admin) user;
-				if(admin.getIsAdmin()!=null&&admin.getIsAdmin()==1){
-					return true;
-				}else{
-					log.error("不是超级管理员，不能访问....");
-				}
-			}
+//			if(user instanceof Admin){
+//				Admin admin = (Admin) user;
+//				if(admin.getIsAdmin()!=null&&admin.getIsAdmin()==1){
+//					return true;
+//				}else{
+//					log.error("不是超级管理员，不能访问....");
+//				}
+//			}
+            return true;
 		}
-		resp.sendRedirect("../login.jsp");
-		return false;
+//		resp.sendRedirect("../login.jsp");
+//		return false;
 	}
 
 	public List<String> getUnCheckSuffixURL() {

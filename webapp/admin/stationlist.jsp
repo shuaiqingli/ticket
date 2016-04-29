@@ -22,7 +22,7 @@
 			</div>
 			<div class="row">
 				<div class="pull-right" style="padding-right:10px;">
-					<select name="parentID" class="span2">
+					<select name="parentid" class="span2">
 <!-- 						<option value="">全部</option> -->
 						<c:forEach var="city" items="${citys}">
 							<option value="${city.id }" <c:if test="${page.param.parentid == city.id }">selected="selected"</c:if> >${city.cityname }</option>
@@ -30,7 +30,6 @@
 					</select>
 					<input name="ishot" value="1" type="hidden"/>
 					<input name="isstation" value="1" type="hidden"/>
-<!-- 					<input name="parentID" value="${page.param.parentid }" type="hidden"/> -->
 					<input type="text" name="cityName" value="${page.param.cityname}"
 						placeholder="站点名称" value="" style="height:30px;"> 
 					<a class="btn"

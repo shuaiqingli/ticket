@@ -7,16 +7,21 @@ import java.beans.PropertyDescriptor;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.apache.xmlbeans.SchemaType;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCell;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.impl.CTCellImpl;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
@@ -174,9 +179,13 @@ public class ExcelHanlder {
 			if(hanlder!=null&&val==null){
 				Object temp = hanlder.dataNullHander(column,map);
 				cell.setCellValue(temp!=null?temp.toString():"");
+                val = temp;
 			}else{
 				cell.setCellValue(val!=null?val.toString():"");
 			}
+            if(val!=null&&(val.getClass()==Integer.class)){
+                cell.setCellType(XSSFCell.CELL_TYPE_NUMERIC);
+            }
 			i++;
 		}
 	}

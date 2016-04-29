@@ -16,8 +16,11 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.alibaba.fastjson.JSON;
 import com.hengyu.ticket.entity.Admin;
+import com.hengyu.ticket.entity.CityStation;
 import com.hengyu.ticket.entity.Driver;
+import com.hengyu.ticket.entity.RelationStation;
 import com.hengyu.ticket.service.AdminService;
+import com.hengyu.ticket.service.CityStationService;
 import com.hengyu.ticket.service.DriverService;
 import com.hengyu.ticket.service.RelationStationService;
 import com.hengyu.ticket.util.APIStatus;
@@ -35,6 +38,9 @@ public class APIAdminControl {
 	@Autowired
 	private RelationStationService relationstationService;
 
+	@Autowired
+	private CityStationService cityStationService;
+	
 	// 站务登录
 	@RequestMapping(value = "/api/public/stationLogin", method = RequestMethod.POST)
 	@ResponseBody
@@ -112,11 +118,44 @@ public class APIAdminControl {
 		result.put("info", APIStatus.SYSTEM_ERROR_INFO);
 
 		// 站点
-		List rsls = relationstationService.findByUser(amap.get("userid").toString());
-
+		List<RelationStation> rsls = relationstationService.findByUser(amap.get("userid").toString());
+		//stid是城市表id
+		List<Map<String,Object>> resultList = new ArrayList<>();
+		if(rsls!=null && rsls.size()>0){
+			for(RelationStation res: rsls){
+				Map<String,Object> map = new HashMap<>();
+				String stid = res.getStid();
+				CityStation city = cityStationService.find(stid);
+				if(city!=null){
+					//根据现有数据发现,id查询到的数据如果ParentID为空那么就是城市名称和城市ID,如果不为空 那么拿到ParentID再去查这个ID的ParentID为空的那个数据
+					String parentid = city.getParentid();
+					if(StringUtils.isNotEmpty(parentid)){
+						Map<String,Object> resultMap = cityStationService.findCityNameAndIdByParentId(parentid);
+						map.put("city_id",resultMap.get("id"));
+						map.put("city_name",resultMap.get("city_name"));
+					}else{
+						map.put("city_id",city.getId());
+						map.put("city_name",city.getCityname());
+					}
+					map.put("id",res.getId());
+					map.put("stid",res.getStid());
+					map.put("stname",res.getStname());
+					map.put("userid",res.getUserid());
+					
+				}else{
+					map.put("id",res.getId());
+					map.put("stid",res.getStid());
+					map.put("stname",res.getStname());
+					map.put("userid",res.getUserid());
+					map.put("city_id","");
+					map.put("city_name","");
+				}
+				resultList.add(map);
+			}
+		}
 		result.put("status", APIStatus.SUCCESS_STATUS);
 		result.put("info", APIStatus.SUCCESS_INFO);
-		result.put("station", rsls);
+		result.put("station", resultList);
 		return JSON.toJSONString(result);
 	}
 

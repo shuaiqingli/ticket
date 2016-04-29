@@ -2,6 +2,7 @@ package com.hengyu.ticket.dao;
 
 import com.hengyu.ticket.entity.Page;
 import com.hengyu.ticket.entity.Plate;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 import java.util.Map;
@@ -74,5 +75,7 @@ public interface PlateDao {
     Long totalCountForBindLine(Page page);
 
     List<Plate> findListForBindLine(Page page);
+
+    Plate findByPlateNum(@Param("platenum") String platenum);
 
 }

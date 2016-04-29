@@ -14,7 +14,7 @@
         <input type="hidden" name="stid" value="${param.stid}">
 
         <div class="page-header">
-            <a id="main_page" href="<%=basePath%>/admin/citystationlist.do?parentID=${station.parentid}&isStation=1&ishot=1" style="color: black;border: none;"></a>
+            <a id="main_page" href="<%=basePath%>/admin/citystationlist.do?parentid=${station.parentid}&isstation=1&ishot=1" style="color: black;border: none;"></a>
             <h2>禁售规则列表(${station.cityname})</h2>
         </div>
         <div class="row">

@@ -24,6 +24,8 @@ public class LineManageStation {
     private Integer submileage;
     //线路时间规则id
     private Integer strid;
+    //标识是否删除
+    private Integer isdel;
 
     //----------------构造方法----------------
 
@@ -33,6 +35,14 @@ public class LineManageStation {
 
     //-------------- get/set方法 --------------
 
+
+    public Integer getIsdel() {
+        return isdel;
+    }
+
+    public void setIsdel(Integer isdel) {
+        this.isdel = isdel;
+    }
 
     public Integer getStrid() {
         return strid;

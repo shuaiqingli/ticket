@@ -18,10 +18,10 @@ public interface TripPriceSubDao {
 	 * @return 返回受影响行数 (int)
 	 * @throws Exception
 	 */
-	public abstract int save(TripPriceSub tripPriceSub) throws Exception;
+	int save(TripPriceSub tripPriceSub) throws Exception;
 	
 	//按规则删除
-	public abstract int deleteByTripPriceRule(Integer tprid) throws Exception;
+	int deleteByTripPriceRule(Integer tprid) throws Exception;
 	
 	/**
 	 * 更新一个对象
@@ -29,7 +29,7 @@ public interface TripPriceSubDao {
 	 * @return 返回受影响行数 (int)
 	 * @throws Exception
 	 */
-	public abstract int update(TripPriceSub tripPriceSub) throws Exception;
+	int update(TripPriceSub tripPriceSub) throws Exception;
 	
 	
 	/**
@@ -38,13 +38,13 @@ public interface TripPriceSubDao {
 	 * @return 返回TripPriceSub对象
 	 * @throws Exception
 	 */
-	public abstract TripPriceSub find(Integer id) throws Exception;
+	TripPriceSub find(Integer id) throws Exception;
 	
 	/**
 	 * 按规则查询详情
-	 * @param tprid
+	 * @param tpr
 	 * @return
 	 * @throws Exception
 	 */
-	public abstract List<TripPriceSub> findByTripPriceRule(TripPriceRule tpr) throws Exception;
+	List<TripPriceSub> findByTripPriceRule(TripPriceRule tpr) throws Exception;
 }

@@ -126,8 +126,8 @@ public class SaleOrderTicketService {
 		return saleOrderTicketDao.ticketDealByCheckCode(b);
 	}
 
-	public List<Map> findSeatNOListForLock(Integer lmid, String shiftnum, String ridedate){
-		return saleOrderTicketDao.findSeatNOListForLock(lmid, shiftnum, ridedate);
+	public List<Map> findSeatNOListForLock(String shiftid){
+		return saleOrderTicketDao.findSeatNOListForLock(shiftid);
 	}
 	
 	//获取订单中的有效票数量
@@ -141,5 +141,33 @@ public class SaleOrderTicketService {
 	
 	public long getSoldQuantity(Map c) throws Exception{
 		return saleOrderTicketDao.getSoldQuantity(c);
+	}
+	
+	/**
+	 * 根据验票码查询
+	 * @param checkCode
+	 * @return
+	 * @throws Exception
+	 */
+	public List<SaleOrderTicket> findByCheckCode(String checkCode) throws Exception {
+		return saleOrderTicketDao.findByCheckCode(checkCode);
+	}
+
+	/**
+	 * 根据checkcode获取座位号和座位ID
+	 * @param checkcode
+	 * @return key只有seat_no和seat_id
+	 */
+	public Map<String, Object> findSeatNOAndSeatId(String checkCode) {
+		return saleOrderTicketDao.findSeatNOAndSeatId(checkCode);
+	}
+
+	/**
+	 * 根据rtid获取座位号
+	 * @param checkcode
+	 * @return key只有seat_no和seat_id
+	 */
+	public List<Integer> findSeatNOByRTID(String rtid) {
+		return saleOrderTicketDao.findSeatNOByRTID(rtid);
 	}
 }

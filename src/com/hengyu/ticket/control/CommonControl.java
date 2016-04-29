@@ -1,25 +1,23 @@
 package com.hengyu.ticket.control;
 
-import com.baidu.ueditor.ActionEnter;
 import com.hengyu.ticket.util.CollectionUtil;
 import com.hengyu.ticket.util.ConfigUtil;
 import com.hengyu.ticket.util.EncryptUtil;
-import org.apache.commons.fileupload.FileItem;
-import org.apache.commons.fileupload.disk.DiskFileItemFactory;
-import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.File;
-import java.io.UnsupportedEncodingException;
+import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 通用接口
@@ -43,28 +41,26 @@ public class CommonControl {
     }
 
     private String doUpload(HttpServletRequest request, String saveBasePath, String accessBaseUrl, Long fileMaxSize, String[] fileTypes) throws Exception {
-        List<String> fileUrlList = new ArrayList<String>();
+        List<String> fileUrlList = new ArrayList<>();
         File repository = new File(saveBasePath);
         if (!repository.exists()) {
             repository.mkdirs();
         }
-        DiskFileItemFactory diskFileItemFactory = new DiskFileItemFactory();
-        diskFileItemFactory.setRepository(repository);
-        diskFileItemFactory.setSizeThreshold(1024 * 6);
-        ServletFileUpload servletFileUpload = new ServletFileUpload(diskFileItemFactory);
-        for (Object fileItemTemp : servletFileUpload.parseRequest(request)) {
-            FileItem fileItem = (FileItem) fileItemTemp;
-            String filePath = fileItem.getName();
+        MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;
+        Map<String, MultipartFile> fileMap = multipartRequest.getFileMap();
+        for (String filename : fileMap.keySet()) {
+            MultipartFile fileItem = fileMap.get(filename);
+            String filePath = fileItem.getOriginalFilename();
             if (StringUtils.isBlank(filePath)) continue;
             Assert.isTrue(fileMaxSize >= fileItem.getSize(), "文件大小超过限制");
             String extName = filePath.substring(filePath.lastIndexOf(".") + 1).toUpperCase();
             Assert.isTrue(CollectionUtil.contain(fileTypes, extName), "无效文件类型");
-            byte[] b = new byte[(int) fileItem.getSize()];
-            fileItem.getInputStream().read(b);
-            String encrytFileName = EncryptUtil.MD5(b) + "." + extName.toLowerCase();
+            String encrytFileName = EncryptUtil.MD5(fileItem.getBytes()) + "." + extName.toLowerCase();
             File tempFile = new File(saveBasePath + File.separator + encrytFileName);
             if (!tempFile.exists()) {
-                fileItem.write(tempFile);
+                FileOutputStream fos = new FileOutputStream(tempFile);
+                fos.write(fileItem.getBytes());
+                fos.close();
             }
             fileUrlList.add(accessBaseUrl + "/" + encrytFileName);
         }

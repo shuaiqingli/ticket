@@ -4,6 +4,7 @@ $(function(){
 	}
 	$('.btn_login').click(function(){
 		if(validate()){
+            //clearAllCookie();
 			var params = getparams();
 			params.openid = '';
 			login(params,function(result,json){

@@ -8,6 +8,9 @@ import java.math.BigDecimal;
   */
 public class Customer{
 
+	 //辅助字段
+	 private String startDate;
+	 private String endDate;
 	//------------------字段-----------------
 	
 	//客户编号
@@ -259,5 +262,21 @@ public class Customer{
 
 	 public void setRegaddr(String regaddr) {
 		 this.regaddr = regaddr;
+	 }
+
+	 public String getStartDate() {
+		 return startDate;
+	 }
+
+	 public void setStartDate(String startDate) {
+		 this.startDate = startDate;
+	 }
+
+	 public String getEndDate() {
+		 return endDate;
+	 }
+
+	 public void setEndDate(String endDate) {
+		 this.endDate = endDate;
 	 }
  }

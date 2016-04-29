@@ -19,10 +19,13 @@ import com.hengyu.ticket.common.Const;
 import com.hengyu.ticket.entity.Admin;
 import com.hengyu.ticket.entity.Page;
 import com.hengyu.ticket.entity.RefundTicket;
+import com.hengyu.ticket.service.AliPayService;
 import com.hengyu.ticket.service.RefundTicketService;
 import com.hengyu.ticket.service.SaleOrderService;
 import com.hengyu.ticket.util.DateHanlder;
 import com.hengyu.ticket.util.RequestTool;
+
+import net.sf.json.JSONObject;
 
 /**
  * 退款记录
@@ -38,6 +41,8 @@ public class RefundTicketControl {
 	@Autowired
 	private SaleOrderService sos;
 
+	@Autowired
+	private AliPayService aliPayService;
 	//退款列表
 	@RequestMapping("refundTicketList")
 	public String refundTicketList(Page page,Model m,HttpServletRequest req) throws Exception{
@@ -59,8 +64,29 @@ public class RefundTicketControl {
 		Assert.notNull(rpercent,"手续费扣除百分比不能为空！");
 		Assert.isTrue(rpercent>=0&&rpercent<=100,"手续费填写不正确！");
 		Admin admin = (Admin) req.getSession().getAttribute(Const.LOGIN_USER);
-		int result = sos.updateRefundSaleOrederTicket(refundno, status, memo, admin, actualprice, rpercent);
-		return String.valueOf(result);
+		JSONObject json = new JSONObject();
+		String payMode = sos.getPayMode(refundno, null);
+		if("Ali".equalsIgnoreCase(payMode)){
+			//退费数据验证,如果不对就会抛异常
+			sos.refundValidate(refundno,actualprice);
+			aliPayService.setNotifyData(refundno,status,memo,actualprice,rpercent,admin);
+			//把数据返回json然后在处理
+			json.accumulate("resultType", "2");
+			json.accumulate("refund_nos", refundno);
+			return json.toString();
+			/*String resu = "forward:/app/public/alipay/fast_refund?rtid="+refundno;
+			return new String(resu.getBytes("ISO-8859-1"),"utf-8");*/
+		}
+		if("WX".equalsIgnoreCase(payMode)){
+			int result = sos.updateRefundSaleOrederTicket(refundno, status, memo, admin, actualprice, rpercent);
+			json.accumulate("resultType",result);
+			json.accumulate("refund_nos", refundno);
+			return json.toString();
+		}else{
+			json.accumulate("resultType", "-1");
+			json.accumulate("refund_nos", refundno);
+			return json.toString();
+		}
 	}
 	
 	//关闭订单

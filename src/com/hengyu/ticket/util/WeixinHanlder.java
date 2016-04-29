@@ -367,26 +367,15 @@ public class WeixinHanlder {
             if ("success".equalsIgnoreCase(returnMap.get("return_code")) && "success".equalsIgnoreCase(returnMap.get("result_code"))) {
                 // 获取返回的预支付ID
                 String prepay_id = returnMap.get("prepay_id");
+                resultMap.put("appid",APP_PAY_APPID);
                 resultMap.put("partnerid",returnMap.get("mch_id"));
                 resultMap.put("prepayid",prepay_id);
                 resultMap.put("noncestr", map.get("nonce_str"));
                 resultMap.put("timestamp", String.valueOf(System.currentTimeMillis()/1000));
                 resultMap.put("package", "Sign=WXPay");
-
-                StringBuffer sgin = new StringBuffer();
-                sgin.append("appid=").append(APP_PAY_APPID).append("&")
-                        .append("noncestr=").append(resultMap.get("noncestr")).append("&")
-                        .append("package=").append("Sign=WXPay").append("&")
-                        .append("partnerid=").append(returnMap.get("mch_id")).append("&")
-                        .append("prepayid=").append(prepay_id).append("&")
-                        .append("timestamp=").append(resultMap.get("timestamp")).append("&")
-                        .append("key=").append(wxConfig.get("api_key"));
-
                 // 第二次签名加密
-//				String paySign = WeixinHanlder.createSign(resultMap);
-                String paySign = SecurityHanlder.md5(sgin.toString()).toUpperCase();
+                String paySign = WeixinHanlder.createSign(resultMap);
                 resultMap.put("sign", paySign);
-                resultMap.put("appid", APP_PAY_APPID);
                 log("=================== APP加密支付信息，返回微信端 resultMap: \n"+resultMap+"\n");
                 return resultMap;
             }
@@ -500,6 +489,12 @@ public class WeixinHanlder {
     }
 
 
+
+    // 微信查询订单
+    public static Map<String,String> orderquery(String orderid) throws Exception{
+        return  orderquery(orderid,null);
+    }
+
     /*
      * 微信查询订单
      * https://api.mch.weixin.qq.com/pay/orderquery
@@ -513,24 +508,29 @@ public class WeixinHanlder {
      *	</xml>
      *
      * */
-    public static Map<String, String> orderquery(String orderid) throws Exception {
+    public static Map<String,String> orderquery(String orderid,String type) throws Exception{
         SortedMap<String, String> map = new TreeMap<String, String>();
-        // 公众账号id
-        map.put("appid", APPID);
-        // 微信支付分配的商户号
-        map.put("mch_id", MCHID);
+        if(type!=null&&type.equalsIgnoreCase("APP")){
+            map.put("appid", APP_PAY_APPID);
+            map.put("mch_id", APP_MCHID);
+        }else{
+            // 公众账号id
+            map.put("appid", APPID);
+            // 微信支付分配的商户号
+            map.put("mch_id", MCHID);
+        }
         //随机字符串
-        map.put("nonce_str", create_nonce_str().replaceAll("-", ""));
-        map.put("transaction_id", orderid);
-        map.put("sign", createSign(map));
+        map.put("nonce_str", create_nonce_str().replaceAll("-",""));
+        map.put("out_trade_no", orderid);
+        map.put("sign",createSign(map));
         String params = XML.toXML(map);
-        Map<String, String> returnmap = XML.toMap(URLHanlder.post("https://api.mch.weixin.qq.com/pay/orderquery", params));
+        Map<String,String> returnmap = XML.toMap(URLHanlder.post("https://api.mch.weixin.qq.com/pay/orderquery",params));
         if ("success".equalsIgnoreCase(returnmap.get("return_code"))) {
             return returnmap;
-        } else {
+        }else{
             log(returnmap);
         }
-        return null;
+        return returnmap;
     }
 
     //	<xml>
@@ -623,8 +623,8 @@ public class WeixinHanlder {
         String nonce_str = create_nonce_str();
         String timestamp = create_timestamp();
         String signature = "";
-        if (wxConfig.get("wx_use_other_token").equals("true")) {
-            jsapi_ticket = getOtherToken().get("wx_ticket");
+        if (wxConfig.get("wx_use_other_token").equals("true")&&jsapi_ticket==null) {
+            jsapi_ticket = getOtherToken().get("wx_js_ticket");
         }
         String string1;
         //注意这里参数名必须全部小写，且必须有序
@@ -844,24 +844,21 @@ public class WeixinHanlder {
     public static class Messaeg {
 
         //发送模板消息
-        public static void sendTemplate(String openid, String templateId, String url, Map<String, Object> data) {
-            try {
-                String token = getOtherToken().get("wx_access_token");
-                if (token == null) {
-                    return;
-                }
-                Map<String, Object> map = new HashMap<String, Object>();
-                map.put("touser", openid);
-                map.put("template_id", templateId);
-                map.put("url", url);
-                map.put("data", data);
-                String requestbody = JSON.toJSONString(map);
-                StringBuilder sb_url = new StringBuilder();
-                sb_url.append("https://api.weixin.qq.com/cgi-bin/message/template/send?access_token=").append(token);
-                URLHanlder.post(sb_url.toString(), requestbody);
-            } catch (Exception e) {
-
+        public static String sendTemplate(String openid, String templateId, String url, Map<String, Object> data) throws Exception {
+            String token = getOtherToken().get("wx_access_token");
+            if (token == null) {
+                return null;
             }
+            Map<String, Object> map = new HashMap<String, Object>();
+            map.put("touser", openid);
+            map.put("template_id", templateId);
+            map.put("url", url);
+            map.put("data", data);
+            String requestbody = JSON.toJSONString(map);
+            StringBuilder sb_url = new StringBuilder();
+            sb_url.append("https://api.weixin.qq.com/cgi-bin/message/template/send?access_token=").append(token);
+            InputStream post = URLHanlder.post(sb_url.toString(), requestbody);
+            return URLHanlder.toString(post);
         }
     }
 }

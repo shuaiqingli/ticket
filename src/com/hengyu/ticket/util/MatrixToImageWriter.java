@@ -59,7 +59,7 @@ public final class MatrixToImageWriter {
 		}else{
 			realpathname = name+ ".png";;
 		}
-		File outputFile = new File(path + realpathname);
+		File outputFile = new File(path + File.separator + realpathname);
 		MatrixToImageWriter.writeToFile(bitMatrix, format, outputFile);
 		return realpathname;
 	}

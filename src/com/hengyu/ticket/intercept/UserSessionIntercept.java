@@ -5,10 +5,15 @@ import com.hengyu.ticket.common.Const;
 import com.hengyu.ticket.entity.Admin;
 import com.hengyu.ticket.exception.BaseException;
 import com.hengyu.ticket.service.AdminService;
+import com.hengyu.ticket.service.CarPositionService;
+import com.hengyu.ticket.service.MakeConfService;
 import com.hengyu.ticket.util.CollectionUtil;
 import com.hengyu.ticket.util.CommonUtil;
+import com.hengyu.ticket.util.PositionSocketUtil;
+import com.hengyu.ticket.util.SmsUtil;
 import org.apache.log4j.Logger;
 import org.apache.log4j.MDC;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
@@ -24,12 +29,16 @@ import javax.servlet.http.HttpSession;
  * @author LGF
  *         2015-09-28
  */
-public class UserSessionIntercept implements HandlerInterceptor {
+public class UserSessionIntercept implements HandlerInterceptor, InitializingBean {
 
     private static Logger log = Logger.getLogger(UserSessionIntercept.class);
 
     @Autowired
     private AdminService adminService;
+    @Autowired
+    private MakeConfService makeConfService;
+    @Autowired
+    private CarPositionService carPositionService;
 
     @Override
     public void afterCompletion(HttpServletRequest req,
@@ -74,7 +83,7 @@ public class UserSessionIntercept implements HandlerInterceptor {
                     Admin login = adminService.login(admin);
                     if (login != null) {
                         req.getSession().setAttribute(Const.LOGIN_USER, login);
-                    }else{
+                    } else {
                         loginFlag = false;
                     }
                 } catch (Exception e) {
@@ -115,5 +124,17 @@ public class UserSessionIntercept implements HandlerInterceptor {
         MDC.put("operation", "interface|" + request.getServletPath().split("\\?")[0]);
         MDC.put("remark", CollectionUtil.mapToString(request.getParameterMap()));
         log.info(MDC.get("operation"));
+    }
+
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        PositionSocketUtil.carPositionService = carPositionService;
+        PositionSocketUtil.init();
+        try {
+            SmsUtil.Platform = makeConfService.find("Platform").getCurrentValue();
+        } catch (Exception e) {
+            log.error("读取短信配置失败");
+            SmsUtil.Platform = 1;
+        }
     }
 }

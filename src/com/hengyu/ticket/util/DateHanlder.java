@@ -194,6 +194,20 @@ public class DateHanlder {
 		}
 		return wks;
 	}
+
+    public  static String getWeekDayStr(Object date) throws Exception {
+        Date d  = null;
+        if(date instanceof Date ){
+            d = (Date) date;
+        }else{
+            d = getDateFromat().parse(date.toString());
+        }
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(d);
+        int w = calendar.get(Calendar.DAY_OF_WEEK);
+        return WEEKS_STR[w-1];
+
+    }
 	
 	/**
 	 * 检查日期是否包含星期

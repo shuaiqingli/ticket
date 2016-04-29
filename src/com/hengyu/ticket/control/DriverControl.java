@@ -93,6 +93,7 @@ public class DriverControl {
             if (StringUtils.isNotEmpty(driver.getId())&&0==issave) {
                 result = driverService.update(driver);
             } else {
+                Assert.isNull(driverService.find(driver.getId()), "员工编号已存在");
                 driver.setMakedate(DateHanlder.getCurrentDateTime());
                 result = driverService.save(driver);
             }
@@ -192,7 +193,8 @@ public class DriverControl {
     @RequestMapping(value = "selectDriver.do")
     public String selectDriver(Page page, String groupid, String type, String keyword, Model m) {
         Assert.hasText(groupid, "线路不能为空");
-        Assert.isTrue(CollectionUtil.contain(new String[]{"1","2"}, type), "无效类型");
+        /*Assert.isTrue(CollectionUtil.contain(new String[]{"1","2"}, type), "无效类型");*/
+        type = "2";
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("groupid", groupid);
         params.put("type", type);

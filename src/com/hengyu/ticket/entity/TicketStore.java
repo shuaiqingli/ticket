@@ -13,8 +13,10 @@ public class TicketStore{
 	private Integer id;
 	//线路编号
 	private Integer lmid;
+    //班次号
+	private Long shiftid;
 	//车票日期
-	private String ticketDate;
+	private String ticketdate;
 	//剩余车票
 	private Integer balanceQuantity;
 	//总票
@@ -26,17 +28,16 @@ public class TicketStore{
 	//锁定车票数量
 	private Integer lockquantity;
 	//生成车票日期
-	private String makeDate;
-	//班次号
-	private String shiftCode;
-	
+	private String makedate;
+	//是否发布
+	private Integer isrelease;
 	//车票线路
 	private List<TicketLine> ticketlines;
-	
-	
+
+
 	//===================== 查询条件
-	
-	
+
+
 	//始发站城市编号
 	private String citystartid;
 	//始发站编号
@@ -47,8 +48,6 @@ public class TicketStore{
 	private String starriveid;
 	//运输公司
 	private String transcompany;
-	//是否发布
-	private Integer isrelease;
 	//是否审核
 	//0未审核
 	//1已审核
@@ -66,191 +65,157 @@ public class TicketStore{
 	}
 
 	//-------------- get/set方法 --------------
-	
-	
 
 
-	public Integer getId() {
-		return id;
-	}
+    public Integer getId() {
+        return id;
+    }
 
-	public void setId(Integer id) {
-		this.id = id;
-	}
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
-	/**
-	 *获取ticketDate (车票日期)
-	 * @return String  
-	 */
-	public String getTicketDate(){
-		return ticketDate;
-	}
+    public Integer getLmid() {
+        return lmid;
+    }
 
-	/**
-	 *设置ticketDate (车票日期)
-	 * @param ticketDate 
- 	 */
-	public void setTicketDate(String ticketDate){
-		this.ticketDate = ticketDate;
-	}
+    public void setLmid(Integer lmid) {
+        this.lmid = lmid;
+    }
 
-	/**
-	 *获取balanceQuantity (剩余车票)
-	 * @return Integer  
-	 */
-	public Integer getBalanceQuantity(){
-		return balanceQuantity;
-	}
+    public String getTicketdate() {
+        return ticketdate;
+    }
 
-	/**
-	 *设置balanceQuantity (剩余车票)
-	 * @param balanceQuantity 
- 	 */
-	public void setBalanceQuantity(Integer balanceQuantity){
-		this.balanceQuantity = balanceQuantity;
-	}
+    public void setTicketdate(String ticketdate) {
+        this.ticketdate = ticketdate;
+    }
 
-	/**
-	 *获取makeDate (生成车票日期)
-	 * @return String  
-	 */
-	public String getMakeDate(){
-		return makeDate;
-	}
+    public Integer getBalanceQuantity() {
+        return balanceQuantity;
+    }
 
-	/**
-	 *设置makeDate (生成车票日期)
-	 * @param makeDate 
- 	 */
-	public void setMakedate(String makeDate){
-		this.makeDate = makeDate;
-	}
+    public void setBalanceQuantity(Integer balanceQuantity) {
+        this.balanceQuantity = balanceQuantity;
+    }
 
-	public String getShiftCode() {
-		return shiftCode;
-	}
+    public Integer getAllquantity() {
+        return allquantity;
+    }
 
-	public void setShiftCode(String shiftCode) {
-		this.shiftCode = shiftCode;
-	}
+    public void setAllquantity(Integer allquantity) {
+        this.allquantity = allquantity;
+    }
 
-	public Integer getLmid() {
-		return lmid;
-	}
+    public Integer getCouponquantity() {
+        return couponquantity;
+    }
 
-	public void setLmid(Integer lmid) {
-		this.lmid = lmid;
-	}
+    public void setCouponquantity(Integer couponquantity) {
+        this.couponquantity = couponquantity;
+    }
 
-	public String getCitystartid() {
-		return citystartid;
-	}
+    public Integer getBalancecouponquantity() {
+        return balancecouponquantity;
+    }
 
-	public void setCitystartid(String citystartid) {
-		this.citystartid = citystartid;
-	}
+    public void setBalancecouponquantity(Integer balancecouponquantity) {
+        this.balancecouponquantity = balancecouponquantity;
+    }
 
-	public String getStstartid() {
-		return ststartid;
-	}
+    public Integer getLockquantity() {
+        return lockquantity;
+    }
 
-	public void setStstartid(String ststartid) {
-		this.ststartid = ststartid;
-	}
+    public void setLockquantity(Integer lockquantity) {
+        this.lockquantity = lockquantity;
+    }
 
-	public String getCityarriveid() {
-		return cityarriveid;
-	}
+    public String getMakedate() {
+        return makedate;
+    }
 
-	public void setCityarriveid(String cityarriveid) {
-		this.cityarriveid = cityarriveid;
-	}
+    public void setMakedate(String makedate) {
+        this.makedate = makedate;
+    }
 
-	public String getStarriveid() {
-		return starriveid;
-	}
+    public List<TicketLine> getTicketlines() {
+        return ticketlines;
+    }
 
-	public void setStarriveid(String starriveid) {
-		this.starriveid = starriveid;
-	}
+    public void setTicketlines(List<TicketLine> ticketlines) {
+        this.ticketlines = ticketlines;
+    }
 
-	public String getTranscompany() {
-		return transcompany;
-	}
+    public String getCitystartid() {
+        return citystartid;
+    }
 
-	public void setTranscompany(String transcompany) {
-		this.transcompany = transcompany;
-	}
+    public void setCitystartid(String citystartid) {
+        this.citystartid = citystartid;
+    }
 
-	public Integer getAllquantity() {
-		return allquantity;
-	}
+    public String getStstartid() {
+        return ststartid;
+    }
 
-	public void setAllquantity(Integer allquantity) {
-		this.allquantity = allquantity;
-	}
+    public void setStstartid(String ststartid) {
+        this.ststartid = ststartid;
+    }
 
-	public List<TicketLine> getTicketlines() {
-		return ticketlines;
-	}
+    public String getCityarriveid() {
+        return cityarriveid;
+    }
 
-	public void setTicketlines(List<TicketLine> ticketlines) {
-		this.ticketlines = ticketlines;
-	}
+    public void setCityarriveid(String cityarriveid) {
+        this.cityarriveid = cityarriveid;
+    }
 
-	public Integer getIsrelease() {
-		return isrelease;
-	}
+    public String getStarriveid() {
+        return starriveid;
+    }
 
-	public void setIsrelease(Integer isrelease) {
-		this.isrelease = isrelease;
-	}
+    public void setStarriveid(String starriveid) {
+        this.starriveid = starriveid;
+    }
 
-	public Integer getIsapprove() {
-		return isapprove;
-	}
+    public String getTranscompany() {
+        return transcompany;
+    }
 
-	public void setIsapprove(Integer isapprove) {
-		this.isapprove = isapprove;
-	}
+    public void setTranscompany(String transcompany) {
+        this.transcompany = transcompany;
+    }
 
-	public Integer getCouponquantity() {
-		return couponquantity;
-	}
+    public Integer getIsrelease() {
+        return isrelease;
+    }
 
-	public void setCouponquantity(Integer couponquantity) {
-		this.couponquantity = couponquantity;
-	}
+    public void setIsrelease(Integer isrelease) {
+        this.isrelease = isrelease;
+    }
 
-	public Integer getBalanceCouponquantity() {
-		return balancecouponquantity;
-	}
+    public Integer getIsapprove() {
+        return isapprove;
+    }
 
-	public void setBalanceCouponquantity(Integer balancecouponquantity) {
-		this.balancecouponquantity = balancecouponquantity;
-	}
+    public void setIsapprove(Integer isapprove) {
+        this.isapprove = isapprove;
+    }
 
-	public TripPriceRule getTpr() {
-		return tpr;
-	}
+    public TripPriceRule getTpr() {
+        return tpr;
+    }
 
-	public void setTpr(TripPriceRule tpr) {
-		this.tpr = tpr;
-	}
+    public void setTpr(TripPriceRule tpr) {
+        this.tpr = tpr;
+    }
 
-	public Integer getBalancecouponquantity() {
-		return balancecouponquantity;
-	}
+    public Long getShiftid() {
+        return shiftid;
+    }
 
-	public void setBalancecouponquantity(Integer balancecouponquantity) {
-		this.balancecouponquantity = balancecouponquantity;
-	}
-
-	public Integer getLockquantity() {
-		return lockquantity;
-	}
-
-	public void setLockquantity(Integer lockquantity) {
-		this.lockquantity = lockquantity;
-	}
+    public void setShiftid(Long shiftid) {
+        this.shiftid = shiftid;
+    }
 }

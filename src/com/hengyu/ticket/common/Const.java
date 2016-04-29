@@ -35,6 +35,9 @@ public class Const {
 	
 	
 	public static final String QRCODE_PATH = "/wx/qrcode/";
+
+	//上下文路径
+	public static String CONTEXT_PATH ;
 	
 	
 	//主键配置表 主键常量

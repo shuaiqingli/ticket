@@ -9,23 +9,29 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.alibaba.fastjson.JSON;
+import com.hengyu.ticket.entity.Admin;
 import com.hengyu.ticket.entity.CityStation;
 import com.hengyu.ticket.entity.LineManage;
 import com.hengyu.ticket.entity.SaleOrder;
+import com.hengyu.ticket.entity.Shift;
 import com.hengyu.ticket.entity.ShiftStart;
 import com.hengyu.ticket.entity.TicketStore;
 import com.hengyu.ticket.service.AdminLineService;
+import com.hengyu.ticket.service.AdminService;
 import com.hengyu.ticket.service.CityStationService;
 import com.hengyu.ticket.service.LineManageService;
 import com.hengyu.ticket.service.SaleOrderService;
 import com.hengyu.ticket.service.SaleOrderTicketService;
+import com.hengyu.ticket.service.ShiftService;
 import com.hengyu.ticket.service.ShiftStartService;
 import com.hengyu.ticket.service.TicketLineService;
 import com.hengyu.ticket.service.TicketStoreService;
@@ -54,6 +60,11 @@ public class APIShiftStartControl {
 	@Autowired
 	private TicketLineService ticketlineService;
 
+	@Autowired
+	private ShiftService shiftService;
+	
+	@Autowired
+	private AdminService adminService;
 	// 查询班次--首页，无条件
 	@RequestMapping(value = "/api/station/shiftStartList", method = RequestMethod.POST)
 	@ResponseBody
@@ -79,15 +90,21 @@ public class APIShiftStartControl {
 		for (int i = 0; i < ssls.size(); i++) {
 			Map<String, Object> na = new HashMap<String, Object>();
 			ShiftStart o = (ShiftStart) ssls.get(i);
-			na.put("id", o.getId());
+			na.put("id",o.getId());
 			na.put("lmid", o.getLmid());
-			na.put("linename", o.getLinename());
-			na.put("shiftcode", o.getShiftcode());
+			if(StringUtils.isEmpty(o.getLinename())){
+				Shift shift = shiftService.find(o.getShiftid());
+				na.put("linename",shift.getLinename());
+			}else{
+				na.put("linename", o.getLinename());
+			}
+			na.put("shiftID", o.getShiftid());
 			na.put("starttime", o.getPunctualstart());
 			// 查余票 按lineid,shiftcode,ticketdate
 			Map<String, Object> b = new HashMap<String, Object>();
 			b.put("lmid", o.getLmid());
-			b.put("shiftcode", o.getShiftcode());
+			//b.put("shiftcode", o.getShiftcode());//换为shiftID
+			b.put("shiftID", o.getShiftid());
 			b.put("ticketdate", DateUtil.getCurrentDateString());
 			b.put("stid", stid);
 			List stls = ticketstoreService.getTicketStoreByLST(b);
@@ -102,13 +119,15 @@ public class APIShiftStartControl {
 			} else {
 				na.put("balancequantity", 0);
 			}
-
-			na.put("originstid", o.getOriginstid());
-			na.put("originstname", o.getOriginstname());
-			na.put("starriveid", o.getStarriveid());
-			na.put("starrivename", o.getStarrivename());
+			//查询始发站等信息
+			Shift shift = shiftService.find(o.getShiftid());
+			na.put("originstid", shift.getOriginstid());//始发站ID没有
+			na.put("originstname",shift.getOriginstname());//始发站没有 
+			na.put("starriveid", shift.getStarriveid());//目的地ID没有
+			na.put("starrivename",shift.getStarrivename());//目的地名称
 			// na.put("currstationname", o.getCurrstationname());
-			na.put("originstarttime", o.getOriginstarttime());
+			na.put("originstarttime",shift.getOriginstarttime());//始发时间没有
+			na.put("shiftcode",shift.getShiftcode());
 			na.put("platenum", o.getPlatenum());
 			na.put("startmemo", o.getStartmemo());
 			// 查本站已售 ，按ridedate,lineid,shiftnum,统计sale_order的quantity
@@ -160,15 +179,19 @@ public class APIShiftStartControl {
 		for (int i = 0; i < ssls.size(); i++) {
 			Map<String, Object> na = new HashMap<String, Object>();
 			ShiftStart o = (ShiftStart) ssls.get(i);
-			na.put("id", o.getId());
+			na.put("id",o.getId());
 			na.put("lmid", o.getLmid());
-			na.put("linename", o.getLinename());
-			na.put("shiftcode", o.getShiftcode());
+			if(StringUtils.isEmpty(o.getLinename())){
+				Shift shift = shiftService.find(o.getShiftid());
+				na.put("linename",shift.getLinename());
+			}else{
+				na.put("linename", o.getLinename());
+			}
 			na.put("starttime", o.getPunctualstart());
 			// 查余票 按lineid,shiftcode,ticketdate
 			Map<String, Object> b = new HashMap<String, Object>();
 			b.put("lmid", o.getLmid());
-			b.put("shiftcode", o.getShiftcode());
+			b.put("shiftID",o.getShiftid());
 			b.put("ticketdate", DateUtil.getCurrentDateString());
 			b.put("stid", stid);
 			List stls = ticketstoreService.getTicketStoreByLST(b);
@@ -183,15 +206,18 @@ public class APIShiftStartControl {
 			} else {
 				na.put("balancequantity", 0);
 			}
-			na.put("originstid", o.getOriginstid());
-			na.put("originstname", o.getOriginstname());
-			na.put("starriveid", o.getStarriveid());
-			na.put("starrivename", o.getStarrivename());
-			na.put("originstarttime", o.getOriginstarttime());
+			Shift shift = shiftService.find(o.getShiftid());
+			na.put("originstid", shift.getOriginstid());//始发站ID没有
+			na.put("originstname",shift.getOriginstname());//始发站没有 
+			na.put("starriveid", shift.getStarriveid());//目的地ID没有
+			na.put("starrivename",shift.getStarrivename());//目的地名称
+			na.put("originstarttime",shift.getOriginstarttime());
+			na.put("shiftcode",shift.getShiftcode());
 			na.put("currstationname", o.getCurrstationname());
 			na.put("platenum", o.getPlatenum());
 			na.put("startmemo", o.getStartmemo());
 			// 查本站已售 ，按ridedate,lineid,shiftnum,统计sale_order的quantity
+			b.put("shiftID", shift.getId());
 			Long soldquantity = saleorderticketService.getSoldQuantity(b);
 			// Long soldquantity = saleorderService.getSoldQuantity(b);
 			if (soldquantity == null) {
@@ -201,7 +227,7 @@ public class APIShiftStartControl {
 			}
 			na.put("isstart", o.getIsstart());
 			na.put("isstartname", o.getIsstartname());
-			na.put("istemp", o.getIsTemp());
+			na.put("istemp", o.getIstemp());
 			als.add(na);
 		}
 
@@ -239,14 +265,20 @@ public class APIShiftStartControl {
 		for (int i = 0; i < ssls.size(); i++) {
 			Map<String, Object> na = new HashMap<String, Object>();
 			ShiftStart o = (ShiftStart) ssls.get(i);
-			na.put("id", o.getId());
+			na.put("id",o.getId());
 			na.put("lmid", o.getLmid());
-			na.put("linename", o.getLinename());
-			na.put("shiftcode", o.getShiftcode());
+			if(StringUtils.isEmpty(o.getLinename())){
+				Shift shift = shiftService.find(o.getShiftid());
+				na.put("linename",shift.getLinename());
+			}else{
+				na.put("linename", o.getLinename());
+			}
 			na.put("starttime", o.getPunctualstart());
 			// 查余票 按lineid,shiftcode,ticketdate
 			Map<String, Object> b = new HashMap<String, Object>();
 			b.put("lmid", o.getLmid());
+			//b.put("shiftcode", o.getShiftcode());
+			b.put("shiftID",o.getShiftid());
 			b.put("shiftcode", o.getShiftcode());
 			b.put("ticketdate", DateUtil.getCurrentDateString());
 			b.put("stid", stid);
@@ -262,11 +294,13 @@ public class APIShiftStartControl {
 			} else {
 				na.put("balancequantity", 0);
 			}
-			na.put("originstid", o.getOriginstid());
-			na.put("originstname", o.getOriginstname());
-			na.put("starriveid", o.getStarriveid());
-			na.put("starrivename", o.getStarrivename());
-			na.put("originstarttime", o.getOriginstarttime());
+			Shift shift = shiftService.find(o.getShiftid());
+			na.put("originstid", shift.getOriginstid());//始发站ID没有
+			na.put("originstname",shift.getOriginstname());//始发站没有 
+			na.put("starriveid", shift.getStarriveid());//目的地ID没有
+			na.put("starrivename",shift.getStarrivename());//目的地名称
+			na.put("originstarttime",shift.getOriginstarttime());
+			na.put("shiftcode",shift.getShiftcode());
 			na.put("currstationname", o.getCurrstationname());
 			na.put("platenum", o.getPlatenum());
 			na.put("startmemo", o.getStartmemo());
@@ -280,7 +314,7 @@ public class APIShiftStartControl {
 			}
 			na.put("isstart", o.getIsstart());
 			na.put("isstartname", o.getIsstartname());
-			na.put("istemp", o.getIsTemp());
+			na.put("istemp", o.getIstemp());
 			na.put("iscancel", o.getIscancel());
 			na.put("iscancelname", o.getIscancelname());
 			als.add(na);
@@ -305,19 +339,22 @@ public class APIShiftStartControl {
 		a.put("shiftcode", shiftcode.substring(0, 5));
 		a.put("currstationid", currstationid);
 		a.put("ridedate", DateUtil.getCurrentDateString());
-		ShiftStart ahf = null;
+		//ShiftStart ahf = null;
 		// 如果是临时班次（最后一个字母为Z），不要当前站，查询班次，istemp=1
 		String findthree = shiftcode.substring(2, 3);
+		Map<String,Object> map = new HashMap<>();
 		if (findthree.equals("Z")) {
-			ahf = shiftstartService.getShiftStartByTemp(a);
+			//ahf = shiftstartService.getShiftStartByTemp(a);
+			map = shiftstartService.getMap_ShiftStartByTemp(a);
 		} else {
-			ahf = shiftstartService.getShiftStartByCRS(a);
+			//ahf = shiftstartService.getShiftStartByCRS(a);
+			map = shiftstartService.getMap_ShiftStartByCRS(a);
 		}
 		Map<String, Object> result = new HashMap<String, Object>();
-		if (ahf != null) {
+		if (map != null && map.size()>0) {
 			result.put("status", APIStatus.SUCCESS_STATUS);
 			result.put("info", APIStatus.SUCCESS_INFO);
-			result.put("data", ahf);
+			result.put("data", map);
 		} else {
 			result.put("status", "09");
 			result.put("info", "没有找到数据");
@@ -334,9 +371,15 @@ public class APIShiftStartControl {
 		String stid = request.getParameter("stid");
 		ShiftStart ss = shiftstartService.find(id);
 		Map<String, Object> result = new HashMap<String, Object>();
-		result.put("id", ss.getId());
+		result.put("id",ss.getId());
 		result.put("lmid", ss.getLmid());
-		result.put("linename", ss.getLinename());
+		Shift shift = shiftService.find(ss.getShiftid());
+		if(StringUtils.isEmpty(ss.getLinename())){
+			result.put("linename",shift.getLinename());
+		}else{
+			result.put("linename", ss.getLinename());
+		}
+	
 		result.put("platenum", ss.getPlatenum());
 		result.put("driverid", ss.getDriverid());
 		result.put("drivername", ss.getDrivername());
@@ -344,25 +387,26 @@ public class APIShiftStartControl {
 		result.put("drivernameii", ss.getDrivernameii());
 		result.put("nuclearload", ss.getNuclearload());
 		result.put("punctualstart", ss.getPunctualstart());
-		result.put("originstname", ss.getOriginstname());
+		result.put("originstname", shift.getOriginstname());
 		result.put("currstationname", ss.getCurrstationname());
-		result.put("starrivename", ss.getStarrivename());
-		result.put("shiftcode", ss.getShiftcode());
+		result.put("starrivename", shift.getStarrivename());
+		//String shiftCode = shiftService.findCodeById(ss.getShiftid());
+		result.put("shiftcode",shift.getShiftcode());
 		result.put("allticketnum", ss.getAllticketnum());
 		result.put("halfticketnum", ss.getHalfticketnum());
 		result.put("freeticketnum", ss.getFreeticketnum());
-		result.put("consignquantity", ss.getConsignQuantity());
-		result.put("consignsum", ss.getConsignSum());
-		result.put("passengerquantity", ss.getPassengerQuantity());
-		result.put("passengersum", ss.getPassengerSum());
+		result.put("consignquantity", ss.getConsignquantity());
+		result.put("consignsum", ss.getConsignsum());
+		result.put("passengerquantity", ss.getPassengerquantity());
+		result.put("passengersum", ss.getPassengersum());
 		result.put("iscancel", ss.getIscancel());
 		result.put("iscancelname", ss.getIscancelname());
-
 		// 根据班次号取票价
 		Map<String, Object> tm = new HashMap<String, Object>();
-		tm.put("shiftcode", ss.getShiftcode());
+		tm.put("shiftcode",shift.getShiftcode());
 		tm.put("ticketdate", DateUtil.getCurrentDateString());
-		List tlls = ticketlineService.getTicketLineByShiftCode(tm);
+		//List tlls = ticketlineService.getTicketLineByShiftCode(tm);
+		List<Map> tlls = ticketlineService.getTicketLineByShiftId(shift.getId());
 		result.put("tlls", tlls);
 
 		// 根据lmid找线路司机数量
@@ -375,10 +419,12 @@ public class APIShiftStartControl {
 
 		// 查已售 ，按ridedate,lineid,shiftnum,统计sale_order的quantity
 		Map<String, Object> c = new HashMap<String, Object>();
+		//String shift_code = shiftService.findCodeById(ss.getShiftid());
 		c.put("ridedate", DateUtil.getCurrentDateString());
 		c.put("lmid", ss.getLmid());
-		c.put("shiftcode", ss.getShiftcode());
+		c.put("shiftID", ss.getShiftid());
 		c.put("ststartid", stid);
+		c.put("shiftcode",shift.getShiftcode());
 		c.put("ticketdate", DateUtil.getCurrentDateString());
 
 		List stls = ticketstoreService.getTicketStoreByLST(c);
@@ -399,14 +445,15 @@ public class APIShiftStartControl {
 
 		// 途经站,手工加入起点站和终点站
 		List<Map> wayls = new ArrayList<Map>();
-		Map<String, Object> s = new LinkedHashMap();
-		s.put("stid", ss.getOriginstid());
-		s.put("stname", ss.getOriginstname());
-		s.put("sortnum", 0);
+		/*Map<String, Object> s = new LinkedHashMap();
+		//Shift shift = shiftService.find(ss.getShiftid());
+		s.put("stid", shift.getOriginstid());
+		s.put("stname", shift.getOriginstname());
+		s.put("sortnum", 0);*/
 		// wayls.add(s);
 		wayls.addAll(linemanageService.getWayStation(ss.getLmid()));
 
-		wayls.add(0, s);
+		//wayls.add(0, s);
 		// wayls.add(e);
 		ArrayList awayls = new ArrayList();
 		int allpeople = 0;
@@ -421,14 +468,14 @@ public class APIShiftStartControl {
 			Map<String, Object> fss = new HashMap<String, Object>();
 			fss.put("currstationid", aw.get("stid"));
 			fss.put("ridedate", DateUtil.getCurrentDateString());
-			fss.put("shiftcode", ss.getShiftcode());
+			fss.put("shiftcode",shift.getShiftcode());
 			ShiftStart ahf = shiftstartService.getShiftStartByCRS(fss);
 			if (ahf != null) {
 				aw.put("allticketnum", ahf.getAllticketnum());
 				aw.put("halfticketnum", ahf.getHalfticketnum());
 				aw.put("freeticketnum", ahf.getFreeticketnum());
-				aw.put("consignquantity", ahf.getConsignQuantity());
-				aw.put("passengerquantity", ahf.getPassengerQuantity());
+				aw.put("consignquantity", ahf.getConsignquantity());
+				aw.put("passengerquantity", ahf.getPassengerquantity());
 				aw.put("memo", ahf.getMemo());
 				if (ahf.getMemo() != null && !ahf.getMemo().equals("null") && !ahf.getMemo().equals("")) {
 					strmemo += aw.get("stname") + "：" + ahf.getMemo() + "\n";
@@ -436,7 +483,7 @@ public class APIShiftStartControl {
 				// aw.put("memo", ahf.getMemo());
 				aw.put("isstart", ahf.getIsstart());
 				allpeople += ahf.getCurrpeople();// 累计车上人数
-				allpackage += ahf.getConsignQuantity() + ahf.getPassengerQuantity();
+				allpackage += ahf.getConsignquantity() + ahf.getPassengerquantity();
 			} else {
 				aw.put("allticketnum", 0);
 				aw.put("halfticketnum", 0);
@@ -461,6 +508,7 @@ public class APIShiftStartControl {
 		// 统计未取票人数
 		Long notake = saleorderService.getNoTakeQuantity(c);
 		if (notake == null) {
+			
 			result.put("notake", 0);
 		} else {
 			result.put("notake", notake);
@@ -476,18 +524,18 @@ public class APIShiftStartControl {
 			SaleOrder o = (SaleOrder) tls.get(a);
 
 			Map<String, Object> b = new HashMap<String, Object>();
-			b.put("ticketcode", o.getTicketCode());
+			b.put("ticketcode", o.getTicketcode());
 			int ticketcount = saleorderticketService.getValidateTicketCountBySOID(b);
 
 			at.put("id", o.getId());
 			// at.put("statusname", o.getStatusName());
-			at.put("lName", o.getLName());
-			at.put("lMobile", o.getLMobile());
+			at.put("lName", o.getLname());
+			at.put("lMobile", o.getLmobile());
 			at.put("sTArriveName", o.getStarrivename());
 			at.put("quantity", ticketcount);
-			at.put("iDCode", o.getIDCode());
+			at.put("iDCode", o.getIdcode());
 			at.put("status", o.getStatus());
-			at.put("statusName", o.getStatusName());
+			at.put("statusName", o.getStatusname());
 
 			saleallticket += ticketcount;
 			atls.add(at);
@@ -500,7 +548,7 @@ public class APIShiftStartControl {
 		result.put("notrain", notrain);
 
 		result.put("ordermsg", atls);
-		result.put("istemp", ss.getIsTemp());
+		result.put("istemp", ss.getIstemp());
 		result.put("status", APIStatus.SUCCESS_STATUS);
 		result.put("info", APIStatus.SUCCESS_INFO);
 		return JSON.toJSONString(result);
@@ -551,9 +599,11 @@ public class APIShiftStartControl {
 		c.put("driveridii", a.get("driveridii"));
 		c.put("drivernameii", a.get("drivernameii"));
 		c.put("nuclearload", a.get("nuclearload"));
-		c.put("shiftcode", ss.getShiftcode());
+		//
+		Shift shift = shiftService.find(ss.getShiftid());
+		c.put("shiftcode",shift.getShiftcode());
 		c.put("lmid", ss.getLmid());
-		c.put("ridedate", ss.getRidedate());
+		c.put("ridedate",shift.getRidedate());
 		c.put("startmemo", ss.getCurrstationname() + "已发车");
 		int comp = shiftstartService.completeShiftStart(c);
 
@@ -635,7 +685,7 @@ public class APIShiftStartControl {
 
 		return JSON.toJSONString(result);
 	}
-
+	
 	// 发车--临时加班
 	@RequestMapping(value = "/api/station/tempShiftStart", method = RequestMethod.POST)
 	@ResponseBody
@@ -644,60 +694,73 @@ public class APIShiftStartControl {
 		Map<String, Object> amap = (Map<String, Object>) request.getAttribute("amap");
 		Map<String, Object> result = new HashMap<String, Object>();
 		ShiftStart ss = new ShiftStart();
+		Shift sh = new Shift();
 		String id = request.getParameter("id");
 		String stid = request.getParameter("stid");
 		String stname = request.getParameter("stname");
-		ss.setIsTemp(RequestTool.getInt(request, "istemp", 0));
-		ss.setShiftcode(request.getParameter("shiftcode"));
-		ss.setRidedate(DateUtil.getCurrentDateString());
-		ss.setLmid(0);// Integer.parseInt(request.getParameter("lmid")));
-
+		sh.setShiftcode(request.getParameter("shiftcode"));//班次号
+		sh.setRidedate(DateUtil.getCurrentDateString());//出行日期
+		sh.setLmid(0);// Integer.parseInt(request.getParameter("lmid")));线路
+		sh.setStatus(0);
+		Admin admin = adminService.find(amap.get("userid").toString());
+		sh.setTranscompany(admin.getCompanyname());//运输公司
+		sh.setTcid(admin.getTcid());//运输公司ID
+		sh.setMakedate(DateUtil.getCurrentDateTime());
+		sh.setCitystartid(request.getParameter("citystartid"));
+		sh.setCitystartname(request.getParameter("citystartname"));
+		sh.setCityarriveid(request.getParameter("cityarriveid"));
+		sh.setCityarrivename(request.getParameter("cityarrivename"));
+		sh.setOriginstid(request.getParameter("originstid"));//始发站ID
+		sh.setOriginstname(request.getParameter("originstname"));//始发站名称
+		sh.setStarriveid(request.getParameter("starriveid"));//目的站ID
+		sh.setStarrivename(request.getParameter("starrivename"));//目的站名称
+		sh.setOriginstarttime(request.getParameter("originstarttime"));//始发时间
 		String currstationid = request.getParameter("currstationid");
-		ss.setStarriveid(request.getParameter("starriveid"));
-		if (ss.getIsTemp() == 1) {
+		ss.setIstemp(RequestTool.getInt(request, "istemp", 0));
+		if (ss.getIstemp() == 1) {
 			// 根据站点获取父ID，再根据父ID获取城市名称
 			CityStation cs = citystationService.find(currstationid);
 			CityStation ps = citystationService.find(cs.getParentid());
 			// 根据到达站点查城市
-			CityStation as = citystationService.find(ss.getStarriveid());
+			CityStation as = citystationService.find(sh.getStarriveid());
 			CityStation ds = citystationService.find(as.getParentid());
-
-			ss.setLinename(ps.getCityname() + "-" + ds.getCityname());
+			sh.setLinename(ps.getCityname() + "-" + ds.getCityname());
+			ss.setLinename(ps.getCityname() + "-" + ds.getCityname());//线路名称
 		} else {
+			sh.setLinename(request.getParameter("linename"));//线路名称
 			ss.setLinename(request.getParameter("linename"));
 		}
-		ss.setOriginstid(request.getParameter("originstid"));
-		ss.setOriginstname(request.getParameter("originstname"));
-		ss.setStarrivename(request.getParameter("starrivename"));
-		ss.setOriginstarttime(request.getParameter("originstarttime"));
-		ss.setPlatenum(request.getParameter("platenum"));
-		ss.setDriverid(request.getParameter("driverid"));
-		ss.setDrivername(request.getParameter("drivername"));
-		ss.setDriveridii(request.getParameter("driveridii"));
-		ss.setDrivernameii(request.getParameter("drivernameii"));
-		ss.setNuclearload(RequestTool.getInt(request, "nuclearload", 45));
-		ss.setCurrpeople(RequestTool.getInt(request, "currpeople", 0));
-		ss.setCurrstationid(request.getParameter("currstationid"));
-		ss.setCurrstationname(request.getParameter("currstationname"));
-		ss.setPunctualstart(request.getParameter("punctualstart"));
-		ss.setActualstart(request.getParameter("actualstart"));
-		ss.setIsstart(RequestTool.getInt(request, "isstart", 0));
-		ss.setIsstartname(request.getParameter("isstartname"));
-		ss.setMemo(request.getParameter("memo"));
-		ss.setAllticketnum(RequestTool.getInt(request, "allticketnum", 0));
-		ss.setHalfticketnum(RequestTool.getInt(request, "halfticketnum", 0));
-		ss.setFreeticketnum(RequestTool.getInt(request, "freeticketnum", 0));
-		ss.setConsignQuantity(RequestTool.getInt(request, "consignquantity", 0));
-		ss.setConsignSum(RequestTool.getBigDecimal(request, "consignsum", new BigDecimal("0")));
-		ss.setPassengerQuantity(RequestTool.getInt(request, "passengerquantity", 0));
-		ss.setPassengerSum(RequestTool.getBigDecimal(request, "passengersum", new BigDecimal("0")));
-		ss.setIscancel(0);
-		ss.setIscancelname("");
+		ss.setLmid(0);
+		ss.setPlatenum(request.getParameter("platenum"));//车牌
+		ss.setDriverid(request.getParameter("driverid"));//司机ID
+		ss.setDrivername(request.getParameter("drivername"));//司机姓名
+		ss.setDriveridii(request.getParameter("driveridii"));//司机2
+		ss.setDrivernameii(request.getParameter("drivernameii"));//司机2姓名
+		ss.setNuclearload(RequestTool.getInt(request, "nuclearload", 45));//核载
+		ss.setCurrpeople(RequestTool.getInt(request, "currpeople", 0));//当前人数
+		ss.setCurrstationid(request.getParameter("currstationid"));//当前车站ID
+		ss.setCurrstationname(request.getParameter("currstationname"));//当前车站名称
+		ss.setPunctualstart(request.getParameter("punctualstart"));//正点发车时间
+		ss.setActualstart(request.getParameter("actualstart"));//实际发车时间
+		ss.setIsstart(RequestTool.getInt(request, "isstart", 0));//是否发车
+		ss.setIsstartname(request.getParameter("isstartname"));//是否发车
+		ss.setMemo(request.getParameter("memo"));//备注
+		ss.setAllticketnum(RequestTool.getInt(request, "allticketnum", 0));//全票人数
+		ss.setHalfticketnum(RequestTool.getInt(request, "halfticketnum", 0));//半票人数
+		ss.setFreeticketnum(RequestTool.getInt(request, "freeticketnum", 0));//免票人数
+		ss.setConsignquantity(RequestTool.getInt(request, "consignquantity", 0));//托运行李件数
+		ss.setConsignsum(RequestTool.getBigDecimal(request, "consignsum", new BigDecimal("0")));//托运行李金额
+		ss.setPassengerquantity(RequestTool.getInt(request, "passengerquantity", 0));//乘客行李件数
+		ss.setPassengersum(RequestTool.getBigDecimal(request, "passengersum", new BigDecimal("0")));//乘客行李金额
+		ss.setIscancel(0);//取消发班
+		ss.setIscancelname("");//取消发班名称
 		ss.setMakeid(amap.get("userid").toString());
 		ss.setMakename(amap.get("realname").toString());
 		ss.setMakedate(DateUtil.getCurrentDateTime());
 
-		if (ss.getIsTemp() == 1) {// 起点新增，并发车
+		if (ss.getIstemp() == 1) {// 起点新增，并发车
+			int save = shiftService.save(sh);
+			ss.setShiftid(sh.getId());
 			// 临时加班,当istemp=1时，增加始发站发车，
 			int s = shiftstartService.save(ss);
 			if (s == 1) {
@@ -708,7 +771,7 @@ public class APIShiftStartControl {
 				result.put("status", APIStatus.SYSTEM_ERROR_STATUS);
 				result.put("info", APIStatus.SYSTEM_ERROR_INFO);
 			}
-		} else if (ss.getIsTemp() == 2) {// 临时非起点发车
+		} else if (ss.getIstemp() == 2) {// 临时非起点发车
 			ShiftStart tmpss = shiftstartService.find(id);
 			tmpss.setPunctualstart(DateUtil.getCurrentHourMunite());
 			tmpss.setActualstart(String.valueOf(DateUtil.getCurrentHourMunite()));
@@ -728,11 +791,11 @@ public class APIShiftStartControl {
 			tmpss.setAllticketnum(ss.getAllticketnum());
 			tmpss.setHalfticketnum(ss.getHalfticketnum());
 			tmpss.setFreeticketnum(ss.getFreeticketnum());
-			tmpss.setConsignQuantity(ss.getConsignQuantity());
-			tmpss.setConsignSum(ss.getConsignSum());
-			tmpss.setPassengerQuantity(ss.getPassengerQuantity());
-			tmpss.setPassengerSum(ss.getPassengerSum());
-			tmpss.setIsTemp(ss.getIsTemp());
+			tmpss.setConsignquantity(ss.getConsignquantity());
+			tmpss.setConsignsum(ss.getConsignsum());
+			tmpss.setPassengerquantity(ss.getPassengerquantity());
+			tmpss.setPassengersum(ss.getPassengersum());
+			tmpss.setIstemp(ss.getIstemp());
 			tmpss.setIscancel(0);
 			tmpss.setIscancelname("");
 			int ts = shiftstartService.save(tmpss);
@@ -762,15 +825,16 @@ public class APIShiftStartControl {
 	public String tempShiftStartDetail(HttpServletRequest request) throws Exception {
 		String id = request.getParameter("id");
 		ShiftStart ss = shiftstartService.find(id);
+		Shift shift = shiftService.find(ss.getShiftid());
 		Map<String, Object> result = new HashMap<String, Object>();
 		result.put("id", ss.getId());
 		result.put("lmid", ss.getLmid());
-		result.put("linename", ss.getLinename());
-		result.put("shiftcode", ss.getShiftcode());
-		result.put("ridedate", ss.getRidedate());
-		result.put("originstname", ss.getOriginstname());
-		result.put("starrivename", ss.getStarrivename());
-		result.put("originstarttime", ss.getOriginstarttime());
+		result.put("linename", shift.getLinename());
+		result.put("shiftcode", shift.getShiftcode());
+		result.put("ridedate", shift.getRidedate());
+		result.put("originstname", shift.getOriginstname());
+		result.put("starrivename", shift.getStarrivename());
+		result.put("originstarttime", shift.getOriginstarttime());
 		result.put("currstationname", ss.getCurrstationname());
 		result.put("platenum", ss.getPlatenum());
 		result.put("driverid", ss.getDriverid());
@@ -782,10 +846,10 @@ public class APIShiftStartControl {
 		result.put("allticketnum", ss.getAllticketnum());
 		result.put("halfticketnum", ss.getHalfticketnum());
 		result.put("freeticketnum", ss.getFreeticketnum());
-		result.put("consignquantity", ss.getConsignQuantity());
-		result.put("consignsum", ss.getConsignSum());
-		result.put("passengerquantity", ss.getPassengerQuantity());
-		result.put("passengersum", ss.getPassengerSum());
+		result.put("consignquantity", ss.getConsignquantity());
+		result.put("consignsum", ss.getConsignsum());
+		result.put("passengerquantity", ss.getPassengerquantity());
+		result.put("passengersum", ss.getPassengersum());
 		// 根据lmid找线路司机数量
 		int driverquantity = 2;
 		LineManage lm = linemanageService.find(ss.getLmid());
@@ -798,7 +862,7 @@ public class APIShiftStartControl {
 		Map<String, Object> c = new HashMap<String, Object>();
 		c.put("ridedate", DateUtil.getCurrentDateString());
 		c.put("lmid", ss.getLmid());
-		c.put("shiftcode", ss.getShiftcode());
+		c.put("shiftcode", shift.getShiftcode());
 		List tmpshiftstart = shiftstartService.getShiftStartBySRL(c);
 		String strmemo = "";
 		Integer allpeople = 0;
@@ -812,15 +876,15 @@ public class APIShiftStartControl {
 			aw.put("allticketnum", ahf.getAllticketnum());
 			aw.put("halfticketnum", ahf.getHalfticketnum());
 			aw.put("freeticketnum", ahf.getFreeticketnum());
-			aw.put("consignquantity", ahf.getConsignQuantity());
-			aw.put("passengerquantity", ahf.getPassengerQuantity());
+			aw.put("consignquantity", ahf.getConsignquantity());
+			aw.put("passengerquantity", ahf.getPassengerquantity());
 			if (ahf.getMemo() != null && !ahf.getMemo().equals("null") && !ahf.getMemo().equals("")) {
 				strmemo += aw.get("stname") + "：" + ahf.getMemo() + "\n";
 			}
 			// aw.put("memo", ahf.getMemo());
 			aw.put("isstart", ahf.getIsstart());
 			allpeople += ahf.getCurrpeople();// 累计车上人数
-			allpackage += ahf.getConsignQuantity() + ahf.getPassengerQuantity();
+			allpackage += ahf.getConsignquantity() + ahf.getPassengerquantity();
 			awayls.add(aw);
 		}
 
@@ -845,6 +909,8 @@ public class APIShiftStartControl {
 		String shiftcode = request.getParameter("shiftcode");
 		Integer iscancel = RequestTool.getInt(request, "iscancel", 1);
 		String iscancelname = request.getParameter("iscancelname");
+		Assert.notNull(shiftcode);
+		Assert.notNull(iscancelname);
 		// String memo = request.getParameter("memo");
 		Map<String, Object> a = new HashMap<String, Object>();
 		a.put("shiftcode", shiftcode);
@@ -852,8 +918,19 @@ public class APIShiftStartControl {
 		a.put("iscancelname", iscancelname);
 		a.put("ridedate", DateUtil.getCurrentDateString());
 		// a.put("memo", memo);
-		int cancel = shiftstartService.cancelShiftStart(a);
-		Integer tmpiscancel = 0;
+
+		int rows = shiftService.cancelOrEableShift(a);
+		//int cancel = shiftstartService.cancelShiftStart(a);
+		int changeiscancel = shiftstartService.changeIsCancel(a);
+		if (changeiscancel > 0 && rows>0) {
+			result.put("status", APIStatus.SUCCESS_STATUS);
+			result.put("info", APIStatus.SUCCESS_INFO);
+		} else {
+			result.put("status", APIStatus.SYSTEM_ERROR_STATUS);
+			result.put("info", APIStatus.SYSTEM_ERROR_INFO);
+		}
+		return JSON.toJSONString(result);
+		/*Integer tmpiscancel = 0;
 		String tmpiscancelname = "";
 		if (iscancel == 2) {
 			tmpiscancel = 1;
@@ -879,15 +956,8 @@ public class APIShiftStartControl {
 		b.put("iscancel", tmpiscancel);
 		b.put("iscancelname", tmpiscancelname);
 		b.put("ridedate", DateUtil.getCurrentDateString());
-		int changeiscancel = shiftstartService.changeIsCancel(b);
-		if (cancel > 0) {
-			result.put("status", APIStatus.SUCCESS_STATUS);
-			result.put("info", APIStatus.SUCCESS_INFO);
-		} else {
-			result.put("status", APIStatus.SYSTEM_ERROR_STATUS);
-			result.put("info", APIStatus.SYSTEM_ERROR_INFO);
-		}
-		return JSON.toJSONString(result);
+		*/
+		
 	}
 
 	// 班次添加备注
@@ -941,6 +1011,7 @@ public class APIShiftStartControl {
 		// 查找余票
 		Map<String, Object> c = new HashMap<String, Object>();
 		c.put("lmid", request.getParameter("lmid"));
+		c.put("shiftID", request.getParameter("shiftID"));
 		c.put("shiftcode", request.getParameter("shiftcode"));
 		c.put("ticketdate", DateUtil.getCurrentDateString());
 		c.put("ridedate", DateUtil.getCurrentDateString());
@@ -981,6 +1052,7 @@ public class APIShiftStartControl {
 			d.put("shiftcode", request.getParameter("shiftcode"));
 			d.put("ticketdate", DateUtil.getCurrentDateString());
 			d.put("stid", o.getCurrstationid());
+			d.put("shiftID", o.getShiftid());
 			long salequantity = saleorderticketService.getSoldQuantity(d);
 			ss.put("salequantity", salequantity);
 			ss.put("isstart", o.getIsstart());

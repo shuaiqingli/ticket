@@ -159,9 +159,11 @@ public class LineManageService {
      * @throws Exception
      */
     public LineManage find(Integer id) throws Exception {
-        LineManage lm = new LineManage();
-        lm.setId(id);
-        return lineManageDao.find(lm);
+        return lineManageDao.find(id);
+    }
+
+    public LineManage findRefundRemark(Integer id)throws Exception{
+        return lineManageDao.findRefundRemark(id);
     }
 
     /**
@@ -271,20 +273,23 @@ public class LineManageService {
     public int delLineManageByGroupId(String groupid) throws Exception{
         List<LineManage> lineManageList = lineManageDao.findLineListByGroupID(groupid);
         Assert.isTrue(lineManageList != null && lineManageList.size() == 2, "无效线路");
-    	int r = lineManageDao.delByGroupId(groupid);
-    	Assert.isTrue(r==2);
 
     	Log.info(this.getClass(),"删除途经站点成功！", lineManageDao.delLineManageStationByGroupId(groupid));
     	Log.info(this.getClass(),"删除时间规则成功！",lineManageDao.delLineStationTimeRule(groupid));
-    	Log.info(this.getClass(),"删除线路成功！",lineManageDao.delByGroupId(groupid));
     	Log.info(this.getClass(),"删除车牌成功！",lineManageDao.delPlateByGroupId(groupid));
     	Log.info(this.getClass(),"删除司机成功！",lineManageDao.delDriverByGroupId(groupid));
+
+    	Log.info(this.getClass(),"删除行程成功！",lineManageDao.delTicketLine(groupid));
+    	Log.info(this.getClass(),"删除票库成功！",lineManageDao.delTicketStore(groupid));
+    	Log.info(this.getClass(),"删除班次发车成功！",lineManageDao.delShiftStart(groupid));
+    	Log.info(this.getClass(),"删除班次成功！",lineManageDao.delShift(groupid));
 
         for(LineManage lm : lineManageList){
             lineManageDao.unbindUserListToLine(lm.getId());
             Log.info(this.getClass(),"删除退票规则关联的线路成功！result ===>", rrldao.deleteByLmid(lm.getId()));
         }
-
+    	int r = lineManageDao.delByGroupId(groupid);
+    	Assert.isTrue(r==2);
     	return r;
     }
 
@@ -310,6 +315,8 @@ public class LineManageService {
         page.setTotalCount(lineManageDao.totalCountForBindIntegralRule(page));
         return lineManageDao.findListForBindIntegralRule(page);
     }
+
+
 
     public List<Map> findListByUserid(String userid){
         return lineManageDao.findListByUserid(userid);

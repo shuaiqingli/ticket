@@ -15,6 +15,10 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.hengyu.ticket.entity.*;
+import com.hengyu.ticket.service.*;
+import com.hengyu.ticket.util.Log;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -23,18 +27,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.hengyu.ticket.common.Const;
 import com.hengyu.ticket.dao.CityStationDao;
-import com.hengyu.ticket.entity.API;
-import com.hengyu.ticket.entity.CityStation;
-import com.hengyu.ticket.entity.Customer;
-import com.hengyu.ticket.entity.Page;
-import com.hengyu.ticket.entity.SaleOrder;
-import com.hengyu.ticket.entity.SaleOrderTicket;
-import com.hengyu.ticket.entity.TicketLine;
-import com.hengyu.ticket.service.CityStationService;
-import com.hengyu.ticket.service.SaleOrderService;
-import com.hengyu.ticket.service.SaleOrderTicketService;
-import com.hengyu.ticket.service.SeatService;
-import com.hengyu.ticket.service.ShowTimeService;
 import com.hengyu.ticket.util.APIUtil;
 import com.hengyu.ticket.util.DateHanlder;
 
@@ -55,10 +47,13 @@ public class AppSaleOrderControl {
 	private SaleOrderTicketService sots;
 	@Autowired
 	private ShowTimeService sts;
+    @Autowired
+    private LineManageService lineManageService;
 
 	//生成订单
 	@RequestMapping("order")
-	public void order(TicketLine tl,Integer quantity,String linkid,String buyway,Integer discountnum,Integer isdiscount,String vouchercode,Writer w,HttpServletRequest req) throws Exception{
+	public void order(TicketLine tl,Integer quantity,String linkid,String buyway,Integer discountnum,Integer isdiscount,String vouchercode
+					  ,String paymodel,Writer w,HttpServletRequest req) throws Exception{
 		Customer c = (Customer) req.getAttribute(Const.LOGIN_CUSTOMER);
 		if(discountnum==null){
 			discountnum = 0;
@@ -75,13 +70,16 @@ public class AppSaleOrderControl {
 			if(discountnum!=null){
 				discount = discountnum;
 			}
-			SaleOrder so = saleOrderService.saveorder(tl, c, quantity, linkid, buyway,discount,vouchercode,req.getSession().getServletContext().getRealPath(Const.QRCODE_PATH));
+			if(StringUtils.isEmpty(paymodel)){
+				paymodel = "WX";
+			}
+			SaleOrder so = saleOrderService.saveorder(tl, c, quantity, linkid, buyway,discount,vouchercode,paymodel,req.getSession().getServletContext().getRealPath(Const.QRCODE_PATH));
 			if(so==null){
 				api.setCode(5011);
 			}else{
 				Map<String,String> result = new HashMap<String,String>(1);
 				result.put("id", so.getId());
-				if((c.getRank()!=null&&c.getRank()==2)||so.getActualSum().compareTo(new BigDecimal(0))==0){
+				if((c.getRank()!=null&&c.getRank()==2)||so.getActualsum().compareTo(new BigDecimal(0))==0){
 					result.put("autopay","1");
 				}
 				api.getDatas().add(result);
@@ -97,7 +95,17 @@ public class AppSaleOrderControl {
 			API api = new API();
 			SaleOrder so = saleOrderService.find(id);
 			Assert.notNull(so,"没有找到该订单！");
-			CityStation cs = css.find(so.getSTStartID());
+			try {
+				if(so.getPaystatus()!=1){
+					if(saleOrderService.updateWeixinOrderStatus(so)){
+						Log.error("查看订单详情，更新微信支付状态成功，订单号：",so.getId());
+						so = saleOrderService.find(id);
+					}
+				}
+			} catch (Exception e) {
+
+			}
+			CityStation cs = css.find(so.getStstartid());
 			so.setTicketaddr(cs.getTicketaddr());
 			so.setStationaddr(cs.getTicketaddr());
 			List<SaleOrderTicket> sots = sotService.findBySaleOrder(so.getId());
@@ -116,7 +124,7 @@ public class AppSaleOrderControl {
 			so.setSeatnos(sb.toString());
 			so.setSots(sots);
 			
-			String content = sts.findShowContent(so.getLmid(),so.getRideDate());
+			String content = sts.findShowContent(so.getLmid(),so.getRidedate());
 			if(content==null){
 				content = "";
 			}
@@ -153,15 +161,15 @@ public class AppSaleOrderControl {
 			API api = new API();
 			SaleOrder so = saleOrderService.find(id);
 			//退款，必须是 已经付款状态、未取票
-			if(status==2&&so.getPayStatus()==1&&so.getStatus()==0){
+			if(status==2&&so.getPaystatus()==1&&so.getStatus()==0){
 //				so.setStatus(2);
 //				so.setStatusName("退款中");
 //				api.getDatas().add(saleOrderService.updateReturned(so,false));
 			}
 			//取消，必须是 未付款状态
-			else if(status==4&&so.getPayStatus()==0){
+			else if(status==4&&so.getPaystatus()==0){
 				so.setStatus(4);
-				so.setStatusName("已取消");
+				so.setStatusname("已取消");
 				api.getDatas().add(saleOrderService.updateCancelSaleOrder(so,true));
 			}else{
 				api.setCode(5012);
@@ -218,7 +226,8 @@ public class AppSaleOrderControl {
 			tickets.add(o);
 		}
 		SaleOrder so = saleOrderService.find(tickets.get(0).getSoid());
-
+        LineManage lineManage = lineManageService.find(so.getLmid());
+        Assert.isTrue(lineManage.getRefundstatus()==0,lineManage.getRefundremark()==null?"该订单不能退款！":lineManage.getRefundremark());
 		Cookie cookie = new Cookie("orderstatus",so.getStatus()+"");
 		cookie.setPath("/");
 		response.addCookie(cookie);
@@ -238,7 +247,7 @@ public class AppSaleOrderControl {
 		Customer c = (Customer) req.getAttribute(Const.LOGIN_CUSTOMER);
 		String[] ids = checkcodes.split(",");
 		
-		int r = saleOrderService.updateRefundOrder(ids, 1, 0, 2,"退票中",1,"已付款", c,true,0);
+		int r = saleOrderService.updateRefundOrder(ids, 1, 0, 2,"退票中",1,"已付款", c,true,0,true);
 		API api = new API();
 		api.getDatas().add(r);
 		APIUtil.toJSON(api, w);

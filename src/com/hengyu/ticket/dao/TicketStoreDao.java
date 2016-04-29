@@ -25,15 +25,15 @@ public interface TicketStoreDao {
 	 * @return 返回受影响行数 (int)
 	 * @throws Exception
 	 */
-	public abstract int save(TicketStore ticketStore) throws Exception;
+	int save(TicketStore ticketStore) throws Exception;
 	
 	/**
 	 * 批量保存操作
-	 * @param ticketStore
+	 * @param ticketStores
 	 * @return
 	 * @throws Exception
 	 */
-	public abstract int batchSave(List<TicketStore> ticketStores) throws Exception;
+	int batchSave(List<TicketStore> ticketStores) throws Exception;
 
 	/**
 	 * 更新一个对象
@@ -42,10 +42,15 @@ public interface TicketStoreDao {
 	 * @return 返回受影响行数 (int)
 	 * @throws Exception
 	 */
-	public abstract int update(TicketStore ticketStore) throws Exception;
-	
+	int update(TicketStore ticketStore) throws Exception;
+
+    //更新发布状态
+	int updateReleaseStatus(@Param("id") Integer id, @Param("isrelease") Integer isrelease, @Param("oldrelease") Integer oldrelease) throws Exception;
+
+    int updateReleaseStatusByDate(@Param("shiftcode") String shiftcode, @Param("begindate") String begindate, @Param("enddate") String enddate, @Param("lmid") Integer lmid, @Param("isrelease") Integer isrelease, @Param("oldrelease") Integer oldrelease) throws Exception;
+
 	//重置审核状态
-	public abstract int updateResetApprove(@Param("ticketdate")String ticketdate,@Param("lmid")Integer lmid,
+	int updateResetApprove(@Param("ticketdate")String ticketdate,@Param("lmid")Integer lmid,
 			@Param("isapprove")Integer isapprove) throws Exception;
 	
 	/**
@@ -54,7 +59,7 @@ public interface TicketStoreDao {
 	 * @return
 	 * @throws Exception
 	 */
-	public abstract int updateApproveQuantity(TicketStore ticketStore) throws Exception;
+	int updateMatchQuantity(TicketStore ticketStore) throws Exception;
 	
 	
 
@@ -67,7 +72,7 @@ public interface TicketStoreDao {
 	 * @return
 	 * @throws Exception
 	 */
-	public abstract int updateQuantity(@Param("id") Integer id,@Param("quantity") Integer quantity,@Param("balancecouponquantity") Integer balancecouponquantity) throws Exception;
+	int updateQuantity(@Param("id") Integer id,@Param("quantity") Integer quantity,@Param("balancecouponquantity") Integer balancecouponquantity) throws Exception;
 	
 	/**
 	 * 添加余票
@@ -78,27 +83,28 @@ public interface TicketStoreDao {
 	 * @return
 	 * @throws Exception
 	 */
-	public abstract int addQuantity(@Param("id") Integer id,@Param("quantity") Integer quantity,@Param("balancecouponquantity") Integer balancecouponquantity) throws Exception;
+	int addQuantity(@Param("id") Integer id,@Param("quantity") Integer quantity,@Param("balancecouponquantity") Integer balancecouponquantity) throws Exception;
 
 	/**
 	 * 根据主键查询一个对象
 	 * 
-	 * @param iD
 	 *            主键
 	 * @return 返回TicketStore对象
 	 * @throws Exception
 	 */
-	public abstract TicketStore find(Integer id) throws Exception;
+	TicketStore find(Integer id) throws Exception;
 	
-	public abstract TicketStore findByLmidDateShiftCode(@Param("lmid")Integer lmid,@Param("ticketdate")String ticketdate,@Param("shiftcode")String shiftcode) throws Exception;
-	
+	TicketStore findByLmidDateShiftCode(@Param("lmid")Integer lmid,@Param("ticketdate")String ticketdate,@Param("shiftcode")String shiftcode) throws Exception;
+
+    TicketStore findShiftID(@Param("shiftid")Long shiftid) throws Exception;
+
 	/**
 	 * 按订单查询唯一的票库
 	 * @param s
 	 * @return
 	 * @throws Exception
 	 */
-	public abstract TicketStore findBySaleOrder(SaleOrder s) throws Exception;
+	TicketStore findBySaleOrder(SaleOrder s) throws Exception;
 	
 	/**
 	 * 按日期查询生成票记录
@@ -106,7 +112,7 @@ public interface TicketStoreDao {
 	 * @return
 	 * @throws Exception
 	 */
-	public abstract List<TicketStore> findByDates(List<String> dates) throws Exception;
+	List<TicketStore> findByDates(List<String> dates) throws Exception;
 	
 	/**
 	 * 查询余票
@@ -114,7 +120,7 @@ public interface TicketStoreDao {
 	 * @return
 	 * @throws Exception
 	 */
-	public abstract List findQuantityBalance(Page page) throws Exception;
+	List<Map> findQuantityBalance(Page page) throws Exception;
 	
 	
 	/**
@@ -123,7 +129,7 @@ public interface TicketStoreDao {
 	 * @return
 	 * @throws Exception
 	 */
-	public abstract List<TicketStore> ticketmanage(TicketStore ts) throws Exception;
+	List<TicketStore> ticketmanage(TicketStore ts) throws Exception;
 	
 	
 	/**
@@ -132,7 +138,7 @@ public interface TicketStoreDao {
 	 * @return
 	 * @throws Exception
 	 */
-	public abstract long findQuantityBalanceCount(Page page) throws Exception;
+	long findQuantityBalanceCount(Page page) throws Exception;
 	
 	/**
 	 * 修改排班日期后删除，未审核的车票关联的票库
@@ -140,7 +146,7 @@ public interface TicketStoreDao {
 	 * @return
 	 * @throws Exception
 	 */
-	public abstract long delNotApproveTicketStore(TicketLine tl) throws Exception;
+	long delNotApproveTicketStore(TicketLine tl) throws Exception;
 	
 	/**
 	 * 自动发布车票
@@ -148,7 +154,7 @@ public interface TicketStoreDao {
 	 * @return
 	 * @throws Exception
 	 */
-	public abstract int updateTicketStoreReleaseByLineManage(LineManage lm) throws Exception;
+	int updateTicketStoreReleaseByLineManage(LineManage lm) throws Exception;
 
 	/**
 	 * 按线路号，开始结束日期（按月查询）
@@ -157,30 +163,30 @@ public interface TicketStoreDao {
 	 * @param enddate
 	 * @return
 	 */
-	public abstract List<Map<String,String>> findApproveReleaseDates(@Param("lmid")Integer lmid,@Param("begindate")String begindate,@Param("enddate")String enddate);
+	List<Map<String,String>> findApproveReleaseDates(@Param("lmid")Integer lmid,@Param("begindate")String begindate,@Param("enddate")String enddate);
 	
 	/**
 	 * 按线路编号统计已审核天数，已发布天数，总天数
 	 * @param lmid
 	 * @return
 	 */
-	public abstract Map<String,Integer> findAllApproveReleaseDates(@Param("lmid")Integer lmid);
+	Map<String,Integer> findAllApproveReleaseDates(@Param("lmid")Integer lmid);
 	
 	// 按lineid,shiftcode,ticketdate
-	public abstract List getTicketStoreByLST(Map a)
+	List getTicketStoreByLST(Map a)
 			throws Exception;
 
 	//按班次取消车票,
-	public abstract int cancelTicketStore(Map a);
+	int cancelTicketStore(Map a);
 
 	//释放锁定票
-	public abstract int releaseQuantity(Map e);
+	int releaseQuantity(Map e);
 	
 	//站务退票
-	public abstract int releaseZWReleaseQuantity(Map e);
+	int releaseZWReleaseQuantity(Map e);
 	
 	//站务退票锁票
-	public abstract int releaseZWLockQuantity(Map e);
+	int releaseZWLockQuantity(Map e);
 
 	int updateQuantityForFreeze(@Param("id") Integer id,@Param("quantity") Integer quantity);
 
@@ -193,4 +199,13 @@ public interface TicketStoreDao {
 	int addQuantityToLock(@Param("id") Integer id,@Param("quantity") Integer quantity);
 
 	TicketStore findForUpdate(Integer id);
+
+	TicketStore findByShiftID(@Param("shiftid")Long shiftid);
+	
+	/**
+	 * 根据班次ID和线路ID查询
+	 * @param map
+	 * @return
+	 */
+	public abstract TicketStore findByShiftIdAndLMID(Map<String, Object> map);
 }

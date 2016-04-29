@@ -42,6 +42,7 @@ public class APISaleOrderControl {
 	@Autowired
 	private LineManageService linemanageService;
 
+
 	// 订单详情
 	@RequestMapping(value = "/api/station/saleOrderDetail", method = RequestMethod.POST)
 	@ResponseBody
@@ -100,7 +101,7 @@ public class APISaleOrderControl {
 		SaleOrder so = new SaleOrder();
 		so.setId(id);
 		so.setStatus(1);
-		so.setStatusName("已取票");
+		so.setStatusname("已取票");
 		so.setIsabnormal(isabnormal);
 		so.setMemo(memo);
 		so.setSid(amap.get("userid").toString());
@@ -119,7 +120,7 @@ public class APISaleOrderControl {
 		Map<String, Object> result = new HashMap<String, Object>();
 		String checkcode = request.getParameter("checkcode").trim();
 		String shiftnum = request.getParameter("shiftnum").trim();
-		String currstationid = request.getParameter("currstationid").trim();
+		String stid = request.getParameter("stid").trim();
 		Map<String, Object> a = new HashMap<String, Object>();
 		a.put("checkcode", checkcode);
 		a.put("shiftnum", shiftnum);
@@ -136,7 +137,7 @@ public class APISaleOrderControl {
 		}else if (!sot.getShiftnum().equals(shiftnum)) {
 			result.put("status", "09");
 			result.put("info", "该车票不能乘坐本班次");
-		} else if (!sot.getStstartid().equals(currstationid)) {
+		} else if (!sot.getStstartid().equals(stid)) {
 			result.put("status", "07");
 			result.put("info", "该车票不是当前站点的票");
 		} else if (!sot.getRidedate().equals(DateUtil.getCurrentDateString())) {
@@ -164,6 +165,8 @@ public class APISaleOrderControl {
 		a.put("currdate", DateUtil.getCurrentDateTime());
 		// 按验票码改票面班次
 		int updso = saleorderticketService.abnormalUpdateShiftNum(a);
+		//退出一张票
+		saleorderService.recoverSeat(checkcode, null, null);
 		result.put("status", APIStatus.SUCCESS_STATUS);
 		result.put("info", APIStatus.SUCCESS_INFO);
 		return JSON.toJSONString(result);
@@ -205,20 +208,21 @@ public class APISaleOrderControl {
 	@RequestMapping(value = "/api/station/saleorderCheck", method = RequestMethod.POST)
 	@ResponseBody
 	public String saleorderCheck(HttpServletRequest request) throws Exception {
+		Map<String, Object> amap = (Map<String, Object>) request.getAttribute("amap");
 		Map<String, Object> result = new HashMap<String, Object>();
 		String ticketcode = request.getParameter("ticketcode");// 取票码
 		String shiftnum = request.getParameter("shiftnum");
 		Map<String, Object> a = new HashMap<String, Object>();
 		a.put("ticketcode", ticketcode);
 		a.put("shiftnum", shiftnum);
-
+		a.put("currdate", DateUtil.getCurrentDateTime());
 		// 根据取票码找出订单
 		SaleOrder so = saleorderService.getAllSaleOrderByTicketCode(ticketcode);
 		// 判断订单是否本班次
-		if(so.getPayStatus()!=1){
+		if(so.getPaystatus()!=1){
 			result.put("status", "06");
 			result.put("info", "该订单没有付款");
-		}else if (!so.getShiftNum().equals(shiftnum)) {
+		}else if (!so.getShiftcode().equals(shiftnum)) {
 			result.put("status", "09");
 			result.put("info", "该车票不能乘坐本班次");
 		} else {
@@ -226,8 +230,11 @@ public class APISaleOrderControl {
 			int socheck = saleorderticketService.saleorderCheck(a);
 			// 修改sale_order取票状态
 			so.setStatus(1);
-			so.setStatusName("已取票");
-			saleorderService.updateStatus(so);
+			so.setStatusname("已取票");
+			so.setSid(amap.get("userid").toString());
+			so.setSname(amap.get("realname").toString());
+			so.setTakedate(DateUtil.getCurrentDateTime());
+			int updateRows = saleorderService.updateStatus(so);
 			result.put("status", "00");
 			result.put("info", "验票成功");
 		}
@@ -246,10 +253,11 @@ public class APISaleOrderControl {
 		a.put("shiftnum", shiftnum);
 		a.put("currdate", DateUtil.getCurrentDateTime());
 		// 将sale_order 班次改变
-		saleorderService.abnormalUpdateSaleOrderShiftNum(a);
+		int updateRows = saleorderService.abnormalUpdateSaleOrderShiftNum(a);
 
 		// 将sale_order_ticket班次改变,by ticketcode
 		int sotchk = saleorderticketService.abnormalUpdateShiftNumByTicketCode(a);
+		saleorderService.recoverSeat(null, ticketcode, null);
 		//System.out.println("-----------" + sotchk);
 		result.put("status", "00");
 		result.put("info", "验票成功");
@@ -257,7 +265,6 @@ public class APISaleOrderControl {
 	}
 
 	// 已验过的车票
-
 	// 查询车票状态
 	@RequestMapping(value = "/api/station/findTicketStatus", method = RequestMethod.POST)
 	@ResponseBody
@@ -299,16 +306,16 @@ public class APISaleOrderControl {
 			SaleOrder o = (SaleOrder) sols.get(i);
 			Map<String,Object> c = new HashMap<String,Object>();
 			c.put("soid", o.getId());
-			b.put("ticketcode", o.getTicketCode());
+			b.put("ticketcode", o.getTicketcode());
 			int validatecount = saleorderticketService.getValidateTicketCountBySOID(c);
 			b.put("id", o.getId());
 			b.put("status", o.getStatus());
-			b.put("statusName", o.getStatusName());
-			b.put("lName", o.getLName());
-			b.put("lMobile", o.getLMobile());
+			b.put("statusName", o.getStatusname());
+			b.put("lName", o.getLname());
+			b.put("lMobile", o.getLmobile());
 			b.put("quantity", validatecount);
 			b.put("sTArriveName", o.getStarrivename());
-			b.put("iDCode", o.getIDCode());
+			b.put("iDCode", o.getIdcode());
 			als.add(b);
 		}
 		result.put("data", als);

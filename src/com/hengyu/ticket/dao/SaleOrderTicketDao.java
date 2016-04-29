@@ -98,11 +98,24 @@ public interface SaleOrderTicketDao {
 	//站务整单退票，修改订单子表
 	public abstract int ticketDealByCheckCode(Map b);
 	
-	List<Map> findSeatNOListForLock(@Param("lmid") Integer lmid, @Param("shiftnum") String shiftnum, @Param("ridedate") String ridedate);
+	List<Map> findSeatNOListForLock(@Param("shiftid") String shiftid);
 	
 	//获取订单中的有效票数量
 	public abstract int getValidateTicketCountBySOID(Map a)throws Exception;
 	
 	//已售
 	public abstract long getSoldQuantity(Map c) throws Exception;
+	
+	/**
+	 * 按checkcode查询
+	 * @param checkCode
+	 * @return
+	 * @throws Exception
+	 */
+	public abstract List<SaleOrderTicket> findByCheckCode(String checkCode) throws Exception;
+
+	public abstract Map<String, Object> findSeatNOAndSeatId(String checkCode);
+
+	public abstract List<Integer> findSeatNOByRTID(String rtid);
+		
 }

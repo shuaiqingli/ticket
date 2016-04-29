@@ -25,7 +25,7 @@ public interface ShiftStartDao {
 	 * @return 返回受影响行数 (int)
 	 * @throws Exception
 	 */
-	public abstract int save(ShiftStart shiftStart) throws Exception;
+	int save(ShiftStart shiftStart) throws Exception;
 
 	/**
 	 * 批量保存
@@ -34,7 +34,7 @@ public interface ShiftStartDao {
 	 * @return
 	 * @throws Exception
 	 */
-	public abstract int batchSave(List<ShiftStart> shiftStarts) throws Exception;
+	int batchSave(List<ShiftStart> shiftStarts) throws Exception;
 
 	/**
 	 * 更新一个对象
@@ -43,7 +43,7 @@ public interface ShiftStartDao {
 	 * @return 返回受影响行数 (int)
 	 * @throws Exception
 	 */
-	public abstract int update(ShiftStart shiftStart) throws Exception;
+	int update(ShiftStart shiftStart) throws Exception;
 
 	/**
 	 * 根据主键查询一个对象
@@ -53,63 +53,72 @@ public interface ShiftStartDao {
 	 * @return 返回ShiftStart对象
 	 * @throws Exception
 	 */
-	public abstract ShiftStart find(Integer id) throws Exception;
+	ShiftStart find(Integer id) throws Exception;
+
+	List<ShiftStart> findByShiftID(@Param("shiftid") Long shiftid) throws Exception;
+
+    //获取详情
+	ShiftStart getDetail(Integer id) throws Exception;
 
 	// 查找审核后的班次
-	public abstract List<LineScheduDetail> findApprovedShiftStart(LineSchedue ls) throws Exception;
+	List<LineScheduDetail> findApprovedShiftStart(LineSchedue ls) throws Exception;
 
 	// 查询审核过的日期
-	public abstract List<String> findApprovedShiftDates(Integer lmid, String begindate, String enddate)
+	List<String> findApprovedShiftDates(Integer lmid, String begindate, String enddate)
 			throws Exception;
 
 	// 按日期查询唯一的班次信息
-	public abstract List<ShiftStart> findShiftStartBylmidDateShiftCode(@Param("lmid") Integer lmid,
+	List<ShiftStart> findShiftStartBylmidDateShiftCode(@Param("lmid") Integer lmid,
 			@Param("ridedate") String ridedate, @Param("shiftcode") String shiftcode) throws Exception;
 
 	// 站务------根据日期查线路班次
-	public abstract List getShiftStartByDate(Map map) throws Exception;
+	List getShiftStartByDate(Map map) throws Exception;
 
-	public abstract Long totalCount(Map map) throws Exception;
+	Long totalCount(Map map) throws Exception;
 
 	// 班次查询-----搜索
-	public abstract List getShiftStartBySearch(Map map) throws Exception;
+	List getShiftStartBySearch(Map map) throws Exception;
 
 	// 班次查询-----正常班次搜索
-	public abstract List getNormalShiftStartBySearch(Map map) throws Exception;
+	List getNormalShiftStartBySearch(Map map) throws Exception;
 
-	public abstract Long totalCountBySearch(Map map) throws Exception;
+	Long totalCountBySearch(Map map) throws Exception;
 
-	public abstract Long totalCountByNormalSearch(Map map) throws Exception;
+	Long totalCountByNormalSearch(Map map) throws Exception;
 
 	// 找全票，半票，免票，查找条件：currstationid,ridedate,shiftcode
-	public abstract ShiftStart getShiftStartByCRS(Map map) throws Exception;
+	ShiftStart getShiftStartByCRS(Map map) throws Exception;
 
 	// 找临时班次
-	public abstract ShiftStart getShiftStartByTemp(Map map) throws Exception;
+	ShiftStart getShiftStartByTemp(Map map) throws Exception;
 
 	// 发车
-	public abstract int toStart(Map map) throws Exception;
+	int toStart(Map map) throws Exception;
 
 	// 修改发车信息
-	public abstract int modifyShiftStart(Map map) throws Exception;
+	int modifyShiftStart(Map map) throws Exception;
 
 	// 补齐该班次的其他发车站的信息，车牌，司机，核载,条件：班次号,线路ID,出行日期
-	public abstract int completeShiftStart(Map map) throws Exception;
+	int completeShiftStart(Map map) throws Exception;
 
 	// 取消、启用发班
-	public abstract int cancelShiftStart(Map map) throws Exception;
+	int cancelShiftStart(Map map) throws Exception;
+
+    //修改发车状态
+    int updateShiftStartIsCancel(@Param("shiftid") Long shiftid,@Param("id") Integer id, @Param("iscancel") Integer iscancel, @Param("iscancelname") String iscancelname, @Param("oldiscancel") Integer oldiscancel) throws Exception;
+    int updateShiftStatus(@Param("shiftid") Long shiftid, @Param("status") Integer status, @Param("iscancel") Integer iscancel) throws Exception;
 
 	// 修改取消状态名称
-	public abstract int changeIsCancel(Map map) throws Exception;
+	int changeIsCancel(Map map) throws Exception;
 
 	// 获取临时班次数量
-	public abstract Long getTempShiftCodeCount(Map aa) throws Exception;
+	Long getTempShiftCodeCount(Map aa) throws Exception;
 
 	// 补充备注
-	public abstract int addShiftStartMemo(Map a) throws Exception;
+	int addShiftStartMemo(Map a) throws Exception;
 
 	// 修改备注
-	public abstract int updShiftStartMemo(Map a) throws Exception;
+	int updShiftStartMemo(Map a) throws Exception;
 
 	/**
 	 * 修改排班日期后，删除未审核的车票关联，发车信息
@@ -118,16 +127,16 @@ public interface ShiftStartDao {
 	 * @return
 	 * @throws Exception
 	 */
-	public abstract int delNotApproveShiftStart(TicketLine tl) throws Exception;
+	int delNotApproveShiftStart(TicketLine tl) throws Exception;
 
 	// 按shiftcode,ridedate,lineid查找所有班次
-	public abstract List getShiftStartBySRL(Map a) throws Exception;
+	List getShiftStartBySRL(Map a) throws Exception;
 
 	// 修改发车备注，根据ShiftCode,Ridedate修改
-	public abstract int updStartMemo(Map a) throws Exception;
+	int updStartMemo(Map a) throws Exception;
 
 	// 按日期，线路编号，查询导出excel班次信息
-	public abstract List<Map<String, String>> findExportExcelShiftByDate(@Param("lmid") Integer lmid,
+	List<Map<String, String>> findExportExcelShiftByDate(@Param("lmid") Integer lmid,
 			@Param("begindate") String begindate, @Param("enddate") String enddate) throws Exception;
 
 	// 班次列表
@@ -155,7 +164,7 @@ public interface ShiftStartDao {
 	int bindDriverAndPlateToShiftStart(Map params);
 
 	// 按司机列表发车信息,按shiftcode 分组,条件，driverid,ridedate
-	public abstract List<Map> getShiftStartByDriver(Map a);
+	List<Map> getShiftStartByDriver(Map a);
 
 	// 按线路统计，时间范围统计人数，行李
 	public List<Map<String, Object>> findStatisticShiftStartByLine(Page page) throws Exception;
@@ -172,5 +181,19 @@ public interface ShiftStartDao {
 	List<Map> driverStatisticList(@Param("startDate") String startDate, @Param("endDate") String endDate, @Param("keyword") String keyword, @Param("page") Page page);
 
 	long driverStatisticTotal(@Param("startDate") String startDate, @Param("endDate") String endDate, @Param("keyword") String keyword);
+
+	/**
+	 * 找临时班次(从写了上面的getShiftStartByTemp 按照map2结构返回)
+	 * @param a
+	 * @return
+	 */
+	public abstract Map<String, Object> getMap_ShiftStartByTemp(Map<String, Object> a);
+
+	/**
+	 * 找全票，半票，免票(从写了上面的getShiftStartByCRS 按照map2结构返回)
+	 * @param a
+	 * @return
+	 */
+	public abstract Map<String, Object> getMap_ShiftStartByCRS(Map<String, Object> a);
 
 }

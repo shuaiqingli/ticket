@@ -49,9 +49,11 @@ public class PromotionControl {
 		if(lm!=null){
 			m.addAttribute("lm", lm);
 		}
-		page.setParam(p);
-		promotionService.findList(page);
-		m.addAttribute(page);
+
+        page.setParam(p);
+        promotionService.findList(page);
+
+        m.addAttribute(page);
 		return "user/promotionlist";
 	}
 
@@ -98,10 +100,10 @@ public class PromotionControl {
 				sum+=weekdays[i];
 			}
 		}
-		if(sum==0){
-			APIUtil.toJSONString(Const.ERROR_CODE.toString(),w);
-			return;
-		}
+//		if(sum==0){
+//			APIUtil.toJSONString(Const.ERROR_CODE.toString(),w);
+//			return;
+//		}
 		p.setWeekdays(sum);
 		int crins = promotionService.save(p,begintime,endtime,reducesum,couponpercent );
 		APIUtil.toJSONString(String.valueOf(crins),w);
@@ -134,6 +136,7 @@ public class PromotionControl {
 		tmp.setEnddate(p.getEnddate());
 		tmp.setWeekdays(p.getWeekdays());
 		tmp.setConsamount(p.getConsamount());
+        tmp.setIsdefault(p.getIsdefault());
 //		tmp.setReducesum(p.getReducesum());
 		tmp.setIsenable(p.getIsenable());
 		if (p.getIsenable() == 0) {
@@ -179,14 +182,17 @@ public class PromotionControl {
 
 	// 删除促销规则
 	@RequestMapping("promotiondel.do")
-	public String promotiondel(HttpServletRequest request, Model m,Integer lmid) throws Exception {
+	public String promotiondel(HttpServletRequest request, Model m,Integer lmid,Integer type) throws Exception {
 		String id = request.getParameter("id");
 		Assert.notNull(id,"编号不能为空！");
 		Assert.notNull(lmid,"线路编号不能为空！");
 		Promotion cr = promotionService.find(id);
 		cr.setIsdel(1);
 		promotionService.update(cr,null,null,null,null);
-		return "redirect:promotionlist.do?lmid="+lmid;
+        if(type!=null&&type==1){
+		    return "redirect:lineadd.do?id="+lmid+"#6";
+        }
+        return "redirect:promotionlist.do?lmid="+lmid;
 	}
 
 	// 促销规则指定线路

@@ -50,7 +50,7 @@
             <c:forEach items="${dataList }" var="data">
                 <tr class="odd">
                     <td>${data.RideDate }</td>
-                    <td>${data.LineName }(${fn:substring(data.ShiftNum,0,3) })</td>
+                    <td>${data.LineName }(${fn:substring(data.ShiftCode,0,3) })</td>
                     <td>${data.STStartName }</td>
                     <td>¥${data.Price }</td>
                     <td>${data.PriceNum }</td>

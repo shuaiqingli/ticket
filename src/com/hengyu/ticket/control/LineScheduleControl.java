@@ -15,6 +15,7 @@ import com.hengyu.ticket.util.DateUtil;
 import com.hengyu.ticket.util.NumberCreate;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.apache.velocity.runtime.directive.Foreach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -57,19 +58,35 @@ public class LineScheduleControl {
 
     //删除排班
     @RequestMapping(value = "delschedule.do")
-    @ResponseBody
-    public String delLineSchedule(Integer isDel, Integer id) throws Exception {
-        int result = -1;
-        if (1 == isDel && id != null) {
-            result = scheduleService.delete(id);
+    public String delLineSchedule(Integer id,Integer lmid) throws Exception {
+        Assert.notNull(id,"编号不能为空！");
+        Assert.notNull(lmid,"线路编号不能为空！");
+       scheduleService.delete(id);
+        return new StringBuffer("redirect:lineadd.do?id=").append(lmid).append("#4").toString();
+    }
+
+    //复制排班
+    @RequestMapping(value = "copyLineSchedule.do")
+    public String copyLineSchedule(Integer id,String lineid) throws Exception {
+        Assert.notNull(id,"编号不能为空！");
+        Assert.notNull(id,"线路编号名称不能为空！");
+        LineSchedue lineSchedue = scheduleService.find(id);
+        lineSchedue.setId(null);
+        List<LineScheduDetail> schedules = lineSchedue.getSchedules();
+        if(schedules!=null){
+            for (LineScheduDetail  d : schedules ) {
+                d.setId(null);
+            }
         }
-        return String.valueOf(result);
+        lineScheduleEdit(lineSchedue,lineid);
+        return new StringBuffer("redirect:lineadd.do?id=").append(lineSchedue.getLmid()).append("#4").toString();
     }
 
     //编辑
     @RequestMapping(value = "editlineschedule.do")
     @SuppressWarnings("all")
-    public void lineScheduleEdit(LineSchedue ls,String lineid,Writer w) throws Exception {
+    @ResponseBody
+    public String lineScheduleEdit(LineSchedue ls,String lineid) throws Exception {
         validateLineScheduleEdit(ls,lineid);
         int result = -1;
         if (ls != null && ls.getId() != null) {
@@ -77,6 +94,18 @@ public class LineScheduleControl {
         } else if (ls != null && ls.getId() == null) {
             result = this.scheduleService.save(ls);
         }
+        return String.valueOf(result);
+    }
+
+    //编辑排版
+    @RequestMapping("lineScheduleRule")
+    public String lineScheduleRule(Integer id,String lineid,Model model) throws Exception {
+        LineSchedue ls = scheduleService.find(id);
+        if(ls!=null){
+            model.addAttribute("ls",ls);
+        }
+        model.addAttribute("lineid",lineid);
+        return "user/lineScheduleRule";
     }
 
     //验证排班
@@ -87,7 +116,7 @@ public class LineScheduleControl {
         List<LineScheduDetail> schedules = ls.getSchedules();
         List<LineScheduDetail> checkSchedule = new ArrayList<LineScheduDetail>();
         for (LineScheduDetail d : schedules ) {
-            if(d.getIsdel()!=null&&d.getIsdel()==1){
+            if(d.getIsdel()==null||d.getIsdel()==0){
                 checkSchedule.add(d);
             }
         }
@@ -119,14 +148,14 @@ public class LineScheduleControl {
     }
 
     @RequestMapping(value = {"distributeDriverAndPlatePreview.do"})
-    public void distributeDriverAndPlatePreview(String dataMap, Writer w) throws IOException {
+    public void distributeDriverAndPlatePreview(String dataMap, Writer w) throws Exception {
         Assert.hasText(dataMap, "参数不能为空");
         APIUtil.toJSONString(scheduleService.previewForDistributeDriverAndPlate(JSON.parseObject(dataMap)), w);
     }
 
     @ResponseBody
     @RequestMapping(value = {"distributeDriverAndPlate.do"})
-    public String distributeDriverAndPlate(String dataMap){
+    public String distributeDriverAndPlate(String dataMap) throws Exception {
         Assert.hasText(dataMap, "参数不能为空");
         scheduleService.updateForDistributeDriverAndPlate(JSON.parseObject(dataMap));
         return "1";

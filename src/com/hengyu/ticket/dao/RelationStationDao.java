@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.hengyu.ticket.entity.RelationStation;
+import org.apache.ibatis.annotations.Param;
 
 /**
  * 
@@ -18,10 +19,10 @@ public interface RelationStationDao {
 	 * @return 返回受影响行数 (int)
 	 * @throws Exception
 	 */
-	public abstract int save(RelationStation relationStation) throws Exception;
+	int save(RelationStation relationStation) throws Exception;
 	
 	//删除
-	public abstract int deleteByIDS(Map map) throws Exception;
+	int deleteByIDS(Map map) throws Exception;
 	
 	/**
 	 * 更新一个对象
@@ -29,7 +30,7 @@ public interface RelationStationDao {
 	 * @return 返回受影响行数 (int)
 	 * @throws Exception
 	 */
-	public abstract int update(RelationStation relationStation) throws Exception;
+	int update(RelationStation relationStation) throws Exception;
 	
 	
 	/**
@@ -38,9 +39,9 @@ public interface RelationStationDao {
 	 * @return 返回RelationStation对象
 	 * @throws Exception
 	 */
-	public abstract RelationStation find(Integer id) throws Exception;
+	RelationStation find(Integer id) throws Exception;
 	
 	//按用户id查询
-	public abstract List<RelationStation> findByUser(String userid) throws Exception;
+	List<RelationStation> findByUser(@Param("userid") String userid) throws Exception;
 	//按多个id查询
 }

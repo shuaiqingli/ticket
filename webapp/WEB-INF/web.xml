@@ -9,7 +9,7 @@
   		<param-value>
   			login.html,register.html,news.html,index.html,erweima.html,
   			password.html,line_address.html,option_city.html,
-  			ticket_list.html,ticket_detail.html,search_city.html,staticpage.html,news_detail.html
+  			ticket_list.html,ticket_detail.html,search_city.html,staticpage.html,news_detail.html,city_list.html,station_list.html
   		</param-value>
   	</init-param>
   	<init-param>

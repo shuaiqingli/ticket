@@ -123,6 +123,7 @@
 	from
 		refund_ticket 
   	   where STStartID=#{ststartid}
+  	   and RTStatus=0
   	    <!--and makedate <![CDATA[ >= ]]>#{makedate}-->
   </select>
   <select id="waitAffirmRefundTicketList" resultMap="result_map"
@@ -132,6 +133,7 @@
         from
         refund_ticket 
         where STStartID=#{ststartid}
+        and RTStatus=0
 	  <!--and makedate <![CDATA[ >= ]]>#{makedate}-->
         order by IsAffirm asc, MakeDate DESC
         limit

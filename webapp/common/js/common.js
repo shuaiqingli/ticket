@@ -489,13 +489,23 @@ function getMonthFirstLastDate(date){
 	return params;
 }
 
+function timepicker(e) {
+    e.timepicker({
+        showMeridian: false,
+        showInputs: true,
+        defaultTime: false,
+        format: 'H:i',
+        minuteStep: 1
+    });
+}
+
 $(function(){
 	$('.nav-tabs').find('li a').click(function(e){
 		e.preventDefault();
 	});
-	$("tr,body,*").bind("click",function(){
+	/*$("tr").bind("click",function(){
 		$("#transmark").remove();
-	});
+	});*/
 
 	//setInterval(function(){
 	//	$("#transmark").remove();

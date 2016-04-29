@@ -21,6 +21,10 @@ public class StationTimeRule {
 
     private List<LineManageStation> stations;
 
+    //状态
+    private Integer status;
+
+
     //----------------构造方法----------------
 
     public StationTimeRule() {
@@ -28,6 +32,15 @@ public class StationTimeRule {
     }
 
     //-------------- get/set方法 --------------
+
+
+    public Integer getStatus() {
+        return status;
+    }
+
+    public void setStatus(Integer status) {
+        this.status = status;
+    }
 
     public List<StationTimeRule> getRules() {
         return rules;

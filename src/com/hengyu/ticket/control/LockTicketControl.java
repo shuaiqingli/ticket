@@ -2,10 +2,7 @@ package com.hengyu.ticket.control;
 
 import com.alibaba.fastjson.JSON;
 import com.hengyu.ticket.common.Const;
-import com.hengyu.ticket.entity.Admin;
-import com.hengyu.ticket.entity.Customer;
-import com.hengyu.ticket.entity.Page;
-import com.hengyu.ticket.entity.TicketLine;
+import com.hengyu.ticket.entity.*;
 import com.hengyu.ticket.service.*;
 import com.hengyu.ticket.util.CollectionUtil;
 import com.hengyu.ticket.util.DateUtil;
@@ -42,6 +39,8 @@ public class LockTicketControl {
     private ShowTimeService showTimeService;
     @Autowired
     private SaleOrderTicketService saleOrderTicketService;
+    @Autowired
+    private ShiftService shiftService;
 
     @RequestMapping("lockTicketManage.do")
     public String lockTicketManage(Model m) throws Exception {
@@ -67,32 +66,21 @@ public class LockTicketControl {
         Assert.hasText(ticketLine.getCitystartid(), "出发城市不能为空");
         Assert.hasText(ticketLine.getCityarriveid(), "到达城市不能为空");
         Assert.hasText(ticketLine.getTicketdate(), "出发日期不能为空");
-        Page page = new Page();
-        page.setPageSize(1000);
-        page.setParam(ticketLine);
-        List ticketLineList = ticketLineService.findTicketList(page, true);
-        if(null != ticketLineList && ticketLineList.size() > 0){
+        List<Map> shiftList = shiftService.findShiftListForLock(CollectionUtil.objectToMap(ticketLine));
+        if(null != shiftList && shiftList.size() > 0){
             Map<String, String> showcontentMap = new HashMap<String, String>();
-            Map<String, Object> lockedseatnolistMap = new HashMap<String, Object>();
-            for(Object ticketLineTemp : ticketLineList){
-                Map parsedTicketLine = (Map) ticketLineTemp;
-                if(null == showcontentMap.get(parsedTicketLine.get("lmid"))){
-                    String showcontent = showTimeService.findShowContent(Integer.parseInt((String) parsedTicketLine.get("lmid")), (String) parsedTicketLine.get("ticketdate"));
-                    showcontentMap.put((String)parsedTicketLine.get("lmid"), showcontent==null?"":showcontent);
+            for(Object shift : shiftList){
+                Map parsedShift = (Map) shift;
+                String lmid = parsedShift.get("lmid").toString();
+                String ticketdate = (String) parsedShift.get("ticketdate");
+                if(null == showcontentMap.get(lmid)){
+                    String showcontent = showTimeService.findShowContent(Integer.parseInt(lmid), ticketdate);
+                    showcontentMap.put(lmid, showcontent==null?"":showcontent);
                 }
-                parsedTicketLine.put("showcontent", showcontentMap.get(parsedTicketLine.get("lmid")));
-                if((Integer)parsedTicketLine.get("allquantity") - (Long)parsedTicketLine.get("balancequantity") - (Long)parsedTicketLine.get("lockquantity") > 0){
-                    if(null == lockedseatnolistMap.get(parsedTicketLine.get("shiftcode"))){
-                        List<Map> lockedseatnolist = saleOrderTicketService.findSeatNOListForLock(Integer.parseInt((String) parsedTicketLine.get("lmid")), (String) parsedTicketLine.get("shiftcode"), (String) parsedTicketLine.get("ticketdate"));
-                        lockedseatnolistMap.put((String)parsedTicketLine.get("shiftcode"), lockedseatnolist);
-                    }
-                    parsedTicketLine.put("lockedseatnolist", lockedseatnolistMap.get(parsedTicketLine.get("shiftcode")));
-                }else{
-                    parsedTicketLine.put("lockedseatnolist", new ArrayList<Map>());
-                }
+                parsedShift.put("showcontent", showcontentMap.get(lmid));
             }
         }
-        return JSON.toJSONString(ticketLineList);
+        return JSON.toJSONString(shiftList);
     }
 
     @RequestMapping("lockTicketDetail.do")
@@ -103,10 +91,10 @@ public class LockTicketControl {
         Assert.isTrue(ticketLineList != null && ticketLineList.size() == 1, "无效班次");
         Map parsedTicketLine = (Map) ticketLineList.get(0);
         parsedTicketLine.put("showcontent", showTimeService.findShowContent(Integer.parseInt((String) parsedTicketLine.get("lmid")), (String) parsedTicketLine.get("ticketdate")));
-        parsedTicketLine.put("lockedseatnolist", saleOrderTicketService.findSeatNOListForLock(Integer.parseInt((String) parsedTicketLine.get("lmid")), (String) parsedTicketLine.get("shiftcode"), (String) parsedTicketLine.get("ticketdate")));
-        m.addAttribute("ticketLine", ticketLineList.get(0));
+        parsedTicketLine.put("lockedseatnolist", saleOrderTicketService.findSeatNOListForLock(parsedTicketLine.get("shiftid").toString()));
+        m.addAttribute("ticketLine", parsedTicketLine);
         m.addAttribute("ticketDate", DateUtil.stringToDate((String) ((Map) ticketLineList.get(0)).get("ticketdate")));
-        m.addAttribute("seatList", seatService.findSeatList(Integer.parseInt((String) ((Map) ticketLineList.get(0)).get("lmid")), (String) ((Map) ticketLineList.get(0)).get("shiftcode"), (String) ((Map) ticketLineList.get(0)).get("ticketdate")));
+        m.addAttribute("seatList", seatService.findSeatList(parsedTicketLine.get("shiftid").toString()));
         return "user/lockTicketDetail";
     }
 
@@ -178,15 +166,15 @@ public class LockTicketControl {
 
     @ResponseBody
     @RequestMapping("shiftDetailForFreezeOrUnfreeze.do")
-    public String shiftDetailForFreezeOrUnfreeze(TicketLine ticketLine) throws Exception {
-        Assert.notNull(ticketLine.getId(), "ID不能为空");
-        Page page = new Page();
-        page.setParam(ticketLine);
-        List ticketLineList = ticketLineService.findTicketList(page, false);
-        Assert.isTrue(ticketLineList != null && ticketLineList.size() == 1, "无效班次");
+    public String shiftDetailForFreezeOrUnfreeze(Long id) throws Exception {
+        Assert.notNull(id, "无效ID");
+        Map<String, Object> param = new HashMap<String, Object>();
+        param.put("id", id.toString());
+        List<Map> shiftList = shiftService.findShiftListForLock(param);
+        Assert.isTrue(null != shiftList && shiftList.size() == 1, "无效班次");
         Map<String, Object> result = new HashMap<String, Object>();
-        result.put("ticketLine", ticketLineList.get(0));
-        result.put("seatList", seatService.findSeatList(Integer.parseInt((String) ((Map) ticketLineList.get(0)).get("lmid")), (String) ((Map) ticketLineList.get(0)).get("shiftcode"), (String) ((Map) ticketLineList.get(0)).get("ticketdate")));
+        result.put("shift", shiftList.get(0));
+        result.put("seatList", seatService.findSeatList(id.toString()));
         return JSON.toJSONString(result);
     }
 

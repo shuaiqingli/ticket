@@ -53,10 +53,13 @@
           <root url="file://$MODULE_DIR$/webapp/WEB-INF/lib" />
         </CLASSES>
         <JAVADOC />
-        <SOURCES />
+        <SOURCES>
+          <root url="jar://$USER_HOME$/.ideaLibSources/druid-1.0.18-sources.jar!/" />
+          <root url="jar://$USER_HOME$/.ideaLibSources/mybatis-spring-1.2.1-sources.jar!/" />
+          <root url="jar://$USER_HOME$/.ideaLibSources/mybatis-3.2.3-sources.jar!/" />
+        </SOURCES>
         <jarDirectory url="file://$MODULE_DIR$/webapp/WEB-INF/lib" recursive="false" />
       </library>
     </orderEntry>
-    <orderEntry type="library" name="groovy-2.4.6" level="application" />
   </component>
 </module>

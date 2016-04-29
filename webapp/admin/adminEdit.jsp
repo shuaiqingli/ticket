@@ -344,11 +344,11 @@ $(function(e){
 		var name = $(this.options[this.selectedIndex]).text();
 		console.debug(name);
 		$("[name=cityName]").val(name);
-		var parentID = $(this).val();
-		if(parentID==""){
+		var parentid = $(this).val();
+		if(parentid==""){
 			return;
 		}
-		getStationList(parentID);
+		getStationList(parentid);
 	});
 	//选择站点
 	$(".stationlist").change(function(){
@@ -462,8 +462,8 @@ $(function(e){
 	});
 });
 //获取城市列表
-function getStationList(parentID){
-	var data = {parentID:parentID};
+function getStationList(parentid){
+	var data = {parentid:parentid};
 		$.ajax({
 		   type: "POST",
 		   dataType:"JSON",

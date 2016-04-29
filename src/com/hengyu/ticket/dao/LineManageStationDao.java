@@ -30,12 +30,13 @@ public interface LineManageStationDao {
 	
 	/**
 	 * 删除途经站点
-	 * @param ids
 	 * @return
 	 * @throws Exception
 	 */
 	int delete(Object map) throws Exception;
-	
+
+	int deleteByID(@Param("id") Integer id) throws Exception;
+
 	/**
 	 * 按线路删除所有途经站点
 	 * @param lMID
@@ -47,7 +48,7 @@ public interface LineManageStationDao {
 	
 	/**
 	 * 根据主键查询一个对象
-	 * @param iD 主键
+	 * @param id 主键
 	 * @return 返回LineManageStation对象
 	 * @throws Exception
 	 */

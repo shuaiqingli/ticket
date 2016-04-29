@@ -25,6 +25,8 @@ public class CityStation {
     private String stationaddr;
     //取票地址
     private String ticketaddr;
+    //取票示意图
+    private String ticketaddrpicture;
 
     private Integer ticketpercent;
     private Integer couponticketpercent;
@@ -154,5 +156,13 @@ public class CityStation {
 
     public void setSort(Integer sort) {
         this.sort = sort;
+    }
+
+    public String getTicketaddrpicture() {
+        return ticketaddrpicture;
+    }
+
+    public void setTicketaddrpicture(String ticketaddrpicture) {
+        this.ticketaddrpicture = ticketaddrpicture;
     }
 }

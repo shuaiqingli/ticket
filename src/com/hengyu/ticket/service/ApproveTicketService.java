@@ -147,7 +147,7 @@ public class ApproveTicketService {
 			
 			LineManage lm = new LineManage();
 			lm.setId(ls.getLmid());
-			lm = lmdao.find(lm);
+			lm = lmdao.find(ls.getLmid());
 			if(lm==null){
 				Log.info(this.getClass(),"===========传入线路id错误，没有找到该线路 " , ls.getLmid());
 			}else{
@@ -260,22 +260,22 @@ public class ApproveTicketService {
 				//生成车票
 				TicketStore tickStore = new TicketStore();
 				tickStore.setLmid(lm.getId());
-				tickStore.setTicketDate(tickeDate);
+//				tickStore.setTicketDate(tickeDate);
 				tickStore.setMakedate(DateHanlder.getCurrentDate());
-				tickStore.setShiftCode(lsd.getShiftcode());
+//				tickStore.setShiftCode(lsd.getShiftcode());
 				tickStore.setIsapprove(0);
 				tickStore.setIsrelease(0);
 				tickStore.setAllquantity(0);
-				tickStore.setBalanceCouponquantity(0);
+//				tickStore.setBalanceCouponquantity(0);
 				tickStore.setBalanceQuantity(0);
 				tickStore.setCouponquantity(0);
 				//检查站点
-				TicketStore ts = ticketStoreDao.findByLmidDateShiftCode(lm.getId(),tickStore.getTicketDate() , tickStore.getShiftCode());
-				if(ticketStores!=null){
-					if(ts==null){
-						ticketStores.add(tickStore);
-					}
-				}
+//				TicketStore ts = ticketStoreDao.findByLmidDateShiftCode(lm.getId(),tickStore.getTicketDate() , tickStore.getShiftCode());
+//				if(ticketStores!=null){
+//					if(ts==null){
+//						ticketStores.add(tickStore);
+//					}
+//				}
 				Log.info(this.getClass(),"===========余票：" ,tickStore.getBalanceQuantity());
 				
 			}

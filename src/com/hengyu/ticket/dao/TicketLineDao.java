@@ -4,7 +4,9 @@ import java.util.List;
 import java.util.Map;
 
 import com.hengyu.ticket.entity.Page;
+import com.hengyu.ticket.entity.SaleOrder;
 import com.hengyu.ticket.entity.TicketLine;
+import org.apache.ibatis.annotations.Param;
 
 /**
  * 
@@ -20,7 +22,7 @@ public interface TicketLineDao {
 	 * @return 返回受影响行数 (int)
 	 * @throws Exception
 	 */
-	public abstract int save(TicketLine ticketLine) throws Exception;
+	int save(TicketLine ticketLine) throws Exception;
 	
 	/**
 	 * 批量保存
@@ -28,7 +30,7 @@ public interface TicketLineDao {
 	 * @return
 	 * @throws Exception
 	 */
-	public abstract int batchSave(List<TicketLine> ticketLines) throws Exception;
+	int batchSave(List<TicketLine> ticketLines) throws Exception;
 
 	/**
 	 * 更新一个对象
@@ -37,12 +39,16 @@ public interface TicketLineDao {
 	 * @return 返回受影响行数 (int)
 	 * @throws Exception
 	 */
-	public abstract int update(TicketLine ticketLine) throws Exception;
+	int update(TicketLine ticketLine) throws Exception;
 	
 	//更新车票线路价格
-	public abstract int updateprice(TicketLine ticketLine) throws Exception;
+	int updateprice(TicketLine ticketLine) throws Exception;
+
+    //更新匹配价格车票数量
+	int updateMatchQuantityPrice(TicketLine ticketLine) throws Exception;
+
 	//取消班次后取消车票线路
-	public abstract int cancelTicketLine(Map m) throws Exception;
+	int cancelTicketLine(Map m) throws Exception;
 
 	/**
 	 * 根据主键查询一个对象
@@ -52,7 +58,7 @@ public interface TicketLineDao {
 	 * @return 返回TicketLine对象
 	 * @throws Exception
 	 */
-	public abstract TicketLine find(Integer id) throws Exception;
+	TicketLine find(Integer id) throws Exception;
 	
 	/**
 	 * 按班次号，
@@ -67,7 +73,7 @@ public interface TicketLineDao {
 	 * @return
 	 * @throws Exception
 	 */
-	public abstract TicketLine findUniqueTicketLine(TicketLine tl) throws Exception;
+	TicketLine findUniqueTicketLine(TicketLine tl) throws Exception;
 
 	/**
 	 * 查询车票列表
@@ -76,7 +82,7 @@ public interface TicketLineDao {
 	 * @throws Exception
 	 */
 	@SuppressWarnings("rawtypes")
-	public abstract List<Map> findTicketList(Page page) throws Exception;
+	List<Map> findTicketList(Page page) throws Exception;
 	
 	/**
 	 * 查询车票总记录数量
@@ -84,13 +90,13 @@ public interface TicketLineDao {
 	 * @return
 	 * @throws Exception
 	 */
-	public abstract long findTicketListCount(Page page) throws Exception;
+	long findTicketListCount(Page page) throws Exception;
 
 	/**
 	 * 修改排班，检查日期是否在审核日期范围
 	 * @return
 	 */
-	public abstract String getCheckApproveTicketDate(TicketLine tl) throws Exception;
+	String getCheckApproveTicketDate(TicketLine tl) throws Exception;
 	
 	/**
 	 * 当前审核的最大日期
@@ -98,7 +104,7 @@ public interface TicketLineDao {
 	 * @return
 	 * @throws Exception
 	 */
-	public abstract String getMaxApproveTicketDate(TicketLine tl) throws Exception;
+	String getMaxApproveTicketDate(TicketLine tl) throws Exception;
 	
 	/**
 	 * 修改排班日期后删除车票
@@ -106,8 +112,31 @@ public interface TicketLineDao {
 	 * @return
 	 * @throws Exception
 	 */
-	public abstract int delNotApproveTicketLine(TicketLine tl) throws Exception;
+	int delNotApproveTicketLine(TicketLine tl) throws Exception;
 	
-	//根据班次查询各站点的票价
-	public abstract List getTicketLineByShiftCode(Map a)throws Exception;
+	/**
+	 * 根据班次查询各站点的票价(不要再用)
+	 * @param a
+	 * @return
+	 * @throws Exception
+	 */
+	@Deprecated 
+	List getTicketLineByShiftCode(Map a)throws Exception;
+
+    Integer getTicketLineNotDataTypeTip(@Param("param") TicketLine ticketLine) throws Exception;
+
+	/**
+	 * 根据多个条件找Shift对象数据
+	 * @param map
+	 * @return
+	 */
+	public abstract List<TicketLine> findShiftByCityStartIDAndCityArriveIDAndRide(Map<String, Object> map);
+
+	int updateQuantity(@Param("id")Integer id, @Param("quantity")Integer quantity, @Param("discountquantity")Integer discountquantity);
+
+	int addQuantity(@Param("id")Integer id, @Param("quantity")Integer quantity, @Param("discountquantity")Integer discountquantity);
+	
+	List<Map> getTicketLineByShiftId(Long ShiftID);
+
+	List<Map> getStationListForShift(@Param("shiftid") Long shiftid);
 }

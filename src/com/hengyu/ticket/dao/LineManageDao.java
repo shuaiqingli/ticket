@@ -21,7 +21,7 @@ public interface LineManageDao {
      * @return 返回受影响行数 (int)
      * @throws Exception
      */
-    public abstract int save(LineManage lineManage) throws Exception;
+    int save(LineManage lineManage) throws Exception;
 
     /**
      * 更新一个对象
@@ -30,9 +30,9 @@ public interface LineManageDao {
      * @return 返回受影响行数 (int)
      * @throws Exception
      */
-    public abstract int update(LineManage lineManage) throws Exception;
+    int update(LineManage lineManage) throws Exception;
     
-    public abstract int updateNotNull(LineManage lineManage) throws Exception;
+    int updateNotNull(LineManage lineManage) throws Exception;
 
     /**
      * 检查该记录是否存在
@@ -41,16 +41,16 @@ public interface LineManageDao {
      * @return
      * @throws Exception
      */
-    public abstract long checkExist(LineManage lineManage) throws Exception;
+    long checkExist(LineManage lineManage) throws Exception;
 
     /**
      * 根据主键查询一个对象
      *
-     * @param lineManage
+     * @param id
      * @return 返回LineManage对象
      * @throws Exception
      */
-    public abstract LineManage find(LineManage lineManage) throws Exception;
+    LineManage find(@Param("id") Integer id) throws Exception;
 
     /**
      * 按 id 查询线路 和 公司id查询
@@ -60,7 +60,7 @@ public interface LineManageDao {
      * @return
      * @throws Exception
      */
-    public abstract LineManage findByIdTcid(@Param("lm") LineManage lineManage, @Param("admin") Object admin) throws Exception;
+    LineManage findByIdTcid(@Param("lm") LineManage lineManage, @Param("admin") Object admin) throws Exception;
 
     /**
      * 查询价格模板
@@ -69,7 +69,7 @@ public interface LineManageDao {
      * @return
      * @throws Exception
      */
-    public abstract LineManage findLinePriceByLineId(String lineId) throws Exception;
+    LineManage findLinePriceByLineId(String lineId) throws Exception;
 
     /**
      * 查询线路
@@ -78,7 +78,7 @@ public interface LineManageDao {
      * @return
      * @throws Exception
      */
-    public abstract List<LineManage> findList(Page page) throws Exception;
+    List<LineManage> findList(Page page) throws Exception;
 
     /**
      * 查询所有审核的线路
@@ -86,7 +86,7 @@ public interface LineManageDao {
      * @return
      * @throws Exception
      */
-    public abstract List<LineManage> findApproveLines() throws Exception;
+    List<LineManage> findApproveLines() throws Exception;
 
     /**
      * 查询自动发布车票的线路
@@ -94,7 +94,7 @@ public interface LineManageDao {
      * @return
      * @throws Exception
      */
-    public abstract List<LineManage> findReleaseLines() throws Exception;
+    List<LineManage> findReleaseLines() throws Exception;
 
     /**
      * 统计条数
@@ -103,16 +103,16 @@ public interface LineManageDao {
      * @return
      * @throws Exception
      */
-    public abstract Long totalCount(Page page) throws Exception;
+    Long totalCount(Page page) throws Exception;
 
     // 根据lineid在line_manage,linemanage_station 中找出途经站
-    public abstract List getWayStation(Integer lmid) throws Exception;
+    List getWayStation(Integer lmid) throws Exception;
 
     //根据ststartid,cityarriveid,starriveid获取线路ID
-    public abstract LineManage getLineidBySCS(Map a) throws Exception;
+    LineManage getLineidBySCS(Map a) throws Exception;
 
     //分页获取所有的线路
-    public abstract List getAllLine(Map a) throws Exception;
+    List getAllLine(Map a) throws Exception;
 
     long checkForBindDriverToLine(@Param("driverid") String driverid, @Param("groupid") String groupid, @Param("type") String type);
 
@@ -136,6 +136,14 @@ public interface LineManageDao {
     int delLineManageStationByGroupId(@Param("groupid") String groupid) throws Exception;
     //删除时间规则
     int delLineStationTimeRule(@Param("groupid") String groupid) throws Exception;
+
+    int delTicketStore(@Param("groupid") String groupid) throws Exception;
+
+    int delTicketLine(@Param("groupid") String groupid) throws Exception;
+
+    int delShift(@Param("groupid") String groupid) throws Exception;
+
+    int delShiftStart(@Param("groupid") String groupid) throws Exception;
 
     //按分组id删除车牌
     int delPlateByGroupId(@Param("groupid")String groupid) throws Exception;
@@ -171,5 +179,9 @@ public interface LineManageDao {
     Long totalCountForBindIntegralRule(Page page);
 
     List<Map> findListForBindIntegralRule(Page page);
+
+    LineManage findRefundRemark(@Param("id") Integer id) throws Exception;
+
+    Integer getRequireTime(@Param("id") Integer id) throws Exception;
 
 }

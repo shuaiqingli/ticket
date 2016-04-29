@@ -35,7 +35,7 @@
 					<option value="">--- 到达站点 ---</option>
 				</select>
 				<span>票面日期：</span>
-				<input name="ticketDate" placeholder="票面日期" size="16" type="text" value="${page.param.ticketDate }" readonly="readonly" class="date _date"/>
+				<input name="ticketDate" placeholder="票面日期" size="16" type="text" value="${page.param.ticketdate }" readonly="readonly" class="date _date"/>
 				<input type="text" name="transcompany" value="${page.param.transcompany }"
 					   placeholder="班次号/公司名称"  style="height:30px;">
 				<a class="btn"

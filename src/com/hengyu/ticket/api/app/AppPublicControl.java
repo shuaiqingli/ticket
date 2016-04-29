@@ -3,6 +3,7 @@ package com.hengyu.ticket.api.app;
 import java.io.IOException;
 import java.io.Writer;
 import java.math.BigDecimal;
+import java.net.Socket;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -140,7 +141,7 @@ public class AppPublicControl {
 						Log.info(this.getClass(),"lat:",lat);
 						Log.info(this.getClass(),"lng:",lng);
 						if(StringUtils.isNotEmpty(lat)&&StringUtils.isNotEmpty(lng)){
-							String addrapi = "http://api.map.baidu.com/geocoder?location="+lat+","+lng+"&output=json";
+							String addrapi = "http://api.map.baidu.com/geocoder?location="+lat+","+lng+"&output=json&type=wgs84";
 							String addrjson = URLHanlder.post(addrapi);
 							Log.info(this.getClass(),"===== 百度地图API返回结果：",addrjson);
 							String addr = APIUtil.getJSONVal("result.formatted_address",addrjson);
@@ -326,6 +327,9 @@ public class AppPublicControl {
 	@SuppressWarnings("all")
 	@RequestMapping("getStationByCityId")
 	public void getStationByCityId(Writer w,String begincityid,String endcityid) throws IOException {
+		/*Socket socket = new Socket("127.0.0.1", 10036);
+        socket.getOutputStream().write(new byte[]{(byte)0x5B,(byte)0x00,(byte)0x00,(byte)0x00,(byte)0x48,(byte)0x00,(byte)0x00,(byte)0x00,(byte)0x01,(byte)0x10,(byte)0x01,(byte)0x02,(byte)0x9F,(byte)0xD8,(byte)0x31,(byte)0x01,(byte)0x02,(byte)0x0F,(byte)0x01,(byte)0x02,(byte)0x9F,(byte)0xD8,(byte)0x31,(byte)0x97,(byte)0x7A,(byte)0x7B,(byte)0x35,(byte)0xDB,(byte)0xB8,(byte)0xA2,(byte)0x5E,(byte)0x02,(byte)0x99,(byte)0x86,(byte)0xA5,(byte)0x45,(byte)0x87,(byte)0x07,(byte)0x57,(byte)0xFB,(byte)0xB0,(byte)0x2A,(byte)0xBF,(byte)0x50,(byte)0x85,(byte)0xAB,(byte)0x5E,(byte)0x01,(byte)0x4E,(byte)0x48,(byte)0xDE,(byte)0xB2,(byte)0x55,(byte)0xB5,(byte)0xD6,(byte)0x5F,(byte)0xD7,(byte)0x61,(byte)0xDA,(byte)0xAC,(byte)0x6E,(byte)0x41,(byte)0x06,(byte)0x02,(byte)0xD0,(byte)0xCF,(byte)0x07,(byte)0x61,(byte)0x5A,(byte)0x02,(byte)0xC0,(byte)0x78,(byte)0x7B,(byte)0x90,(byte)0x5D});*/
+
 		Assert.notNull(begincityid, "城市编号参数错误！");
 		Assert.notNull(endcityid, "城市编号参数错误！");
 		API api = new API();
@@ -334,6 +338,36 @@ public class AppPublicControl {
 			List<Object> ecitys = cityStationService.getStartStationByCityid(begincityid,endcityid,1);
 			api.getDatas().add(bcitys);
 			api.getDatas().add(ecitys);
+		} catch (Exception e) {
+			api.setCode(5000);
+			e.printStackTrace();
+		}
+		APIUtil.toJSON(api, w);
+	}
+
+	// 获取出发城市站点
+	@SuppressWarnings("all")
+	@RequestMapping("getStartStationList")
+	public void getStartStationList(Writer w,String begincityid,String endcityid, String endstationid) throws IOException {
+		Assert.notNull(begincityid, "无效出发城市");
+		API api = new API();
+		try {
+			api.getDatas().add(cityStationService.getStartStationList(begincityid, endcityid, endstationid));
+		} catch (Exception e) {
+			api.setCode(5000);
+			e.printStackTrace();
+		}
+		APIUtil.toJSON(api, w);
+	}
+
+	// 获取达到城市站点
+	@SuppressWarnings("all")
+	@RequestMapping("getEndStationList")
+	public void getEndStationList(Writer w,String endcityid,String begincityid, String beginstationid) throws IOException {
+		Assert.notNull(endcityid, "无效到达城市");
+		API api = new API();
+		try {
+			api.getDatas().add(cityStationService.getEndStationList(endcityid, begincityid, beginstationid));
 		} catch (Exception e) {
 			api.setCode(5000);
 			e.printStackTrace();
@@ -363,6 +397,16 @@ public class AppPublicControl {
 			e.printStackTrace();
 			api.setCode(5000);
 		}
+		APIUtil.toJSON(out, api, null,null,false,true);
+	}
+
+	// 获取班次的站点列表
+	@SuppressWarnings("rawtypes")
+	@RequestMapping("getStationListForShift")
+	public void getStationListForShift(Long id, Writer out) throws IOException {
+		Assert.notNull(id, "无效班次");
+		API api = new API();
+		api.setDatas(ticketLineService.getStationListForShift(id));
 		APIUtil.toJSON(out, api, null,null,false,true);
 	}
 
@@ -573,6 +617,24 @@ public class AppPublicControl {
 			api.getDatas().add(1);
 		}
 		APIUtil.toJSON(api, w);
+	}
+
+    //获取线路退款备注
+    @RequestMapping("getLineRefundRemark")
+    public void getLineRefundRemark(Integer lmid,Writer w) throws Exception {
+        Assert.notNull(lmid,"线路编号不能为空");
+        LineManage lm = lms.findRefundRemark(lmid);
+        Assert.notNull(lm,"没有找到线路！");
+        APIUtil.APIToJSON(w,lm);
+    }
+
+	//获取线路代金券开关
+	@RequestMapping("getLineManageCouponFlag")
+	public void getLineManageCouponFlag(Integer lmid,Writer w) throws Exception {
+		Assert.notNull(lmid,"线路编号不能为空");
+		LineManage lm = lms.find(lmid);
+		Assert.notNull(lm,"没有找到线路！");
+		APIUtil.APIToJSON(w,lm);
 	}
 
 }

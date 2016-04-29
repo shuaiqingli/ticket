@@ -1,8 +1,13 @@
 package com.hengyu.ticket.util;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
+import java.util.Set;
 
 
 /**
@@ -81,4 +86,49 @@ public class NumberCreate {
 		}
 	}
 	
+	/**
+	 * 以当前时间生成一个ID
+	 * @return
+	 */
+	public static String getIdByCurrentTime(){
+		Date date=new Date();
+		DateFormat df=new SimpleDateFormat("yyyyMMddHHmmss");
+		return df.format(date);
+	}
+
+	/**
+	 * 获取当前时间毫秒值
+	 * @return
+	 */
+	public static String getCurrentTimeMillis() {
+		long time = System.currentTimeMillis();
+		return String.valueOf(time);
+	}
+	
+	/**
+	 * 获取一个指定位数的随机数
+	 * @return
+	 */
+	public static String getAnyNum(int size){
+		String result = "";
+		if(size==0){
+			return result;
+		}
+		int tempSize = size;
+		while(tempSize>10){
+			result = getAnyNum(result, 10);
+			tempSize = tempSize-10;
+		}
+		if(tempSize!=0){
+			return getAnyNum(result, tempSize);
+		}
+		return result;
+	}
+	private static String getAnyNum(String result,int size){
+		List<Integer> list = new ArrayList<Integer>();
+		for(int i=0;i<size;i++){
+			list.add(random.nextInt(10));
+		}
+		return result+CollectionUtil.listToString(list,"");
+	} 
 }

@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import com.hengyu.ticket.entity.MakeConf;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -109,6 +110,16 @@ public class TicketLineService {
 		if (tl.getId() == null) {
 			long count = ticketLineDao.findTicketListCount(page);
 			page.setTotalCount(count);
+			Integer istoday = tl.getIstoday();
+			tl.setIstoday(0);
+            Integer res_all = ticketLineDao.getTicketLineNotDataTypeTip(tl);
+			page.setNotDataType(res_all == 0 ? 0 : 1);
+			if(res_all > 0 && istoday == 1){
+				tl.setIstoday(1);
+				Integer res_available = ticketLineDao.getTicketLineNotDataTypeTip(tl);
+				page.setNotDataType(res_available == 0 ? 1 : 2);
+			}
+			tl.setIstoday(istoday);
 		}
 		return ticketLineDao.findTicketList(page);
 	}
@@ -133,7 +144,6 @@ public class TicketLineService {
 	/**
 	 * 修改排班日期后删除车票，以及相关的 ticketStore ShirtStart
 	 * 
-	 * @param tl
 	 * @return
 	 * @throws Exception
 	 */
@@ -154,9 +164,31 @@ public class TicketLineService {
 		this.ticketLineDao = ticketLineDao;
 	}
 
-	// 根据班次查询各站点的票价
+	/**
+	 * 根据班次查询各站点的票价(不要再用)
+	 * @param a
+	 * @return
+	 * @throws Exception
+	 */
+	@Deprecated  
 	public List getTicketLineByShiftCode(Map a) throws Exception{
 		return ticketLineDao.getTicketLineByShiftCode(a);
+	}
+
+	/**
+     * 根据出发站和到达站以及出发日期查询
+     * @param map
+     */
+	public List<TicketLine> findShiftByCityStartIDAndCityArriveIDAndRide(Map<String, Object> map) {
+		return ticketLineDao.findShiftByCityStartIDAndCityArriveIDAndRide(map);
+	}
+
+	public List<Map> getTicketLineByShiftId(Long shiftId) {
+		return ticketLineDao.getTicketLineByShiftId(shiftId);
+	}
+
+	public List<Map> getStationListForShift(Long shiftid){
+		return ticketLineDao.getStationListForShift(shiftid);
 	}
 
 }

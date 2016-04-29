@@ -30,7 +30,7 @@
 	where
 		ID=#{iD}
   </select>
-  <select id="findMenuByRole" parameterType="Role" resultMap="result_map2" >
+  <select id="findMenuByRole" resultMap="result_map2" >
 	select
 		<include refid="columns_children"></include>
 		p.*

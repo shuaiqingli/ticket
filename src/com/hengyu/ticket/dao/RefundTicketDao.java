@@ -81,4 +81,11 @@ public interface RefundTicketDao {
 	
 	// 确认退票
 	public abstract int refundTicketAffirm(Map a) throws Exception;
+	
+	/**
+	 * 根据外部号进行退费
+	 * @param batch_no
+	 * @return
+	 */
+	public abstract RefundTicket findByOutCode(String batch_no);
 }

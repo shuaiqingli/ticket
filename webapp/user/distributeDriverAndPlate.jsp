@@ -18,8 +18,8 @@
         <div style="float:left;">司机排班</div>
         <div style="float:right;" class="date" groupid="${data.groupid}" date="${data.date}">${data.date}</div>
     </div>
-    <div style="border-bottom: 1px solid #ccc;" class="cityA" cityID="${data.dataMapForCityA.line.cityStartID}">
-        <div class="main_tit cityName"><img src="images/CITY_03.png">${data.dataMapForCityA.line.cityStartName}/${data.dataMapForCityA.line.lineID}</div>
+    <div style="border-bottom: 1px solid #ccc;" class="cityA" cityID="${data.dataMapForCityA.line.citystartid}">
+        <div class="main_tit cityName"><img src="${basePath}/images/CITY_03.png">${data.dataMapForCityA.line.citystartname}/${data.dataMapForCityA.line.lineid}</div>
         <div style="text-align: center;overflow: hidden;width: initial;">
             <div class="cell_mod">
                 <div class="tit">班次</div>
@@ -84,8 +84,8 @@
             </div>
         </div>
     </div>
-    <div style="border-bottom: 1px solid #ccc;" class="cityB" cityID="${data.dataMapForCityB.line.cityStartID}">
-        <div class="main_tit cityName"><img src="images/CITY_03.png">${data.dataMapForCityB.line.cityStartName}/${data.dataMapForCityB.line.lineID}</div>
+    <div style="border-bottom: 1px solid #ccc;" class="cityB" cityID="${data.dataMapForCityB.line.citystartid}">
+        <div class="main_tit cityName"><img src="${basePath}/images/CITY_03.png">${data.dataMapForCityB.line.citystartname}/${data.dataMapForCityB.line.lineid}</div>
         <div style="text-align: center;overflow: hidden;width: initial;">
             <div class="cell_mod">
                 <div class="tit">班次</div>

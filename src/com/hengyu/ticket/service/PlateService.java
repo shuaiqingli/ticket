@@ -92,4 +92,8 @@ public class PlateService {
         page.setTotalCount(totalCount);
         return plateDao.findListForBindLine(page);
     }
+
+    public Plate findByPlateNum(String platenum) throws Exception {
+        return plateDao.findByPlateNum(platenum);
+    }
 }

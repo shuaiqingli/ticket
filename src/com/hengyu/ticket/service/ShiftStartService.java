@@ -10,6 +10,7 @@ import com.hengyu.ticket.dao.ShiftStartDao;
 import com.hengyu.ticket.dao.TicketLineDao;
 import com.hengyu.ticket.entity.Page;
 import com.hengyu.ticket.entity.ShiftStart;
+import org.springframework.util.Assert;
 
 /**
  * 
@@ -46,6 +47,16 @@ public class ShiftStartService {
 		return shiftStartDao.update(shiftStart);
 	}
 
+
+    //修改发车状态
+	public int updateShiftStartIsCancel(Long shiftid,Integer id,Integer iscancel, String iscancelname,Integer oldiscancel) throws Exception {
+        Assert.isTrue(shiftStartDao.updateShiftStartIsCancel(shiftid,id,iscancel,iscancelname,oldiscancel)>=1,"更新发车失败!");
+        if(iscancel==0){
+            shiftStartDao.updateShiftStatus(shiftid,0,0);
+        }
+        return 1;
+    }
+
 	/**
 	 * 根据主键查询一个对象
 	 * 
@@ -56,6 +67,11 @@ public class ShiftStartService {
 	 */
 	public ShiftStart find(Object id) throws Exception {
 		return shiftStartDao.find(Integer.parseInt(id.toString()));
+	}
+
+    //获取详情
+	public ShiftStart getDetail(Integer id) throws Exception {
+		return shiftStartDao.getDetail(id);
 	}
 
 	public void setShiftStartDao(ShiftStartDao shiftStartDao) {
@@ -194,6 +210,14 @@ public class ShiftStartService {
 	// 按线路、日期查询,按站点分组
 	public List<Object> getShiftStartDataReportByDriver(Map a) throws Exception {
 		return shiftStartDao.getShiftStartDataReportByDriver(a);
+	}
+
+	public Map<String, Object> getMap_ShiftStartByTemp(Map<String, Object> a) {
+		return shiftStartDao.getMap_ShiftStartByTemp(a);
+	}
+
+	public Map<String, Object> getMap_ShiftStartByCRS(Map<String, Object> a) {
+		return shiftStartDao.getMap_ShiftStartByCRS(a);
 	}
 
 }

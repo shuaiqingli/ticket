@@ -44,6 +44,9 @@ public class LineSchedueService {
      * @throws Exception
      */
     public int save(LineSchedue lineSchedue) throws Exception {
+        if(lineSchedue.getIsdefault()!=null&&lineSchedue.getIsdefault()==1){
+            lineSchedueDao.resetDefault(lineSchedue.getLmid());
+        }
         Assert.isTrue(lineSchedueDao.save(lineSchedue)==1,"保存排班规则失败！");
         saveOrUpdateScheduleDetail(lineSchedue);
         return 1;
@@ -57,6 +60,9 @@ public class LineSchedueService {
      * @throws Exception
      */
     public int update(LineSchedue lineSchedue) throws Exception {
+        if(lineSchedue.getIsdefault()!=null&&lineSchedue.getIsdefault()==1){
+            lineSchedueDao.resetDefault(lineSchedue.getLmid());
+        }
         Assert.isTrue(lineSchedueDao.update(lineSchedue)==1,"更新排班规则失败！");
         saveOrUpdateScheduleDetail(lineSchedue);
         return 1;
@@ -134,7 +140,6 @@ public class LineSchedueService {
                 return result;
             }
             if(ssdao.isDriverExistForShiftStart(lineManage.getId(), date) != 0){
-                result.put("shiftStartList", ssdao.getShiftStartListBylmidList(new Integer[]{lmid}, date));
                 result.put("distributeFlag", "2");
                 return result;
             }
@@ -280,7 +285,7 @@ public class LineSchedueService {
         plateList.addAll(sortedPlateList);
     }
 
-    public Map<String, Object> previewForDistributeDriverAndPlate(Map dataMap) {
+    public Map<String, Object> previewForDistributeDriverAndPlate(Map dataMap) throws Exception {
         checkAndDistributeDriverAndPlate(dataMap);
         Map<String, Object> result = new HashMap<String, Object>();
         result.put("shiftStartList", dataMap.get("shiftStartList"));
@@ -290,7 +295,7 @@ public class LineSchedueService {
     }
 
     @SuppressWarnings("unchecked")
-    public void updateForDistributeDriverAndPlate(Map dataMap) {
+    public void updateForDistributeDriverAndPlate(Map dataMap) throws Exception {
         checkAndDistributeDriverAndPlate(dataMap);
         for(Map shiftStart : (List<Map>)dataMap.get("shiftStartList")){
             Assert.isTrue(ssdao.bindDriverAndPlateToShiftStart(shiftStart) == 1, "绑定数据失败");
@@ -298,7 +303,7 @@ public class LineSchedueService {
     }
 
     @SuppressWarnings("unchecked")
-    private void checkAndDistributeDriverAndPlate(Map dataMap){
+    private void checkAndDistributeDriverAndPlate(Map dataMap) throws Exception {
         String groupid = (String) dataMap.get("groupid");
         Assert.hasText(groupid, "GROUPID不能为空");
         Date date = DateUtil.stringToDate((String) dataMap.get("date"));
@@ -320,11 +325,13 @@ public class LineSchedueService {
             if(cityIDForCityA.equals(lineManage.getCitystartid())){
                 dataMap.put("lineForCityA", lineManage);
                 dataMap.put("lineIDForCityA", lineManage.getId());
-                dataMap.put("minutesForCityA", lineManage.getDefaulttime());
+                Integer minutesForCityA = lineManageDao.getRequireTime(lineManage.getId());
+                dataMap.put("minutesForCityA",minutesForCityA);
             }else if(cityIDForCityB.equals(lineManage.getCitystartid())){
                 dataMap.put("lineForCityB", lineManage);
                 dataMap.put("lineIDForCityB", lineManage.getId());
-                dataMap.put("minutesForCityB", lineManage.getDefaulttime());
+                Integer minutesForCityB = lineManageDao.getRequireTime(lineManage.getId());
+                dataMap.put("minutesForCityB",minutesForCityB);
             }else{
                 Assert.isTrue(true, "城市与线路不匹配");
             }

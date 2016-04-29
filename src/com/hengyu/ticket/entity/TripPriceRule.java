@@ -7,151 +7,155 @@ import javax.validation.constraints.Min;
 import com.hengyu.ticket.util.DateHanlder;
 
 /**
-  * @author 李冠锋 2015-11-14 
-  */
-public class TripPriceRule{
+ * @author 李冠锋 2015-11-14
+ */
+public class TripPriceRule {
 
-	//------------------字段-----------------
-	
-	private Integer id;
-	private Integer tplid;
-	private Integer weekday = 0;
-	//总票
-	private Integer ticketquantity = 0;
-	//总优惠票
-	private Integer couponticketquantity = 0;
-	//锁票数量
-	private Integer lockquantity = 0;
-	
-	private Integer isstart = 0;
-	//开始卖票位置
-	private Integer startseat  = 1;
-	
-	//行程价格列表
-	private List<TripPriceSub> tps;
-	//限制买票规则
-	private List<StationLine> stationlines;
-	
-	//显示星期字符
-	private String weekdaystr;
-	
-	//查询条件字段
-	private Integer lmid;
+    //------------------字段-----------------
 
-	//----------------构造方法----------------
-	
-	public TripPriceRule(){
+    private Integer id;
+    private Integer tplid;
+    private Integer weekday = 0;
+    //总票
+    private Integer ticketquantity = 0;
+    //总优惠票
+    private Integer couponticketquantity = 0;
+    //锁票数量
+    private Integer lockquantity = 0;
 
-	}
+    private Integer isstart = 0;
+    //开始卖票位置
+    private Integer startseat = 1;
 
-	//-------------- get/set方法 --------------
-	
-	public Integer getId(){
-		return id;
-	}
-	public void setId(Integer id){
-		this.id = id;
-	}
-	
-	public Integer getTplid() {
-		return tplid;
-	}
+    //行程价格列表
+    private List<TripPriceSub> tps;
+    //限制买票规则
+    private List<StationLine> stationlines;
 
-	public void setTplid(Integer tplid) {
-		this.tplid = tplid;
-	}
+    //显示星期字符
+    private String weekdaystr;
 
-	public Integer getWeekday(){
-		return weekday;
-	}
-	public void setWeekday(Integer weekday){
-		this.weekday = weekday;
-	}
-	public Integer getTicketquantity(){
-		return ticketquantity;
-	}
-	public void setTicketquantity(Integer ticketquantity){
-		this.ticketquantity = ticketquantity;
-	}
+    //查询条件字段
+    private Integer lmid;
 
-	public Integer getIsstart() {
-		return isstart;
-	}
+    //----------------构造方法----------------
 
-	public void setIsstart(Integer isstart) {
-		this.isstart = isstart;
-	}
+    public TripPriceRule() {
 
-	public List<TripPriceSub> getTps() {
-		return tps;
-	}
+    }
 
-	public void setTps(List<TripPriceSub> tps) {
-		this.tps = tps;
-	}
+    //-------------- get/set方法 --------------
 
-	public Integer getLmid() {
-		return lmid;
-	}
+    public Integer getId() {
+        return id;
+    }
 
-	public void setLmid(Integer lmid) {
-		this.lmid = lmid;
-	}
-	
-	public void setWeekdaystr(String weekdaystr) {
-		this.weekdaystr = weekdaystr;
-	}
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
-	public String getWeekdaystr() {
-		if(this.weekday==null){
-			return weekdaystr;
-		}
-		List<String> list = DateHanlder.getweekString(this.getWeekday());
-		if(list!=null){
-			StringBuffer sb = new StringBuffer();
-			int i = 0;
-			for (String s : list) {
-				sb.append(s);
-				if(i!=list.size()-1){
-					sb.append("、");
-				}
-				i++;
-			}
-			this.weekdaystr = sb.toString();
-		}
-		return weekdaystr;
-	}
+    public Integer getTplid() {
+        return tplid;
+    }
 
-	public List<StationLine> getStationlines() {
-		return stationlines;
-	}
+    public void setTplid(Integer tplid) {
+        this.tplid = tplid;
+    }
 
-	public void setStationlines(List<StationLine> stationlines) {
-		this.stationlines = stationlines;
-	}
+    public Integer getWeekday() {
+        return weekday;
+    }
 
-	public Integer getCouponticketquantity() {
-		return couponticketquantity;
-	}
+    public void setWeekday(Integer weekday) {
+        this.weekday = weekday;
+    }
 
-	public void setCouponticketquantity(Integer couponticketquantity) {
-		this.couponticketquantity = couponticketquantity;
-	}
+    public Integer getTicketquantity() {
+        return ticketquantity;
+    }
 
-	public Integer getLockquantity() {
-		return lockquantity;
-	}
+    public void setTicketquantity(Integer ticketquantity) {
+        this.ticketquantity = ticketquantity;
+    }
 
-	public void setLockquantity(Integer lockquantity) {
-		this.lockquantity = lockquantity;
-	}
+    public Integer getIsstart() {
+        return isstart;
+    }
 
-	public Integer getStartseat() {
-		return startseat;
-	}
+    public void setIsstart(Integer isstart) {
+        this.isstart = isstart;
+    }
 
-	public void setStartseat(Integer startseat) {
-		this.startseat = startseat;
-	}
-	
+    public List<TripPriceSub> getTps() {
+        return tps;
+    }
+
+    public void setTps(List<TripPriceSub> tps) {
+        this.tps = tps;
+    }
+
+    public Integer getLmid() {
+        return lmid;
+    }
+
+    public void setLmid(Integer lmid) {
+        this.lmid = lmid;
+    }
+
+    public void setWeekdaystr(String weekdaystr) {
+        this.weekdaystr = weekdaystr;
+    }
+
+    public String getWeekdaystr() {
+        if (this.weekday == null) {
+            return weekdaystr;
+        }
+        List<String> list = DateHanlder.getweekString(this.getWeekday());
+        if (list != null) {
+            StringBuffer sb = new StringBuffer();
+            int i = 0;
+            for (String s : list) {
+                sb.append(s);
+                if (i != list.size() - 1) {
+                    sb.append("、");
+                }
+                i++;
+            }
+            this.weekdaystr = sb.toString();
+        }
+        return weekdaystr;
+    }
+
+    public List<StationLine> getStationlines() {
+        return stationlines;
+    }
+
+    public void setStationlines(List<StationLine> stationlines) {
+        this.stationlines = stationlines;
+    }
+
+    public Integer getCouponticketquantity() {
+        return couponticketquantity;
+    }
+
+    public void setCouponticketquantity(Integer couponticketquantity) {
+        this.couponticketquantity = couponticketquantity;
+    }
+
+    public Integer getLockquantity() {
+        return lockquantity;
+    }
+
+    public void setLockquantity(Integer lockquantity) {
+        this.lockquantity = lockquantity;
+    }
+
+    public Integer getStartseat() {
+        return startseat;
+    }
+
+    public void setStartseat(Integer startseat) {
+        this.startseat = startseat;
+    }
+
 }

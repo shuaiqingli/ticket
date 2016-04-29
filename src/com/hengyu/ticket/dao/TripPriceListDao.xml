@@ -10,24 +10,50 @@
 	values
 		(<include refid="propertys"/>)
   </insert>
-  <delete id="delete" parameterType="java.lang.Integer">
-	delete
-	from
-		trip_price_list
-	where
-		ID=#{id}
+
+  <delete id="delete">
+      delete from trip_price_list where
+      <if test="id!=null">
+          ID = #{id}
+      </if>
+      <if test="lrid!=null">
+          strid = #{lrid}
+      </if>
+  </delete>
+
+  <delete id="deleteTripPriceSub">
+      DELETE FROM trip_price_sub
+      WHERE
+      <if test="tplid != null">
+          tprid=#{tplid}
+      </if>
+      <if test="lrid != null">
+          tprid IN ( SELECT id FROM trip_price_list WHERE strid =  #{lrid} ) ;
+      </if>
   </delete>
   <update id="update" parameterType="TripPriceList">
 	update
 		trip_price_list
 	set
-		`iseffect`=#{iseffect},
+		`TPLName`=#{tplname},
 		`LMID`=#{lmid},
-		`BeginDate`=#{begindate},
-		`EndDate`=#{enddate},
-		`IsForever`=#{isforever}
+		`STRID`=#{strid},
+		`TicketQuantity`=#{ticketquantity},
+		`IsStart`=#{isstart},
+		`CouponTicketQuantity`=#{couponticketquantity},
+		`LockQuantity`=#{lockquantity},
+		`StartSeat`=#{startseat},
+		`Isdefault`=#{isdefault}
 	where
 		ID=#{id}
+  </update>
+  <update id="resetDefault" parameterType="int">
+	update
+		trip_price_list
+	set
+		`Isdefault`= 0
+	where
+		LMID=#{lmid} and STRID = #{strid}
   </update>
   <select id="findExistsDate" parameterType="TripPriceList" resultMap="result_map">
 	select
@@ -51,15 +77,15 @@
 	</if>
 	limit 0,1
   </select>
-  <select id="find" parameterType="java.lang.Integer" resultMap="result_map">
-	select
-		*
-	from
-		trip_price_list
-	where
-		ID=#{id}
+
+  <select id="find" parameterType="java.lang.Integer" resultMap="result_map3">
+	select * from trip_price_list where ID = #{id}
   </select>
-  
+
+  <select id="findTripPriceSub" parameterType="java.lang.Integer" resultMap="com.hengyu.ticket.dao.TripPriceSubDao.result_map">
+	select * from trip_price_sub where tprid = #{tprid} order by ststartid
+  </select>
+
   <select id="findlist" resultMap="result_map2" parameterType="Page">
 	select
 		tpl.*,sum(tpr.weekday) as weekday
@@ -75,21 +101,7 @@
   </select>
   
   <select id="findByTicketStore" parameterType="TicketStore" resultMap="result_map2">
-  	select
-		tpl.*
-	from
-		trip_price_list as tpl
-	where
-		1 = 1
--- 	and (
--- 		#{ticketDate} between begindate and enddate
--- 		or
--- 		isforever = 1 and  #{ticketDate} >= begindate
--- 	)
--- 	and
--- 		lmid = #{lmid}
--- 	order by
--- 		isforever
+  	select tpl.* from trip_price_list as tpl
   </select>
   
   <select id="count" resultType="long" parameterType="Page">
@@ -120,8 +132,44 @@
    		where 
    			lmid = #{lmid} and EndDate >= current_date()
    </select>
-  
-  <sql id="findlist_where">
+
+    <select id="findByLMID" resultMap="result_map2">
+      SELECT tpl.*,str.rulename as strname
+      FROM trip_price_list as tpl
+      JOIN station_time_rule as str  on str.id = tpl.strid
+      WHERE tpl.lmid = #{lmid}
+      ORDER BY tpl.strid,tpl.isdefault desc
+    </select>
+
+    <select id="findByStrID" resultMap="result_map2">
+      SELECT tpl.*,str.rulename as strname
+      FROM trip_price_list as tpl
+      JOIN station_time_rule as str  on str.id = tpl.strid
+      WHERE tpl.strid = #{strid}
+      ORDER BY tpl.isdefault desc
+    </select>
+
+    <select id="getDifferStation" resultMap="com.hengyu.ticket.dao.LineManageStationDao.result_map">
+        select distinct sort,lmid,stid,stname from line_manage_station where strid in (
+        select id from station_time_rule where groupid = #{lrid}
+        ) and stid not in (
+        select
+        distinct tps.ststartid
+        from
+        trip_price_sub as tps
+        where tprid = #{tplid}
+        union
+        select
+        distinct tps.starriveid
+        from
+        trip_price_sub as tps
+        where tprid = #{tplid}
+        )
+        order by sort
+    </select>
+
+
+    <sql id="findlist_where">
   	where 
   		lmid = #{param.lmid}
   	and(
@@ -130,32 +178,49 @@
   		isforever = 1
   	)
   </sql>
-  
-  <sql id="columns">
-	`iseffect`,
-	`LMID`,
-	`BeginDate`,
-	`EndDate`,
-	`IsForever`
-  </sql>
-  <sql id="propertys">
-	#{iseffect},
-	#{lmid},
-	#{begindate},
-	#{enddate},
-	#{isforever}
-  </sql>
-  <resultMap id="result_map" type="TripPriceList">
-    <id column="ID" property="id" javaType="java.lang.Integer"/>
-    <result column="iseffect" property="iseffect" javaType="java.lang.Integer"/>
-    <result column="LMID" property="lmid" javaType="java.lang.Integer"/>
-    <result column="BeginDate" property="begindate" javaType="java.lang.String"/>
-    <result column="EndDate" property="enddate" javaType="java.lang.String"/>
-    <result column="IsForever" property="isforever" javaType="java.lang.Integer"/>
-    <result column="weekday" property="weekday" javaType="java.lang.Integer"/>
-  </resultMap>
+
+    <sql id="columns">
+        `isdefault`,
+        `TPLName`,
+        `LMID`,
+        `STRID`,
+        `TicketQuantity`,
+        `IsStart`,
+        `CouponTicketQuantity`,
+        `LockQuantity`,
+        `StartSeat`
+    </sql>
+    <sql id="propertys">
+        #{isdefault},
+        #{tplname},
+        #{lmid},
+        #{strid},
+        #{ticketquantity},
+        #{isstart},
+        #{couponticketquantity},
+        #{lockquantity},
+        #{startseat}
+    </sql>
+    <resultMap id="result_map" type="TripPriceList">
+        <id column="ID" property="id" javaType="java.lang.Integer"/>
+        <result column="TPLName" property="tplname" javaType="java.lang.String"/>
+        <result column="LMID" property="lmid" javaType="java.lang.Integer"/>
+        <result column="STRID" property="strid" javaType="java.lang.Integer"/>
+        <result column="TicketQuantity" property="ticketquantity" javaType="java.lang.Integer"/>
+        <result column="IsStart" property="isstart" javaType="java.lang.Integer"/>
+        <result column="CouponTicketQuantity" property="couponticketquantity" javaType="java.lang.Integer"/>
+        <result column="LockQuantity" property="lockquantity" javaType="java.lang.Integer"/>
+        <result column="StartSeat" property="startseat" javaType="java.lang.Integer"/>
+        <result column="strname" property="strname" javaType="java.lang.String"/>
+        <result column="isdefault" property="isdefault" javaType="java.lang.Integer"/>
+    </resultMap>
   
    <resultMap type="TripPriceList" id="result_map2" extends="result_map">
-  	<collection property="rules" column="id" select="com.hengyu.ticket.dao.TripPriceRuleDao.findByTripPrice"></collection>
+  	<collection property="differStations" column="{tplid=id,lrid=strid}" select="getDifferStation"></collection>
   </resultMap>
+
+   <resultMap type="TripPriceList" id="result_map3" extends="result_map">
+  	<collection property="tps" column="id" select="findTripPriceSub"></collection>
+  </resultMap>
+
 </mapper>

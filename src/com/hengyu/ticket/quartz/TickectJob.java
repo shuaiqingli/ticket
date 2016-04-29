@@ -1,13 +1,10 @@
 package com.hengyu.ticket.quartz;
 
 
-import com.hengyu.ticket.service.SaleOrderTicketService;
+import com.hengyu.ticket.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.hengyu.ticket.config.TicketConfig;
-import com.hengyu.ticket.service.ApproveTicketService;
-import com.hengyu.ticket.service.SaleOrderService;
-import com.hengyu.ticket.service.TicketStoreService;
 
 /**
  * 发布车票定时器
@@ -25,7 +22,7 @@ public class TickectJob{
 	@Autowired
 	private TicketConfig conf;
 	@Autowired
-	private TicketStoreService tss;
+	private TicketService ticketService;
 	@Autowired
 	private SaleOrderTicketService sots;
 	@Autowired
@@ -37,7 +34,7 @@ public class TickectJob{
 			return;
 		}
 		try {
-			tss.updateTicketStoreReleaseByLineManage();
+            ticketService.updateTicketStoreReleaseByLineManage();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

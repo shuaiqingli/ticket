@@ -11,21 +11,26 @@
     var isnew = "${param.isnew}";
     var $lmid = "${param.lmid}";
     $(function () {
-        $("#sortable").sortable({
-            items: "tr:not(.ui-state-disabled)"
-        });
-        $("#sortable1").sortable({
-            items: "tr:not(.ui-state-disabled)"
-        });
-        $("#sortable2").sortable({
-            items: "tr:not(.ui-state-disabled)"
-        });
-        $("#sortable3").sortable({
-            items: "tr:not(.ui-state-disabled)"
-        });
-        $(".sortable").sortable({
-            items: "tr:not(.ui-state-disabled)"
-        });
+//        hideFirst();
+//        $("#sortable").sortable({
+//            items: "tr:not(.ui-state-disabled)"
+//        });
+//        $("#sortable1").sortable({
+//            items: "tr:not(.ui-state-disabled)"
+//        });
+//        $("#sortable2").sortable({
+//            items: "tr:not(.ui-state-disabled)"
+//        });
+//        $("#sortable3").sortable({
+//            items: "tr:not(.ui-state-disabled)"
+//        });
+//        $(".sortable").sortable({
+//            items: "tr:not(.ui-state-disabled)",
+//            stop:function (e) {
+//                console.debug(e);
+//                hideFirst();
+//            }
+//        });
         $(".extend").click(function () {
             if ($(this).attr('on') == 1) {
                 $(this).attr('on', '0');
@@ -36,6 +41,7 @@
                 $(this).find('img').attr("src", basePath + "/images/pointer2.png").attr("style", "");
                 $(this).parent().parent().find(".cell_content").show();
             }
+            hideFirst();
         });
         $(".del_btn").click(function () {
             var $this = $(this);
@@ -93,7 +99,7 @@
         <div style="line-height: 40px;">
             <div style="display: inline-block;">名称</div>
             <div style="display: inline-block;">
-                <input type="text" class="rule_name notnull" placeholder="规则名称" value="${rule.rulename}"/>
+                <input type="text" class="rule_name notnull" placeholder="规则名称" value="${empty rule.rulename?'线路规则':rule.rulename}"/>
                 <input type="hidden" class="rule_id" value="${rule.id}"/>
             </div>
         </div>
@@ -106,11 +112,11 @@
             <div style="background-color: #F2F2F2;line-height: 40px;overflow: hidden;">
                 <div style="display: inline-block;padding: 0 10px;">时间段</div>
                 <div style="display: inline-block;">
-                    <input type="text" class="begintime" readonly value="00:00"/>
+                    <input type="text" class="begintime" readonly value="07:00"/>
                 </div>
                 <div style="display: inline-block;">-</div>
                 <div style="display: inline-block;">
-                    <input type="text" class="endtime" readonly value="00:00"/>
+                    <input type="text" class="endtime" readonly value="18:00"/>
                 </div>
                 <div class="extend" on="1"
                      style="display: inline-block;float: right;padding-right: 20px;padding-top: 5px;cursor: pointer;">
@@ -154,13 +160,16 @@
                                 <td style="padding-left: 10px;color: #4D8A83;">途经站（始发）</td>
                                 <td style="color: #4D8A83;">间隔时间(分)</td>
                                 <td style="color: #4D8A83;">里程(千米)</td>
+                                <td style="color: #4D8A83;">&nbsp;</td>
                             </tr>
                             <tr class="bs_info_template" style="display: none;">
                                 <input type="hidden" class="stid" placeholder="站点编号"/>
                                 <input type="hidden" class="sort"/>
+                                <input type="hidden" class="isdel hide" class="0" />
                                 <td style="padding-left: 10px;" class="cityname">仙境</td>
                                 <td><input type="text" class="requiretime" value="0" placeholder="间隔时间" maxlength="3"/></td>
                                 <td><input type="text" class="submileage" value="0" placeholder="里程不能为空" maxlength="3"/></td>
+                                <td><a href="javascript:;;" class="del_station">删除</a></td>
                             </tr>
 
                         </table>
@@ -268,16 +277,19 @@
                                     <td style="padding-left: 10px;color: #4D8A83;">途经站（始发）</td>
                                     <td style="color: #4D8A83;">间隔时间(分)</td>
                                     <td style="color: #4D8A83;">里程(千米)</td>
+                                    <td style="color: #4D8A83;">&nbsp;</td>
                                 </tr>
                                 <c:forEach var="station" items="${rule.stations}">
                                     <c:if test="${station.sort==0}">
                                         <tr class="station" sid="${station.stid}">
                                             <input type="hidden" class="id" value="${station.id}"/>
+                                            <input type="hidden" class="isdel hide" value="0"/>
                                             <input type="hidden" class="stid" placeholder="站点编号" value="${station.stid}"/>
                                             <input type="hidden" class="sort" value="${station.sort}" />
                                             <td style="padding-left: 10px;" class="cityname">${station.stname}</td>
                                             <td><input type="text" class="requiretime" value="${station.requiretime}" placeholder="间隔时间" maxlength="3"/></td>
                                             <td><input type="text" class="submileage" value="${station.submileage}" placeholder="里程不能为空" maxlength="3"/></td>
+                                            <td><a href="javascript:;;" class="del_station">删除</a></td>
                                         </tr>
                                     </c:if>
                                 </c:forEach>
@@ -326,16 +338,19 @@
                                 <td style="padding-left: 10px;color: #4D8A83;">途经站（到达）</td>
                                 <td style="color: #4D8A83;">间隔时间(分)</td>
                                 <td style="color: #4D8A83;">里程(千米)</td>
+                                <td style="color: #4D8A83;">&nbsp;</td>
                             </tr>
                             <c:forEach var="station" items="${rule.stations}">
                                 <c:if test="${station.sort==1}">
                                     <tr class="station" sid="${station.stid}">
                                         <input type="hidden" class="id" value="${station.id}"/>
+                                        <input type="hidden" class="isdel" value="0"/>
                                         <input type="hidden" class="stid" placeholder="站点编号" value="${station.stid}"/>
                                         <input type="hidden" class="sort" value="${station.sort}" />
                                         <td style="padding-left: 10px;" class="cityname">${station.stname}</td>
                                         <td><input type="text" class="requiretime" value="${station.requiretime}" placeholder="间隔时间" maxlength="3"/></td>
                                         <td><input type="text" class="submileage" value="${station.submileage}" placeholder="里程不能为空" maxlength="3"/></td>
+                                        <td><a href="javascript:;;" class="del_station">删除</a></td>
                                     </tr>
                                 </c:if>
                             </c:forEach>

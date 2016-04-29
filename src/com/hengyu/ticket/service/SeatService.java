@@ -53,8 +53,8 @@ public class SeatService{
 		this.seatDao = seatDao;
 	}
 
-	public List<Seat> findSeatList(Integer lmid, String shiftcode, String date) throws Exception {
-		return seatDao.findByLmidDateShiftCode(lmid, date, shiftcode);
+	public List<Seat> findSeatList(String shiftid) throws Exception {
+		return seatDao.findByShiftID(shiftid);
 	}
 	
 	public int updateUseSeat(Seat seat) throws Exception{

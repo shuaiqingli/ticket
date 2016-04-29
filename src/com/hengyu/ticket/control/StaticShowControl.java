@@ -13,6 +13,7 @@ import com.alibaba.fastjson.JSON;
 import com.hengyu.ticket.common.Const;
 import com.hengyu.ticket.entity.StaticShow;
 import com.hengyu.ticket.service.StaticShowService;
+import org.springframework.web.util.HtmlUtils;
 
 @Controller
 @RequestMapping("/admin")
@@ -31,7 +32,10 @@ public class StaticShowControl {
 	@RequestMapping("staticinfos")
 	public void staticinfos(Writer out) throws Exception{
 		List<StaticShow> list = staticService.findAll();
-		out.write(JSON.toJSONString(list));
+//        for (StaticShow s  : list ) {
+//            s.setShowcontent(HtmlUtils.htmlEscape(s.getShowcontent()));
+//        }
+        out.write(JSON.toJSONString(list));
 		out.close();
 	}
 	

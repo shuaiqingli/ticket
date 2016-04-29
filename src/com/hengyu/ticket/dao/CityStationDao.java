@@ -103,4 +103,10 @@ public interface CityStationDao {
 
     List<CityStation> findByParent(@Param("pid") String pid) throws Exception;
 
+    List<Map> getStartStationList(@Param("begincityid")String begincityid,@Param("endcityid")String endcityid,@Param("endstationid")String endstationid);
+
+    List<Map> getEndStationList(@Param("endcityid")String endcityid,@Param("begincityid")String begincityid,@Param("beginstationid")String beginstationid);
+
+	public abstract Map<String, Object> findCityNameAndIdByParentId(String ParentID);
+
 }
