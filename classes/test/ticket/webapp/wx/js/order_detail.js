@@ -157,4 +157,12 @@ $(function(){
 	$('.big').click(function(){
 		$('.big').hide();
 	});
+	$('.ticketaddr').click(function() {
+		$('.get-ticket-mask').fadeIn();
+    	$('.get-ticket-img').fadeIn();
+    });
+    $('.get-ticket-img').click(function() {
+    	$('.get-ticket-mask').fadeOut();
+    	$('.get-ticket-img').fadeOut();
+    });
 });
