@@ -2,6 +2,24 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.hengyu.ticket.dao.TicketStoreDao">
+	<select id="findByShiftIdAndLMID" parameterType="java.util.Map" resultMap="result_map">
+		select
+			* 
+		from
+			ticket_store
+		where 
+			ShiftID = #{shiftID}
+		and
+			LMID = #{LMID}
+	</select>
+	<select id="findByShiftID" resultMap="result_map">
+        select
+        *
+        from
+        ticket_store
+        where
+        ShiftID=#{shiftid}
+    </select>
     <update id="addQuantityToLock">
 		update
 		ticket_store
@@ -43,7 +61,7 @@
 		LockQuantity = ifnull(LockQuantity,0) + #{quantity}
 		where ID=#{id}
 		and ifnull(BalanceQuantity,0) >=  #{quantity}
-		and isapprove = 1 and isrelease = 1
+		and isrelease = 1
 	</update>
 
     <update id="updateQuantityForUnfreeze">
@@ -54,7 +72,7 @@
 		LockQuantity = ifnull(LockQuantity,0) - #{quantity}
 		where ID=#{id}
 		and ifnull(LockQuantity,0) >=  #{quantity}
-		and isapprove = 1 and isrelease = 1
+		and isrelease = 1
 	</update>
 
     <insert id="save" parameterType="TicketStore">
@@ -84,11 +102,9 @@
 	set
 		`LMID`=#{lmid},
 		`TicketDate`=#{ticketDate},
-		`BalanceQuantity`=#{balanceQuantity},
 		`ShiftCode`=#{shiftCode},
 		`isrelease`=#{isrelease}, 
 		`isapprove`=#{isapprove},
-		`allquantity`=#{allquantity},
 		`MakeDate`=#{makeDate}
 	where
 		ID=#{id}
@@ -102,41 +118,40 @@
 		`TicketDate`=#{ticketdate} and lmid = #{lmid} and isrelease = 0
   </update>
 
-    <update id="updateApproveQuantity" parameterType="TicketStore">
+    <update id="updateMatchQuantity" parameterType="TicketStore">
 	update
 		ticket_store
 	set
 		`couponquantity`=#{couponquantity},
-		`balanceCouponquantity`=#{balanceCouponquantity},
+		`balanceCouponquantity`=#{balancecouponquantity},
 		`BalanceQuantity`=#{balanceQuantity},
-		`isrelease`=#{isrelease}, 
-		`isapprove`=#{isapprove},
 		`lockquantity`=#{lockquantity},
-		`allquantity`=#{allquantity}
+		`allquantity`=#{allquantity},
+		isrelease = #{isrelease}
 	where
-		ID=#{id}
+		ID=#{id} and isrelease = 0
   </update>
 
     <update id="updateQuantity">
 	update
 		ticket_store
 	set
-		`BalanceQuantity`= ifnull(BalanceQuantity,0) - #{quantity},
-		 balancecouponquantity=ifnull(balancecouponquantity,0) - #{balancecouponquantity}
+		`BalanceQuantity`= ifnull(BalanceQuantity,0) - ifnull(#{quantity},0),
+		 balancecouponquantity=ifnull(balancecouponquantity,0) - ifnull(#{balancecouponquantity},0)
 	where ID=#{id}
-	and ifnull(BalanceQuantity,0) >=  #{quantity} and ifnull(balancecouponquantity,0) >=  #{balancecouponquantity}
-	and isapprove = 1 and isrelease = 1
+	and ifnull(BalanceQuantity,0) >=  ifnull(#{quantity},0) and ifnull(balancecouponquantity,0) >=  ifnull(#{balancecouponquantity},0)
+	and isrelease = 1
   </update>
 
     <update id="addQuantity">
 	update
 		ticket_store
 	set
-		`BalanceQuantity`= ifnull(BalanceQuantity,0) + #{quantity},
-		`balancecouponquantity`= ifnull(balancecouponquantity,0) + #{balancecouponquantity}
+		`BalanceQuantity`= ifnull(BalanceQuantity,0) + ifnull(#{quantity},0),
+		`balancecouponquantity`= ifnull(balancecouponquantity,0) + ifnull(#{balancecouponquantity},0)
 	where
-		ID=#{id} and allquantity >= ifnull(BalanceQuantity,0) + #{quantity} 
-  </update>
+		ID=#{id} and allquantity-lockquantity >= ifnull(BalanceQuantity,0) + ifnull(#{quantity},0)
+    </update>
 
 
     <select id="findForUpdate" parameterType="java.lang.Integer" resultMap="result_map">
@@ -163,28 +178,42 @@
 	where
 		lmid=#{lmid} and ShiftCode=#{shiftcode} and ticketdate=#{ticketdate}
   </select>
+
+    <select id="findShiftID" parameterType="java.lang.Integer" resultMap="result_map">
+	select
+		*
+	from
+		ticket_store
+	where
+		shiftid = #{shiftid}
+  </select>
     <select id="findBySaleOrder" parameterType="SaleOrder" resultMap="result_map">
 	select
-		*
+		ts.*
 	from
-		ticket_store
+		ticket_store ts
+    LEFT JOIN shift s on ts.ShiftID=s.ID
 	where
-		lmid=#{lmid} and ShiftCode=#{shiftNum} and TicketDate=#{rideDate}
+		s.lmid=#{lmid} and s.ShiftCode=#{shiftcode} and s.RideDate=#{ridedate}
   </select>
     <select id="getTicketStoreByLST" parameterType="map" resultMap="result_map">
-	select
-		*
-	from
-		ticket_store
-	where
-		lmid=#{lmid} and ShiftCode=#{shiftcode} and TicketDate=#{ticketdate}
+    select 
+    	ts.* 
+    from 
+    	ticket_store as ts 
+    LEFT JOIN 
+    	shift as s 
+    on 
+    	(ts.ShiftID=s.ID) 
+    where 
+    	ts.ShiftID=#{shiftID} and ts.lmid=#{lmid} and s.RideDate=#{ticketdate};
   </select>
     <select id="findByDates" parameterType="list" resultMap="result_map">
         select
         *
         from
         ticket_store as ts
-		join shfit as s on s.id = ts.shiftid
+        join shfit as s on s.id = ts.shiftid
         where
         ts.TicketDate
         in
@@ -268,7 +297,7 @@
         ,tl.id as tl_tlsid,tl.allquantity as tl_salequantity, tl.couponquantity as tl_couponsalequantity
         from
         ticket_store as ts
-		join shift as s on s.id = ts.shiftid
+        join shift as s on s.id = ts.shiftid
         join ticket_line as tl on tl.shiftid = s.id
         where
         ts.lmid = #{lmid}
@@ -303,20 +332,11 @@
 
 
     <select id="findApproveReleaseDates" resultType="map">
-  	select
-		ticketdate,isapprove ,isrelease
-	from
-		ticket_store
-	where
-		lmid = #{lmid}
-	and 
-		ticketdate 
-	between 
-		#{begindate}
-	and 
-		#{enddate}
-	group by
-		ticketdate
+  	select s.ridedate as ticketdate ,isrelease,s.tplid
+  	from ticket_store as ts
+  	join shift as s on s.id = ts.shiftid
+  	where s.lmid = #{lmid} and  s.ridedate between #{begindate} and #{enddate}
+  	group by s.ridedate
   </select>
 
     <select id="findAllApproveReleaseDates" resultType="map">
@@ -344,7 +364,7 @@
         join shift as s on s.id =tl.ShiftID
         join ticket_store as ts on ts.shiftid = tl.shiftid
         where
-        s.ridedate = #{param.ticketDate}
+        s.ridedate = #{param.ticketdate}
         <if test="param.citystartid != null and param.citystartid != '' ">
             and s.citystartid = #{param.citystartid}
         </if>
@@ -372,75 +392,80 @@
         </if>
     </sql>
     <update id="cancelTicketStore">
-	update
-		ticket_store
-	set
-		IsApprove=#{isapprove},IsRelease=#{isrelease}  
-	where
-		ShiftCode=#{shiftcode} and TicketDate=#{ticketdate}
-  </update>
-    <sql id="columns">
-	`lmid`,
-	`allquantity`,
-	`TicketDate`,
-	`BalanceQuantity`,
-	`ShiftCode`,
-	`isrelease`,
-	`isapprove`,
-	`MakeDate`,
-	`Couponquantity`,
-	`balanceCouponquantity`
-  </sql>
+        update
+            ticket_store as ts
+        set
+          <!--  ts.IsApprove=#{isapprove}, -->
+           ts.IsRelease=#{isrelease}
+        where
+            ts.ShiftID = (select s.id from shift as s where s.ShiftCode=#{shiftcode} and s.RideDate=#{ticketdate})
+    </update>
+    <update id="updateReleaseStatus">
+        UPDATE ticket_store SET isrelease = #{isrelease} WHERE id=#{id} and isrelease = #{oldrelease}
+    </update>
+    <update id="updateReleaseStatusByDate">
+        UPDATE ticket_store SET isrelease = #{isrelease} WHERE
+        shiftid in (
+          select id from shift where lmid = #{lmid} and ridedate between #{begindate} and #{enddate} and shiftcode=#{shiftcode}
+        )
+        and isrelease = #{oldrelease}
+    </update>
     <sql id="pre_columns">
 	ts.`ID` as ts_ID,
 	ts.`AllQuantity` as ts_AllQuantity,
 	ts.`BalanceQuantity` as ts_BalanceQuantity,
-	ts.`isapprove` as ts_isapprove,
+	/*ts.`isapprove` as ts_isapprove,*/
 	ts.`isrelease` as ts_isrelease,
 	ts.`MakeDate` as ts_MakeDate
-  </sql>
+    </sql>
+    <sql id="columns">
+        `ShiftID`,
+        `LMID`,
+        `BalanceQuantity`,
+        `AllQuantity`,
+        `LockQuantity`,
+        `CouponQuantity`,
+        `BalanceCouponQuantity`,
+        `MakeDate`,
+        `IsRelease`
+    </sql>
     <sql id="propertys">
-	#{lmid},
-	#{allquantity},
-	#{ticketDate},
-	#{balanceQuantity},
-	#{shiftCode},
-	#{isrelease},
-	#{isapprove},
-	#{makeDate},
-	#{couponquantity},
-	#{balancecouponquantity}
-  </sql>
+        #{shiftid},
+        #{lmid},
+        #{balanceQuantity},
+        #{allquantity},
+        #{lockquantity},
+        #{couponquantity},
+        #{balancecouponquantity},
+        #{makedate},
+        #{isrelease}
+    </sql>
     <sql id="batch_propertys">
-	#{i.lmid},
-	#{i.allquantity},
-	#{i.ticketDate},
-	#{i.balanceQuantity},
-	#{i.shiftCode},
-	#{i.isrelease},
-	#{i.isapprove},
-	#{i.makeDate},
-	#{i.couponquantity},
-	#{i.balancecouponquantity}
-  </sql>
+        #{i.lmid},
+        #{i.lockquantity},
+        #{i.allquantity},
+        #{i.balanceQuantity},
+        #{shiftid},
+        #{i.isrelease},
+        #{i.makedate},
+        #{i.couponquantity},
+        #{i.balancecouponquantity}
+    </sql>
 
     <resultMap id="result_map" type="TicketStore">
         <id column="ID" property="id" javaType="java.lang.Integer"/>
         <result column="lmid" property="lmid"/>
-        <result column="ShiftCode" property="shiftCode" javaType="java.lang.String"/>
-        <result column="TicketDate" property="ticketDate" javaType="java.lang.String"/>
         <result column="BalanceQuantity" property="balanceQuantity" javaType="java.lang.Integer"/>
-        <result column="MakeDate" property="makeDate" javaType="java.lang.String"/>
+        <result column="MakeDate" property="makedate" javaType="java.lang.String"/>
         <result column="allquantity" property="allquantity"/>
         <result column="isrelease" property="isrelease"/>
-        <result column="isapprove" property="isapprove"/>
         <result column="Couponquantity" property="couponquantity"/>
         <result column="balancecouponquantity" property="balancecouponquantity"/>
         <result column="lockquantity" property="lockquantity"/>
+        <result column="shiftid" property="shiftid"/>
     </resultMap>
 
     <resultMap type="TicketStore" id="result_map2" extends="result_map">
-        <collection property="ticketlines" columnPrefix="tl_"
-                    resultMap="com.hengyu.ticket.dao.TicketLineDao.result_map"/>
+        <collection property="ticketlines" columnPrefix="tl_" resultMap="com.hengyu.ticket.dao.TicketLineDao.result_map"/>
     </resultMap>
 </mapper>

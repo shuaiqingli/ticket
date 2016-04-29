@@ -10,13 +10,13 @@
 		<meta name="apple-touch-fullscreen" content="YES" />
 		<meta name="apple-mobile-web-app-capable" content="yes" />
 		<meta name="MobileOptimized" content="320" />
-		<meta name="apple-mobile-web-app-status-bar-style" content="black" />
+		<meta name="apple-mobile-web-app-status-bar-style" content="black"/>
 		<link type="text/css" rel="stylesheet" href="css/css.css">
-		<script src="js/jquery-1.11.1.min.js"></script>
+		<script src="js/jquery-1.11.1.min.js?jsversion=2"></script>
 		<script src="js/elementCenter.js"></script>
 	</head>
-	<script type="text/javascript" src="js/wx.js"></script>
-	<script type="text/javascript" src="js/ticket_detail.js"></script>
+	<script type="text/javascript" src="js/wx.js?jsversion=3"></script>
+	<script type="text/javascript" src="js/ticket_detail.js?jsversion=3"></script>
 	<!--<script type="text/javascript">-->
 		<!--$(function(){-->
 			<!--importjs(['ticket_detail.js']);-->
@@ -29,8 +29,8 @@
 			    $(window).bind('resize', function() {
 			        $('#mainDiv').center({transition:300});
 			    });
-			   
-				var windowScreen = document.documentElement; 
+
+				var windowScreen = document.documentElement;
 				var minus=document.getElementById('minus');
 				var plus=document.getElementById('plus');
 				var tnum=document.getElementById('tnum');
@@ -54,27 +54,29 @@
 		<form action="javascript:void(0)" method="get" id="buyTicket">
 			<div class="main_content" style="background:#fff;font-size:30px;padding:0 24px;overflow:hidden;">
 				<div style="border-bottom:1px dashed #dadada;line-height:70px;font-size:34px;">
-					<span class="st_date" style="width:33%;display:inline-block;font-family:Arial Regular,'微软雅黑','Source Sans Pro', 'Helvetica Neue', Helvetica, Arial, sans-serif;">-</span><span class="st_time" style="width:33%;display:inline-block;text-align:center;font-family:Arial Regular,'微软雅黑','Source Sans Pro', 'Helvetica Neue', Helvetica, Arial, sans-serif;">-</span><div class="linemanagememo" style="width:120px;display:inline-block;text-align:right;color:#ff6861;font-size:28px;color:#353535;float:right;border:1px solid #00CEA8;color:#00CEA8;height:40px;line-height:40px;position:relative;top:15px;text-align:center;">对号入座<div style="display:none;">￥<span class="st_price" style="display:inline-block;font-family:Arial Regular,'微软雅黑','Source Sans Pro', 'Helvetica Neue', Helvetica, Arial, sans-serif;">-</span><span style="display:inline-block;">元/张</span></div></div>
+					<span class="st_date" style="width:33%;display:inline-block;font-family:Arial Regular,'微软雅黑','Source Sans Pro', 'Helvetica Neue', Helvetica, Arial, sans-serif;"></span>
+					<span class="st_time" style=";font-weight:bold;width:33%;display:inline-block;text-align:center;font-family:Arial Regular,'微软雅黑','Source Sans Pro', 'Helvetica Neue', Helvetica, Arial, sans-serif;"></span>
+					<div class="linemanagememo" style="width:120px;display:inline-block;text-align:right;color:#ff6861;font-size:28px;color:#353535;float:right;border:1px solid #00CEA8;color:#00CEA8;height:40px;line-height:40px;position:relative;top:15px;text-align:center;display: none;"></div>
 				</div>
 				<div style="font-size:24px;margin-top:18px;color:#6f6f6f;line-height:24px;text-align:right;overflow:hidden;">
-					<div style="float:right;display:inline-block;border:1px solid #ff6861;color:#ff6861;width:106px;text-align:center;display: none;" class="linemanagememo">
+					<div style="float:right;display:inline-block;border:1px solid #ff6861;color:#ff6861;width:106px;text-align:center;display: none;">
 					</div>
 					<div style="display:none;">
 						<img src="images/coupon-.png"><span style="display:inline-block;text-indent:4px;">可使用代金券</span>
 					</div>
 				</div>
-				<div style="overflow:hidden;border-bottom:1px solid #dadada;font-size:36px;margin-top:-18px;color:#353535;line-height:138px;text-align:center;height:142px;">
+				<div style="overflow:hidden;border-bottom:1px solid #f2f2f2;font-size:36px;margin-top:-18px;color:#353535;line-height:138px;text-align:center;height:142px;">
 					<div style="float:left;display:inline-block;line-height:142px;width:41%;">
 						<div class="startCity" style="line-height:40px;margin-top:28px;font-size:40px;">-</div>
-						<div class="start_st" style="font-size:28px;text-align:center;line-height:28px;margin-top:10px;color:#9a9a9a;">-</div>
+						<div class="start_st" style="font-size:28px;text-align:center;line-height:28px;margin-top:10px;color:#6f6f6f;">-</div>
 					</div>
 					<div style="float:left;display:inline-block;line-height:142px;width:16%;margin-top:45px;">
 						<!-- <div style="font-size:24px;line-height:24px;text-align:center;" class="carmodelname">普通大巴</div> -->
-						<div style="line-height:24px;margin-top:4px;text-align:center;text-indent:10px;"><img src="images/to_icon3.png"><div class="carmodelname" style="font-size:20px;display:none;"></div></div>
+						<div style="line-height:24px;margin-top:4px;text-align:center;text-indent:10px;"><img src="images/to_icon4.png"><div class="carmodelname" style="font-size:20px;display:none;"></div></div>
 					</div>
 					<div style="float:left;display:inline-block;line-height:142px;width:42%;">
 						<div class="endCity" style="line-height:40px;margin-top:28px;font-size:40px;">-</div>
-						<div class="end_st" style="font-size:28px;text-align:center;line-height:28px;margin-top:10px;color:#9a9a9a;">-</div>
+						<div class="end_st" style="font-size:28px;text-align:center;line-height:28px;margin-top:10px;color:#6f6f6f;">-</div>
 					</div>
 				</div>
 
@@ -86,37 +88,38 @@
 				</div>
 				</div> -->
 				<!-- <div style="position:relative;margin-top:-24px;height:40px;line-height:21px;border-bottom:1px solid #ccc;color:#ff6861;overflow:hidden;" class="ticket_price">
-						
+
 				</div> -->
-				<div style="line-height:100px;overflow:hidden;border-bottom:1px solid #ccc;">
+				<div style="line-height:100px;overflow:hidden;">
 					<!-- <d<del>iv style="float:left;">
 						<span style="font-size:24px;">原价&yen;</span><span class="ticketprice">0.00</span>/张
 					</div> -->
 					<div style="float:left;">
 						<div style="overflow:hidden;color:#ff6861;display:none;" class="coupon_ticket">
-							<div style="float:left;"><span style="font-size:26px;">优惠价&yen;</span><span class="st_price" style="font-size:30px;display:inline-block;font-family:Arial Regular,'微软雅黑','Source Sans Pro', 'Helvetica Neue', Helvetica, Arial, sans-serif;">-</span></div>
+							<div style="float:left;"><span style="font-size:26px;"><!--优惠价-->&yen;</span><span class="st_price" style="font-size:30px;display:inline-block;font-family:Arial Regular,'微软雅黑','Source Sans Pro', 'Helvetica Neue', Helvetica, Arial, sans-serif;">-</span>/张</div>
 							<div style="float:right;display:none;">×1张</div>
 						</div>
 					</div>
 						<div style="float:left;">
 							<div class="coupon_ticket" style="overflow:hidden;font-size:24px;color:#adadad;text-align:right;position:relative;top:2px;left:5px;display:none;" class="">
 								<div style="height:1px;width:100%;position:absolute;top:50px;background:#aaa;z-index:999;"></div>
-								<span style="font-size:22px;">原价</span><span style="font-size:18px;">&yen;</span><span class="ticketprice" style="font-size:26px;">0.00</span><!-- /张 -->
+								<span style="font-size:22px;"><!--原价--></span><span style="font-size:18px;">&yen;</span><span class="ticketprice" style="font-size:26px;">0.00</span>/张
 							</div>
-							
+
 							<div class="ticket_price" style="overflow:hidden;font-size:24px;color:#353535;text-align:right;position:relative;top:2px;left:5px;">
-								<span style="font-size:26px;">原价</span><span style="font-size:18px;">&yen;</span><span class="ticketprice" style="font-size:34px;">0.00</span><!-- /张 -->
-							
+								<span style="font-size:26px;"><!--原价--></span><span style="font-size:18px;">&yen;</span><span class="ticketprice" style="font-size:34px;">0.00</span>/张
+
 							</div>
 						</div>
-					<div class="buy_ticket" style="display:inline-block;line-height:100px;margin:0 0;float:right;text-align:right;"> 
-						<span class="p_right" style="float:initial;font-size:30px;margin:0 0;">票数：
+					<div class="buy_ticket" style="display:inline-block;line-height:100px;margin:0 0;float:right;text-align:right;">
+						<span class="p_right" style="float:initial;font-size:30px;margin:0 0;"><!--票数：-->
 							<a style="top:20px;" id="minus" class="minus" href="javascript:;"></a>
 							<input id="ti_num" style="font-size:36px;" type="text" class="d_tnum ticket_num fontyh" readonly="readonly" value="1" id="tnum" />
 							<a style="top:20px;" href="javascript:;" id="plus" class="plus"></a>
 						</span>
 					</div>
 				</div>
+				<div style="text-align:right;color:#8f724f;font-size:28px;line-height:56px;margin-top:-24px;display: none;" class="refendremark">该票不可改退</div>
 				<div style="overflow:hidden;line-height:80px;height:80px;display:none;">
 					<div style="float:left;color:#353535;font-size:28px;">
 						<div style="font-size:20px;border-radius:5px;line-height:24px;;height:24px;padding:2px 4px;color:#ffffff;display:inline-block;margin-right:5px;background:#ff6861;position:relative;bottom:2px;">惠</div>每个订单限购1张优惠票
@@ -193,7 +196,9 @@
 			</div>
 			<div class="layout_footer" style="line-height:98px;padding:0 0;height:98px;">
 				<div style="display:inline-block;font-size:26px;text-indent:7px;color:#ff6861"><span style="font-size:26px;">共计:</span><span style="font-size:24px;">&yen;</span><span class="total_price" style="font-size:34px;">0.00</span><span></span>
-				<span style="color:#9d9d9d;" class="coupon_desc">(还有未使用的优惠券)</span><!-- ￥</span><span id="total_price">adasda</span> --></div>
+					<!--<span style="color:#9d9d9d;" class="coupon_desc">(还有未使用的优惠券)</span>-->
+					<!-- ￥</span><span id="total_price">adasda</span> -->
+				</div>
 				<div style="display:inline-block;float:right;"></div>
 			</div>
 			<input style="margin-top:14px;position: fixed;bottom: 16px;right:20px;margin:0 0;z-index: 1000;" type="submit" name="" value="" class="buy_btn order_ticket">

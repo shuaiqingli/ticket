@@ -1,102 +1,99 @@
-<%@ page language="java" import="java.util.*" pageEncoding="UTF-8"%>
+<%@ taglib prefix="h" uri="http://java.sun.com/jsf/html" %>
+<%@ page language="java" pageEncoding="UTF-8" %>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
 <head>
-	<%@ include file="../common/head.jsp"%>
-	<script type="text/javascript" src="<%=basePath%>/js/adminList.js"></script>
-	<title>线路列表</title>
+	<%@ include file="../common/head.jsp" %>
+	<script type="text/javascript" src="<%=basePath%>/js/lineScheduleRule.js"></script>
+	<title>排班</title>
 </head>
-
-<body>
-	<%@include file="../common/header.jsp"%>
-	<div class="container main_container">
-		<form action="<%=basePath%>/user/lineschedule.do" method="get">
-			<div class="page-header">
-				<h2>排班列表</h2>
-			</div>
-			<div class="row">
-				<div class="pull-right" style="padding-right:10px;">
-					<input type="text" name="lineName" value="${page.param.lineName }"
-						placeholder="线路/站点/公司名称" value="" style="height:30px;"> 
-					<a class="btn"
-						style="padding:5px 12px;margin:-8px 0 0 10px;"
-						href="javascript:void(0)" onclick="$(this).parents('form')[0].submit();">搜索</a>
-				</div>
-				<div class="btn-group pull-right" style="margin-right:20px;">
-					<a class="btn" href="<%=basePath%>/user/linescheduleadd.do">
-						<i class="icon-plus-sign"></i>新增排班
-					</a>
-				</div>
-			</div>
-			<table class="table table-striped" style="font-size: 14px;">
-				<thead>
-					<tr>
-						<th class="hide">线路编号</th>
-						<th>线路</th>
-						<th>始发站</th>
-						<th>到达站</th>
-						<th>运输公司</th>
-						<th>开始时间</th>
-						<th>间隔(分钟)</th>
-						<th>生效时间</th>
-						<th>失效时间</th>
-						<th>班次数量</th>
-						<th class="pull-left">操作</th>
-					</tr>
-				</thead>
-				<tbody>
-					<c:forEach items="${page.data }" var="o">
-						<tr class="odd">
-							<td class="hide">${o.lineManage.lineID }</td>
-							<td>${o.lineManage.lineName }</td>
-							<td>${o.lineManage.sTStartName }</td>
-							<td>${o.lineManage.sTArriveName }</td>
-							<td>${o.lineManage.transCompany }</td>
-							<td>${o.schedueTime }</td>
-							<td>${o.intervalMinute }</td>
-							<td>${o.begindate }</td>
-							<td>${o.enddate }</td>
-							<td>${o.shiftNum }</td>
-							<td>
-								<div class="btn-group pull-left">
-									<a class="btn" href="<%=basePath%>/user/linescheduleadd.do?id=${o.id}">
-										<i class="icon-pencil"></i> 编辑
-									</a> 
-									<a class="btn" href="<%=basePath%>/user/linepricedetail.do?lineId=${o.lineManage.lineID}">
-										编辑价格
-									</a> 
-									<a class="btn btn-danger" href="javascript:void(0)" onclick="del(${o.id});">
-										<i class="icon-remove"></i> 删除
-									</a> 
-								</div>
-							</td>
-						</tr>
-					</c:forEach>
-				</tbody>
-			</table>
-			<%@include file="../common/page.jsp"%>
-		</form>
-	</div>
-
-	<%@include file="../common/footer.jsp" %>
-</body>
+<script type="text/javascript">
+</script>
 <script type="text/javascript">
 
-//删除
-function del(id){
-	layer.confirm('确定删除该线路吗？', 
-		{
-		    btn: ['确定', '取消']
-		},function(index, layero){
-			var url = basePath+"/user/delschedule.do";
-			ajax({id:id,isDel:1}, url,function(json){
-				location.reload(true);
-			});
-	});
-}
+	$(function(){
 
-$(function(){
+		$('[name=begindate],[name=enddate]').datetimepicker({
+			language:  'zh-CN',
+			format:'yyyy-mm-dd',
+			weekStart: 1,
+			todayBtn:  1,
+			autoclose: 1,
+			todayHighlight: 1,
+			startDate:new Date(),
+			startView: 2,
+			minView: 2,
+			forceParse: 0
+		});
 
-});
+		$('[name=begindate]').datetimepicker().on('changeDate',function(ev){
+			$('[name=enddate]').datetimepicker('setStartDate', ev.date);
+		});
+
+		$('.allchoose').click(function () {
+			$('.live').find('[type=checkbox]').prop("checked",$(this).prop("checked"))
+		});
+	})
+
 </script>
+<body>
+<div class="container main_container" style="height:auto;">
+	<form action="${basePath}/user/getScheduleTask" method="get">
+		<div class="pull-left" style="padding-right:10px;">
+			<input name="lmid" value="${param.lmid}" type="hidden">
+			<span>排班日期：</span>
+			<input  style="width: 120px;" name="begindate" placeholder="开始日期" size="16" value="${begindate}" readonly="readonly" class="" type="text"/>
+			&nbsp;至&nbsp;
+			<input style="width: 120px;" name="enddate" placeholder="结束日期" size="16" value="${enddate}" readonly="readonly" class="" type="text"/>
+			<a class="btn" style="padding:5px 12px;margin:-8px 0 0 10px;" href="javascript:void(0)" onclick="$(this).parents('form')[0].submit();">确定</a>
+		</div>
+		<div style="clear: both;"></div>
+		<hr/>
+		<table class="table table-striped" style="font-size: 14px;">
+			<thead>
+				<tr>
+					<th>日期</th>
+					<th>星期</th>
+					<th>线路规则</th>
+					<th>排班规则</th>
+					<th>状态</th>
+					<th style="position: relative">是否排班 <input type="checkbox" class="allchoose" style="top: 7px;position: absolute;left:70px;" /></th>
+				</tr>
+			</thead>
+			<tbody>
+				<c:forEach var="task" items="${tasks}">
+					<tr class="${task.ticketstatus==1?'disabled':'live'}">
+						<td class="date">${task.date}</td>
+						<td class="weekday">${task.weekday}</td>
+						<td>
+							<select ${task.ticketstatus==1?'disabled':''} class="lrid">
+								<c:forEach var="rule" items="${linerules}">
+									<option ${task.lrid==rule.id?'selected':''} value="${rule.id}">${rule.rulename}${rule.isdefault==1?'(默认规则)':''}</option>
+								</c:forEach>
+							</select>
+							<input type="hidden" class="old_lrid" value="${task.lrid}"/>
+						</td>
+						<td>
+							<select  ${task.ticketstatus==1?'disabled':''} class="lsid">
+								<c:forEach var="rule" items="${scheduerules}">
+									<option ${task.lsid==rule.id?'selected':''}  value="${rule.id}">${rule.scheduname}${rule.isdefault==1?'(默认规则)':''}</option>
+								</c:forEach>
+							</select>
+							<input type="hidden" class="old_lsid" value="${task.lsid}" />
+						</td>
+						<td >
+                            ${empty task.ticketstatus?'未排班':not empty task.tplid and task.ticketstatus == 0 ?'未发布':
+                            task.ticketstatus==1?'已发布':task.ticketstatus == 0 ?'未出票':''}
+						</td>
+						<td style="padding-left: 70px;">
+							<input type="checkbox" ${task.ticketstatus==1?'disabled':''} checked />
+						</td>
+					</tr>
+				</c:forEach>
+			</tbody>
+		</table>
+
+	</form>
+</div>
+</body>
 </html>

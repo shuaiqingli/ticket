@@ -13,10 +13,10 @@
         <div class="row">
             <div class="pull-left" style="padding-right:10px;margin-left: 20px;">
                 <input type="hidden" name="groupid" value="${param.groupid}">
-                <select name="type" class="span2" onchange="$(this).parents('form')[0].submit();">
+                <%--<select name="type" class="span2" onchange="$(this).parents('form')[0].submit();">
                     <option value="1" <c:if test='${param.type == 1 }'>selected</c:if> >固定司机</option>
                     <option value="2" <c:if test='${param.type == 2 }'>selected</c:if> >机动司机</option>
-                </select>
+                </select>--%>
                 <input type="text" name="keyword" value="${param.keyword }"
                        placeholder="名称/手机" style="height:30px;">
                 <a class="btn"

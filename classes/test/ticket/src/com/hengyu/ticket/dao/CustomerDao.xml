@@ -66,6 +66,12 @@
 			<if test="customer.rank != null">
 				and t1.`Rank`=#{customer.rank}
 			</if>
+			<if test="customer.startDate != null and customer.startDate != ''">
+				and t1.MakeDate >= #{customer.startDate}
+			</if>
+			<if test="customer.endDate != null and customer.endDate != ''">
+				and t1.MakeDate <![CDATA[ <= ]]> #{customer.endDate}
+			</if>
 		</if>
 		GROUP BY t1.CID
 		) t

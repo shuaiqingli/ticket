@@ -2,6 +2,93 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.hengyu.ticket.dao.CityStationDao">
+	<select id="findCityNameAndIdByParentId" parameterType="java.lang.String" resultType="map">
+		select 
+			cs.ID as id,
+			cs.CityName as city_name 
+		from 
+			city_station as cs 
+		where 
+			cs.ID = #{ParentID} 
+		and 
+			cs.ParentID is NULL
+	</select>
+	<select id="getStartStationList" resultType="map">
+		select t1.id,t1.cityname,t1.stpinyin, if(t2.id IS  NULL ,0,1) as hasshift from
+		(
+			select cs.id,cs.cityname,upper(cs.STPinYin) stpinyin,count(tl.ID) as ticketlinesum from city_station cs
+			LEFT JOIN ticket_line tl on tl.STStartID=cs.ID
+			LEFT JOIN ticket_store ts on tl.ShiftID=ts.ShiftID
+			LEFT JOIN shift s on tl.ShiftID=s.ID
+			where cs.ParentID=#{begincityid} and
+				tl.Status=0 and
+				ts.IsRelease=1 and
+				s.Status=0 and
+				(UNIX_TIMESTAMP(concat(s.RideDate,' ',tl.StartTime,':00'))-UNIX_TIMESTAMP(now()))/60 > 15
+			<if test="endcityid != null and endcityid != ''">
+				and s.CityArriveID=#{endcityid}
+			</if>
+			GROUP BY cs.id
+		) t1
+		LEFT JOIN
+		(
+			select
+			tl.STStartID id,
+			tl.STStartName cityname
+			from ticket_line tl
+			LEFT JOIN ticket_store ts on tl.ShiftID=ts.ShiftID
+			LEFT JOIN shift s on tl.ShiftID=s.ID
+			where tl.Status=0 and ts.IsRelease=1 and s.Status=0 and s.CityStartID=#{begincityid}
+			<if test="endcityid != null and endcityid != ''">
+				and s.CityArriveID=#{endcityid}
+			</if>
+			<if test="endstationid != null and endstationid != ''">
+				and tl.STArriveID=#{endstationid}
+			</if>
+			GROUP BY tl.STStartID
+		) t2 ON t1.ID=t2.id
+		where t1.ticketlinesum > 0
+		ORDER BY t1.stpinyin
+	</select>
+
+	<select id="getEndStationList" resultType="map">
+		select t1.id,t1.cityname,t1.stpinyin, if(t2.id IS  NULL ,0,1) as hasshift from
+		(
+			select cs.id,cs.cityname,upper(cs.STPinYin) stpinyin,count(tl.ID) as ticketlinesum from city_station cs
+			LEFT JOIN ticket_line tl on tl.STArriveID=cs.ID
+			LEFT JOIN ticket_store ts on tl.ShiftID=ts.ShiftID
+			LEFT JOIN shift s on tl.ShiftID=s.ID
+			where cs.ParentID=#{endcityid} and
+				tl.Status=0 and
+				ts.IsRelease=1 and
+				s.Status=0 and
+				(UNIX_TIMESTAMP(concat(s.RideDate,' ',tl.StartTime,':00'))-UNIX_TIMESTAMP(now()))/60 > 15
+			<if test="begincityid != null and begincityid != ''">
+				and s.CityStartID=#{begincityid}
+			</if>
+			GROUP BY cs.id
+		) t1
+		LEFT JOIN
+		(
+			select
+			tl.STArriveID id,
+			tl.STArriveName cityname
+			from ticket_line tl
+			LEFT JOIN ticket_store ts on tl.ShiftID=ts.ShiftID
+			LEFT JOIN shift s on tl.ShiftID=s.ID
+			where tl.Status=0 and ts.IsRelease=1 and s.Status=0 and s.CityArriveID=#{endcityid}
+			<if test="begincityid != null and begincityid != ''">
+				and s.CityStartID=#{begincityid}
+			</if>
+			<if test="beginstationid != null and beginstationid != ''">
+				and tl.STStartID=#{beginstationid}
+			</if>
+			GROUP BY tl.STArriveID
+		) t2 ON t1.ID=t2.id
+		where t1.ticketlinesum > 0
+		ORDER BY t1.stpinyin
+	</select>
+
 	<select id="totalCountForBindAdmin" parameterType="Page" resultType="long">
 		select count(1)
 		<include refid="findListForBindAdmin_where"/>
@@ -66,7 +153,8 @@
 		`couponticketpercent`=#{couponticketpercent},
 		`couponpercent`=#{couponpercent},
 		`stationaddr`=#{stationaddr},
-		`ticketaddr`=#{ticketaddr}
+		`ticketaddr`=#{ticketaddr},
+		`ticketaddrpicture`=#{ticketaddrpicture}
 		where
 		ID=#{id}
 	</update>
@@ -137,26 +225,14 @@
 		select 
 			cs.id,`cityname`,`parentid`,`rank`,`ishot`,`stpinyin`
 		from city_station as cs
-		where 1=1 and cs.id in (
-				select lms.stid as stid from line_manage as lm
-					join line_manage_station as lms on lms.lmid = lm.id and lms.sort = #{sort}
-					where lm.citystartid = #{begincityid} and lm.CityArriveID= #{endcityid}
-					group by 
-					lms.stid
-				<!--union
-				<if test="sort==0">
-					select lm.ststartid as stid from line_manage as lm 
-					where lm.citystartid =#{begincityid} and lm.CityArriveID= #{endcityid}
-					group by 
-						lm.ststartid
-				</if>
-				<if test="sort==1">
-					select lm.starriveid as stid from line_manage as lm 
-					where lm.citystartid =#{begincityid} and lm.CityArriveID= #{endcityid}
-					group by 
-						lm.starriveid
-				</if>-->
-		)
+		where 1=1
+		<if test="sort == 0 and begincityid != null">
+			and cs.ParentID=#{begincityid}
+		</if>
+		<if test="sort == 1 and endcityid != null">
+			and cs.ParentID=#{endcityid}
+		</if>
+		ORDER BY cs.STPinYin
 	</select>
 	<select id="findCityByNameCheck" resultType="java.lang.Long"
 		parameterType="java.lang.String">
@@ -217,7 +293,8 @@
 		`stpinyin`,
 		 ticketpercent,
 		 couponticketpercent,
-		 couponpercent
+		 couponpercent,
+		`ticketaddrpicture`,
 	</sql>
 	<sql id="columns2">
 		`id`,
@@ -227,7 +304,8 @@
 		`parentid`,
 		`rank`,
 		`ishot`,
-		`stpinyin`
+		`stpinyin`,
+		`ticketaddrpicture`,
 	</sql>
 	<sql id="propertys">
 		#{id},
@@ -241,7 +319,8 @@
 		#{stpinyin},
 		#{ticketpercent},
 		#{couponticketpercent},
-		#{couponpercent}
+		#{couponpercent},
+		#{ticketaddrpicture}
 	</sql>
 	<resultMap id="result_map" type="CityStation">
 		<id column="ID" property="id" javaType="java.lang.String" />
@@ -256,6 +335,7 @@
 		<result column="stationaddr" property="stationaddr"/>
 		<result column="ticketaddr" property="ticketaddr"/>
 		<result column="shortname" property="shortname"/>
+		<result column="ticketaddrpicture" property="ticketaddrpicture"/>
 	</resultMap>
 	<resultMap id="result_map2" type="CityStation" extends="result_map">
 		<association property="parent" columnPrefix="p" resultMap="result_map" />

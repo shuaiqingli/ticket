@@ -14,98 +14,24 @@
 		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.2.xsd
 		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.2.xsd">
 
-	<!-- 生成车票定时任务 -->
-	<bean id="tickectJob" class="com.hengyu.ticket.quartz.TickectJob" p:enable="true" p:days="8" />
-	<!-- 自动关闭订单定时任务 -->
-	<bean id="cancelOrderJob" class="com.hengyu.ticket.quartz.CancelOrderJob" p:enable="true" p:minute="10" />
-	<!-- 初始化订单号定时任务 -->
-	<bean id="saleOrderIdJob" class="com.hengyu.ticket.quartz.SaleOrderIdJob" p:enable="true" />
-	<!-- 应用禁售规则定时任务 -->
-	<bean id="prohibitJob" class="com.hengyu.ticket.quartz.ProhibitJob" p:enable="true" />
+    <!--定时任务-->
+    <bean id="schedule_task" class="com.hengyu.ticket.quartz.Task">
+        <property name="minute" value="10"/>
+    </bean>
 
-	<!-- 定义调用对象和调用对象的方法 -->
-	<bean id="TickectDetail"
-		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
-		<property name="targetObject" ref="tickectJob" />
-		<property name="targetMethod" value="execute" />
-	</bean>
+    <task:scheduled-tasks>
+        <!-- 车票发布 -->
+        <task:scheduled ref="schedule_task" method="ticketRelease" cron="0 30 0 * * ?"/>
+        <!-- 车票过期 -->
+        <task:scheduled ref="schedule_task" method="ticketTimeOut" cron="0 30 0 * * ?"/>
+        <!-- 用户积分结算 -->
+        <task:scheduled ref="schedule_task" method="customerIntegral" cron="0 30 0 * * ?"/>
+        <!-- 取消订单 -->
+        <task:scheduled ref="schedule_task" method="cancelOrder" cron="0 */5 * * * ?"/>
+        <!-- 更新订单前缀 -->
+        <task:scheduled ref="schedule_task" method="UpdateOrderIdPrefix" cron="0 0 0 1 * ?"/>
+        <!-- 禁售行程 -->
+        <task:scheduled ref="schedule_task" method="updateProhibit" cron="0 0 0 * * ?"/>
+    </task:scheduled-tasks>
 
-	<bean id="CancelOrderDetail"
-		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
-		<property name="targetObject" ref="cancelOrderJob" />
-		<property name="targetMethod" value="execute" />
-	</bean>
-	<bean id="SaleOrderIdJobDetail"
-		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
-		<property name="targetObject" ref="saleOrderIdJob" />
-		<property name="targetMethod" value="execute" />
-	</bean>
-	<bean id="ProhibitJobDetail"
-		  class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
-		<property name="targetObject" ref="prohibitJob" />
-		<property name="targetMethod" value="execute" />
-	</bean>
-	
-		
-	<!-- quartz-2.x的配置 -->
-	 <!-- 定义触发时间 -->
-	<bean id="tickectJobTrigger"
-		class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
-		<property name="jobDetail">
-			<ref bean="TickectDetail" />
-		</property>
-<!-- 		每天凌晨执行发布车票 -->
-		<property name="cronExpression">
-			<value>0 30 0 * * ?</value>
-		</property>
-	</bean>
-
-	<bean id="cancelOrderJobTrigger"
-		class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
-		<property name="jobDetail">
-			<ref bean="CancelOrderDetail" />
-		</property>
-<!-- 		5分钟取消订单 -->
-		<property name="cronExpression">
-			<value>0 */5 * * * ?</value>
-		</property>
-	</bean>
-	
-	<bean id="saleOrderIdJobTrigger"
-		class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
-		<property name="jobDetail">
-			<ref bean="SaleOrderIdJobDetail" />
-		</property>
-<!-- 		秒 分 时 日 月 星期 年 -->
-<!-- 		每个月初始化订单号 -->
-		<property name="cronExpression">
-			<value>0 0 0 1 * ?</value>
-		</property>
-	</bean>
-
-	<bean id="prohibitJobTrigger"
-		  class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
-		<property name="jobDetail">
-			<ref bean="ProhibitJobDetail" />
-		</property>
-		<!-- 		秒 分 时 日 月 星期 年 -->
-		<!-- 		每个月初始化订单号 -->
-		<property name="cronExpression">
-			<value>0 1 0 * * ?</value>
-		</property>
-	</bean>
-	
-	<!-- 总管理类 如果将lazy-init='false'那么容器启动就会执行调度程序  -->
-	<!-- 如果lazy-init='true',则需要实例化该bean才能执行调度程序 -->
-	<bean name="startQuertz" lazy-init="true" autowire="no"
-		class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
-		<property name="triggers">
-			<list>
-				<ref bean="tickectJobTrigger" />
-				<ref bean="cancelOrderJobTrigger" />
-				<ref bean="saleOrderIdJobTrigger" />
-				<ref bean="prohibitJobTrigger" />
-			</list>
-		</property>
-	</bean>
 </beans>

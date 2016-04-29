@@ -2,54 +2,108 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.hengyu.ticket.dao.TicketLineDao">
-	<insert id="save" parameterType="TicketLine">
-		insert
-		into
-		ticket_line
-		(
-		<include refid="columns" />
-		)
-		values
-		(
-		<include refid="propertys" />
-		)
-	</insert>
-	<insert id="batchSave" parameterType="list">
-		insert
-		into
+    <select id="getStationListForShift" resultType="map">
+        (select STStartID as id,STStartName as name,1 as type from ticket_line where ShiftID=#{shiftid} GROUP BY STStartID ORDER BY StartTime)
+        UNION
+        (select STArriveID as id,STArriveName as name,2 as type from ticket_line where ShiftID=#{shiftid} GROUP BY STArriveID ORDER BY ArriveTime)
+    </select>
+
+    <update id="updateQuantity">
+        update
+          ticket_line
+        set
+          balancequantity= ifnull(balancequantity,0) - ifnull(#{quantity},0),
+          balancecouponquantity=ifnull(balancecouponquantity,0) - ifnull(#{discountquantity},0)
+        where id=#{id} and
+            ifnull(balancequantity,0) >=  #{quantity} and
+            ifnull(balancecouponquantity,0) >=  ifnull(#{discountquantity},0)
+    </update>
+
+    <update id="addQuantity">
+        update
+            ticket_line
+        set
+            balancequantity = ifnull(balancequantity,0) + ifnull(#{quantity},0),
+            balancecouponquantity = ifnull(balancecouponquantity,0) + ifnull(#{discountquantity},0)
+        where ID=#{id} and AllQuantity >= ifnull(balancequantity,0) + #{quantity}
+    </update>
+
+	<!-- 莫名其妙  -->
+	<select id="findShiftByCityStartIDAndCityArriveIDAndRide" parameterType="java.util.Map" resultMap="result_map">
+		select
+			* 
+		from
 			ticket_line
-			(<include refid="columns"/>)
-		values
-		<foreach item="i" collection="list" index="index" separator=",">
-			(<include refid="batch_propertys"/>)
-		</foreach>
-	 </insert>
-	<update id="update" parameterType="TicketLine">
-		update
-		ticket_line
-		set
-		`LMID`=#{lmid},
-		`LineName`=#{linename},
-		`ShiftCode`=#{shiftcode},
-		`CityStartID`=#{citystartid},
-		`OriginStartTime`=#{originstarttime},
-		`STStartID`=#{ststartid},
-		`STStartName`=#{ststartname},
-		`CityArriveID`=#{cityarriveid},
-		`STArriveID`=#{starriveid},
-		`STArriveName`=#{starrivename},
-		`StartTime`=#{starttime},
-		`ArriveTime`=#{arrivetime},
-		`TicketPrice`=#{ticketprice},
-		`TransCompany`=#{transcompany},
-		`TicketDate`=#{ticketdate},
-		`MakeDate`=#{makedate},
-		`mileage`=#{mileage},
-		`favprice`=#{favprice}
 		where
-		ID=#{id}
+			ShiftID
+		in
+		(
+			select 
+				id
+			from 
+				shift 
+			where
+				 CityStartID = #{cityStartID}
+			and
+				CityArriveID = #{cityArriveID}
+			and 
+				RideDate = #{rideDate}
+			and 
+				Status = 0
+		)
+		<if test="begin_times !=null and begin_times != '' and end_times !=null and end_times != '' ">
+		and 
+			StartTime
+		BETWEEN
+			#{begin_times} and #{end_times} 
+		</if>
+	</select>
+    <insert id="save" parameterType="TicketLine">
+        insert
+        into
+        ticket_line
+        (
+        <include refid="columns"/>
+        )
+        values
+        (
+        <include refid="propertys"/>
+        )
+    </insert>
+    <insert id="batchSave" parameterType="list">
+        insert
+        into
+        ticket_line
+        (<include refid="columns"/>)
+        values
+        <foreach item="i" collection="list" index="index" separator=",">
+            (<include refid="batch_propertys"/>)
+        </foreach>
+    </insert>
+    <update id="update" parameterType="TicketLine">
+        update
+        ticket_line
+        set
+        `LMID`=#{lmid},
+        `ShiftID`=#{shiftid},
+        `STStartID`=#{ststartid},
+        `STStartName`=#{ststartname},
+        `STArriveID`=#{starriveid},
+        `STArriveName`=#{starrivename},
+        `StartTime`=#{starttime},
+        `ArriveTime`=#{arrivetime},
+        `FavPrice`=#{favprice},
+        `TicketPrice`=#{ticketprice},
+        `BalanceQuantity`=#{balancequantity},
+        `AllQuantity`=#{allquantity},
+        `CouponQuantity`=#{couponquantity},
+        `BalanceCouponQuantity`=#{balancecouponquantity},
+        `Mileage`=#{mileage},
+        `Status`=#{status}
+        where
+        ID=#{id}
 	</update>
-	<update id="updateprice" parameterType="TicketLine">
+    <update id="updateprice" parameterType="TicketLine">
 		update
 			ticket_line
 		set
@@ -57,7 +111,7 @@
 		where
 			ID=#{id}
 	</update>
-	<update id="cancelTicketLine" parameterType="map">
+    <update id="cancelTicketLine" parameterType="map">
 		update
 			ticket_line
 		set
@@ -68,115 +122,121 @@
 			select ID from ticket_line where ShiftCode=#{shiftcode} and lmid=#{lmid} and TicketDate=#{ridedate}
 		)
 	</update>
-	<select id="find" parameterType="java.lang.Integer" resultMap="result_map">
+    <update id="updateMatchQuantityPrice" parameterType="TicketLine">
+         update ticket_line set
+            `FavPrice`=#{favprice},
+            `TicketPrice`=#{ticketprice},
+            `BalanceQuantity`=#{balancequantity},
+            `AllQuantity`=#{allquantity},
+            `CouponQuantity`=#{couponquantity},
+            `BalanceCouponQuantity`=#{balancecouponquantity}
+        where ID=#{id}
+    </update>
+    <select id="find" parameterType="java.lang.Integer" resultMap="result_map">
 		select
 		*
 		from
 		ticket_line
 		where
 		ID=#{id}
-  </select>
-  <select id="findTicketList" resultType="map" parameterType="page">
-  		SELECT
-			tl.id,
-			c1.cityname as ststartname,
-			tl.ststartid,
-			c2.cityname as starrivename,
-			tl.starriveid,
-			tl.starttime,
-			tl.arrivetime,
-			c.shortname as transcompany,
-			tl.ticketprice,
-			tl.lmid,
-			s.linename,
-			tl.favprice,
-			ts.allquantity,
-	  		ifnull(ts.lockquantity,0) lockquantity,
-			s.shiftcode,
-			ifnull(ts.balancequantity,0) as balancequantity,
-			ifnull(ts.balancecouponquantity,0) as balancecouponquantity,
-			s.RideDate as ticketdate,
-			lm.carmodelname,
-			lm.carmodelid,
-			ifnull(tl.balancequantity,0) as stationquantity,
-			ifnull(tl.balancecouponquantity,0) as stationcouponquantity
-		FROM
-			ticket_line AS tl
-	  	join shift as s on s.ID=tl.ShiftID
-		join ticket_store as ts on ts.ShiftID = tl.ShiftID
-		join line_manage as lm on lm.id = ts.lmid
-		join company as c on lm.tcid = c.id
-		join city_station as c1 on c1.id = tl.ststartid
-		join city_station as c2 on c2.id = tl.starriveid
-		<choose>
-			<when test="param!=null and param.id != null">
-				where tl.id = #{param.id}
-			</when>
-			<otherwise>
-				<include refid="ticketlist_where"></include>
-				<choose>
-					<when test="param!=null and param.ticketprice == 1">
-						ORDER BY tl.favprice desc
-					</when>
-					<when test="param!=null and param.ticketprice == 0">
-						ORDER BY tl.favprice asc
-					</when>
-					<when test="param!=null and param.time == 1">
-						ORDER BY tl.StartTime desc,tl.arrivetime desc
-					</when>
-					<when test="param!=null and param.time == 0">
-						ORDER BY tl.StartTime asc,tl.arrivetime asc
-					</when>
-					<otherwise>
-						ORDER BY tl.StartTime asc
-					</otherwise>
-				</choose>
-			</otherwise>
-		</choose>
-		LIMIT 
-			#{startOfPage},#{pageSize}
-  </select>
-  <select id="findTicketListCount" resultType="long" parameterType="page">
-  		SELECT
-			count(1)
-		FROM
-			ticket_line AS tl
-	  	join shift as s on s.ID=tl.ShiftID
-		join ticket_store as ts on ts.ShiftID = tl.ShiftID
-		join line_manage as lm on lm.id = ts.lmid
-		join company as c on lm.tcid = c.id
-		join city_station as c1 on c1.id = tl.ststartid
-		join city_station as c2 on c2.id = tl.starriveid
-		<include refid="ticketlist_where"></include>
-  </select>
-  
-  <select id="findUniqueTicketLine" resultMap="result_map2" parameterType="TicketLine">
-  		select
-			tl.*
-			,<include refid="com.hengyu.ticket.dao.TicketStoreDao.pre_columns"/>
-		from
-			ticket_line as tl
-		inner join
-			ticket_store as ts
-		on
-			ts.lmid = tl.lmid 
-		and
-			ts.TicketDate = tl.TicketDate
-		and 
-			ts.ShiftCode = tl.ShiftCode
-		where 1=1
-		<choose>
-			<when test="id!=null">
-				and tl.id = #{id}
-			</when>
-			<otherwise>
-				and	tl.lmid = #{lmid} and tl.ShiftCode = #{shiftcode} and tl.STStartID = #{ststartid} 
-				and tl.STArriveID = #{starriveid} and tl.TicketDate = #{ticketdate}
-			</otherwise>
-		</choose>
-  </select>
-  
-  <select id="getCheckApproveTicketDate" resultType="string" parameterType="TicketLine">
+    </select>
+    <select id="findTicketList" resultType="map" parameterType="page">
+        SELECT
+        tl.id,
+        c1.cityname as ststartname,
+        tl.ststartid,
+        c2.cityname as starrivename,
+        tl.starriveid,
+        tl.starttime,
+        tl.arrivetime,
+        c.shortname as transcompany,
+        tl.ticketprice,
+        tl.lmid,
+        s.linename,
+        tl.favprice,
+        ts.allquantity,
+        ifnull(ts.lockquantity,0) lockquantity,
+        s.shiftcode,
+        ifnull(ts.balancequantity,0) as balancequantity,
+        ifnull(ts.balancecouponquantity,0) as balancecouponquantity,
+        s.RideDate as ticketdate,
+        lm.carmodelname,
+        lm.carmodelid,
+        ifnull(tl.balancequantity,0) as stationquantity,
+        ifnull(tl.balancecouponquantity,0) as stationcouponquantity,
+        s.id as shiftid
+        FROM
+        ticket_line as tl
+        join shift as s on s.ID=tl.ShiftID
+        join ticket_store as ts on ts.ShiftID = tl.ShiftID
+        join line_manage as lm on lm.id = ts.lmid
+        join company as c on lm.tcid = c.id
+        join city_station as c1 on c1.id = tl.ststartid
+        join city_station as c2 on c2.id = tl.starriveid
+        <choose>
+            <when test="param!=null and param.id != null">
+                where tl.id = #{param.id}
+            </when>
+            <otherwise>
+                <include refid="ticketlist_where"></include>
+                <choose>
+                    <when test="param!=null and param.ordertype == 4">
+                        ORDER BY tl.favprice desc
+                    </when>
+                    <when test="param!=null and param.ordertype == 3">
+                        ORDER BY tl.favprice asc
+                    </when>
+                    <when test="param!=null and param.ordertype == 2">
+                        ORDER BY tl.StartTime desc,tl.arrivetime desc
+                    </when>
+                    <when test="param!=null and param.ordertype == 1">
+                        ORDER BY tl.StartTime asc,tl.arrivetime asc
+                    </when>
+                    <otherwise>
+                        ORDER BY tl.StartTime asc,tl.arrivetime asc
+                    </otherwise>
+                </choose>
+            </otherwise>
+        </choose>
+        LIMIT
+        #{startOfPage},#{pageSize}
+    </select>
+    <select id="findTicketListCount" resultType="long" parameterType="page">
+        SELECT
+        count(1)
+        FROM
+        ticket_line AS tl
+        join shift as s on s.ID=tl.ShiftID
+        join ticket_store as ts on ts.ShiftID = tl.ShiftID
+        join line_manage as lm on lm.id = ts.lmid
+        join company as c on lm.tcid = c.id
+        join city_station as c1 on c1.id = tl.ststartid
+        join city_station as c2 on c2.id = tl.starriveid
+        <include refid="ticketlist_where"></include>
+    </select>
+
+    <select id="findUniqueTicketLine" resultMap="result_map2" parameterType="TicketLine">
+        select
+        tl.*
+        ,
+        <include refid="com.hengyu.ticket.dao.TicketStoreDao.pre_columns"/>
+        from
+        ticket_line as tl
+        left join ticket_store as ts on tl.ShiftID=ts.ShiftID
+        left join shift as s on tl.ShiftID=s.ID
+        where 1=1
+        <choose>
+            <when test="id!=null">
+                and tl.id = #{id}
+            </when>
+            <otherwise>
+                and s.lmid = #{lmid} and s.ShiftCode = #{shiftcode} and s.RideDate = #{ticketdate}
+                and tl.STStartID = #{ststartid} and tl.STArriveID = #{starriveid}
+            </otherwise>
+        </choose>
+    </select>
+
+    <select id="getCheckApproveTicketDate" resultType="string" parameterType="TicketLine">
   		select
 			max(ticketdate)
 		from
@@ -190,7 +250,7 @@
 		)
 		limit 0,1
   </select>
-  <select id="getMaxApproveTicketDate" resultType="java.lang.String" parameterType="TicketLine">
+    <select id="getMaxApproveTicketDate" resultType="java.lang.String" parameterType="TicketLine">
   		select
 			max(ticketdate)
 		from
@@ -200,8 +260,8 @@
 		and 
 			isapprove = 1
   </select>
-  
-  <delete id="delNotApproveTicketLine" parameterType="TicketLine">
+
+    <delete id="delNotApproveTicketLine" parameterType="TicketLine">
   		delete from 
   			ticket_line
   		where
@@ -209,150 +269,203 @@
   		and
   			TicketDate >= #{ticketdate}
   </delete>
-  
-  <sql id="ticketlist_where">
-	where 1=1
-	<if test="param != null">
-		<if test=" param.ticketdate != null and param.ticketdate != '' ">
-			and s.RideDate = #{param.ticketdate}
-		</if>
-		<if test="param.cityarriveid != null and param.cityarriveid != '' ">
-			and s.cityarriveid = #{param.cityarriveid}
-		</if>
-		<if test="param.citystartid != null and param.citystartid != '' ">
-			and s.citystartid = #{param.citystartid}
-		</if>
-		<if test="param.iscustomer == 1 ">
-<!-- 			and ts.balancequantity <![CDATA[>]]> 0  -->
-			and ts.isrelease = 1
-		</if>
-		<if test="param.istoday == 1 ">
-			and tl.starttime <![CDATA[>=]]> #{param.ordertime}
-		</if>
-		<if test="param.ststartid != null and param.ststartid != '' ">
-			and tl.ststartid = #{param.ststartid}
-		</if>
-		<if test="param.shiftcode != null and param.shiftcode != '' ">
-			and s.shiftcode = #{param.shiftcode}
-		</if>
-		<if test="param.lmid != null and param.lmid != '' ">
-			and tl.lmid = #{param.lmid}
-		</if>
-		<if test="param.starriveid != null and param.starriveid != '' ">
-			and tl.starriveid = #{param.starriveid}
-		</if>
-		<if test="param.starttime != null and param.starttime != '' and param.arrivetime != null and param.arrivetime != '' ">
-			and tl.starttime between #{param.starttime} and #{param.arrivetime}
-		</if>
-	</if>
-		
-  </sql>
- <select id="getTicketLineByShiftCode" parameterType="map" resultMap="result_map">
+
+    <sql id="ticketlist_where">
+        where 1=1
+        <if test="param != null">
+            <if test=" param.ticketdate != null and param.ticketdate != '' ">
+                and s.RideDate = #{param.ticketdate}
+            </if>
+            <if test="param.cityarriveid != null and param.cityarriveid != '' ">
+                and s.cityarriveid = #{param.cityarriveid}
+            </if>
+            <if test="param.citystartid != null and param.citystartid != '' ">
+                and s.citystartid = #{param.citystartid}
+            </if>
+            <if test="param.iscustomer == 1 ">
+                <!-- 			and ts.balancequantity <![CDATA[>]]> 0  -->
+                and ts.isrelease = 1
+                and s.status = 0
+            </if>
+            <if test="param.istoday == 1 ">
+                and tl.starttime <![CDATA[>=]]> #{param.ordertime}
+            </if>
+            <if test="param.ststartid != null and param.ststartid != '' ">
+                and tl.ststartid = #{param.ststartid}
+            </if>
+            <if test="param.shiftcode != null and param.shiftcode != '' ">
+                and s.shiftcode = #{param.shiftcode}
+            </if>
+            <if test="param.lmid != null and param.lmid != '' ">
+                and tl.lmid = #{param.lmid}
+            </if>
+            <if test="param.starriveid != null and param.starriveid != '' ">
+                and tl.starriveid = #{param.starriveid}
+            </if>
+            <if test="param.starttime != null and param.starttime != '' and param.arrivetime != null and param.arrivetime != '' ">
+                and tl.starttime between #{param.starttime} and #{param.arrivetime}
+            </if>
+        </if>
+
+    </sql>
+    <select id="getTicketLineByShiftCode" parameterType="map" resultMap="result_map">
 		select
 		*
 		from
 		ticket_line
 		where
 		ShiftCode=#{shiftcode} and TicketDate=#{ticketdate}
-  </select>
- <sql id="columns">
-	`lmid`,
-	`LineName`,
-	`ShiftCode`,
-	`CityStartID`,
-	`OriginStartTime`,
-	`STStartID`,
-	`STStartName`,
-	`CityArriveID`,
-	`STArriveID`,
-	`STArriveName`,
-	`StartTime`,
-	`ArriveTime`,
-	`TicketPrice`,
-	`TransCompany`,
-	`TicketDate`,
-	`MakeDate`,
-	`mileage`,
-	`favprice`
- </sql>
- <sql id="columns_pre">
-	tl.`ID` as tl_ID ,
-	tl.`STStartID` as tl_STStartID ,
-	tl.`STStartName` as tl_STStartName ,
-	tl.`STArriveID` as tl_STArriveID ,
-	tl.`STArriveName` as tl_STArriveName ,
-	tl.`StartTime` as tl_StartTime ,
-	tl.`ArriveTime` as tl_ArriveTime ,
-	tl.`TicketPrice` as tl_TicketPrice ,
-	tl.`mileage` as tl_mileage ,
-	tl.`favprice` as tl_favprice 
- </sql>
- <sql id="propertys">
-	#{lmid},
-	#{linename},
-	#{shiftcode},
-	#{citystartid},
-	#{originstarttime},
-	#{ststartid},
-	#{ststartname},
-	#{cityarriveid},
-	#{starriveid},
-	#{starrivename},
-	#{starttime},
-	#{arrivetime},
-	#{ticketprice},
-	#{transcompany},
-	#{ticketdate},
-	#{makedate},
-	#{mileage},
-	#{favprice}
- </sql>
- <sql id="batch_propertys">
-	#{i.lmid},
-	#{i.linename},
-	#{i.shiftcode},
-	#{i.citystartid},
-	#{i.originstarttime},
-	#{i.ststartid},
-	#{i.ststartname},
-	#{i.cityarriveid},
-	#{i.starriveid},
-	#{i.starrivename},
-	#{i.starttime},
-	#{i.arrivetime},
-	#{i.ticketprice},
-	#{i.transcompany},
-	#{i.ticketdate},
-	#{i.makedate},
-	#{i.mileage},
-	#{i.favprice}
- </sql>
- <resultMap id="result_map" type="TicketLine">
-  <id column="ID" property="id" javaType="java.lang.Integer"/>
-  <result column="lmid" property="lmid"/>
-  <result column="LineName" property="linename" javaType="java.lang.String"/>
-  <result column="ShiftCode" property="shiftcode" javaType="java.lang.String"/>
-  <result column="CityStartID" property="citystartid" javaType="java.lang.String"/>
-  <result column="OriginStartTime" property="originstarttime" javaType="java.lang.String"/>
-  <result column="STStartID" property="ststartid" javaType="java.lang.String"/>
-  <result column="STStartName" property="ststartname" javaType="java.lang.String"/>
-  <result column="CityArriveID" property="cityarriveid" javaType="java.lang.String"/>
-  <result column="STArriveID" property="starriveid" javaType="java.lang.String"/>
-  <result column="STArriveName" property="starrivename" javaType="java.lang.String"/>
-  <result column="StartTime" property="starttime" javaType="java.lang.String"/>
-  <result column="ArriveTime" property="arrivetime" javaType="java.lang.String"/>
-  <result column="TicketPrice" property="ticketprice" javaType="java.math.BigDecimal"/>
-  <result column="favprice" property="favprice" javaType="java.math.BigDecimal"/>
-  <result column="TransCompany" property="transcompany" javaType="java.lang.String"/>
-  <result column="TicketDate" property="ticketdate" javaType="java.lang.String"/>
-  <result column="MakeDate" property="makedate" javaType="java.lang.String"/>
-  <result column="isapprove" property="isapprove"/>
-  <result column="mileage" property="mileage"/>
-  <result column="tlsid" property="tlsid"/>
-  <result column="salequantity" property="salequantity"/>
-  <result column="couponsalequantity" property="couponsalequantity"/> 
- </resultMap>
- <resultMap type="TicketLine" id="result_map2" extends="result_map">
- 	<association property="ticketStore" columnPrefix="ts_" resultMap="com.hengyu.ticket.dao.TicketStoreDao.result_map"/>
- </resultMap>
+    </select>
+    <select id="getTicketLineByShiftId" parameterType="Long" resultType="map">
+    	select 
+    		tl.ID as id,tl.LMID as lmid,tl.ArriveTime as arrivetime,
+    		s.CityStartID as citystartid,s.OriginSTID as cityarriveid,tl.FavPrice as favprice,
+    		s.LineName as linename,s.MakeDate as makedate,tl.Mileage as mileage,
+			s.OriginStartTime as originstarttime,s.ShiftCode as shiftcode,tl.STArriveID as starriveid,
+			tl.STArriveName as starrivename,tl.StartTime as starttime,tl.STStartID as ststartid,
+			tl.STStartName as ststartname,s.RideDate as ticketdate,tl.TicketPrice as ticketprice,
+			s.TransCompany as transcompany
+		from 
+			ticket_line as tl 
+		LEFT JOIN 
+			shift as s 
+		on 
+			s.id=tl.ShiftID 
+		where 
+			1=1 
+		and 
+			tl.ShiftID=#{ShiftID}
+    </select>
+    <select id="getTicketLineNotDataTypeTip" resultType="java.lang.Integer">
+        SELECT ifnull(count(1),0) FROM ticket_line tl
+        join shift s on s.ID=tl.ShiftID
+        join ticket_store ts on ts.ShiftID = tl.ShiftID
+        where tl.Status=0 and ts.IsRelease=1 and s.Status=0
+        <if test=" param.ticketdate != null and param.ticketdate != '' ">
+            and s.RideDate = #{param.ticketdate}
+        </if>
+        <if test="param.cityarriveid != null and param.cityarriveid != '' ">
+            and s.cityarriveid = #{param.cityarriveid}
+        </if>
+        <if test="param.citystartid != null and param.citystartid != '' ">
+            and s.citystartid = #{param.citystartid}
+        </if>
+        <if test="param.ststartid != null and param.ststartid != '' ">
+            and tl.ststartid = #{param.ststartid}
+        </if>
+        <if test="param.starriveid != null and param.starriveid != '' ">
+            and tl.starriveid = #{param.starriveid}
+        </if>
+        <if test="param.istoday == 1 ">
+            and tl.starttime <![CDATA[>=]]> #{param.ordertime}
+        </if>
+        <!--<if test="param.starttime != null and param.starttime != '' and param.arrivetime != null and param.arrivetime != '' ">
+            and tl.starttime between #{param.starttime} and #{param.arrivetime}
+        </if>-->
+    </select>
+    <sql id="columns">
+        `LMID`,
+        `ShiftID`,
+        `STStartID`,
+        `STStartName`,
+        `STArriveID`,
+        `STArriveName`,
+        `StartTime`,
+        `ArriveTime`,
+        `FavPrice`,
+        `TicketPrice`,
+        `BalanceQuantity`,
+        `AllQuantity`,
+        `CouponQuantity`,
+        `BalanceCouponQuantity`,
+        `Mileage`,
+        `Status`
+    </sql>
+    <sql id="propertys">
+        #{lmid},
+        #{shiftid},
+        #{ststartid},
+        #{ststartname},
+        #{starriveid},
+        #{starrivename},
+        #{starttime},
+        #{arrivetime},
+        #{favprice},
+        #{ticketprice},
+        #{balancequantity},
+        #{allquantity},
+        #{couponquantity},
+        #{balancecouponquantity},
+        #{mileage},
+        #{status}
+    </sql>
+    <sql id="columns_pre">
+        tl.`ID` as tl_ID ,
+        tl.`STStartID` as tl_STStartID ,
+        tl.`STStartName` as tl_STStartName ,
+        tl.`STArriveID` as tl_STArriveID ,
+        tl.`STArriveName` as tl_STArriveName ,
+        tl.`StartTime` as tl_StartTime ,
+        tl.`ArriveTime` as tl_ArriveTime ,
+        tl.`TicketPrice` as tl_TicketPrice ,
+        tl.`mileage` as tl_mileage ,
+        tl.`favprice` as tl_favprice
+    </sql>
+
+    <sql id="batch_propertys">
+        #{i.lmid},
+        #{i.linename},
+        #{i.shiftcode},
+        #{i.citystartid},
+        #{i.originstarttime},
+        #{i.ststartid},
+        #{i.ststartname},
+        #{i.cityarriveid},
+        #{i.starriveid},
+        #{i.starrivename},
+        #{i.starttime},
+        #{i.arrivetime},
+        #{i.ticketprice},
+        #{i.transcompany},
+        #{i.ticketdate},
+        #{i.makedate},
+        #{i.mileage},
+        #{i.favprice}
+    </sql>
+    <resultMap id="result_map" type="TicketLine">
+        <id column="ID" property="id" javaType="java.lang.Integer"/>
+        <result column="lmid" property="lmid"/>
+        <result column="shiftid" property="shiftid"/>
+       <!--  <result column="LineName" property="linename" javaType="java.lang.String"/> -->
+       <!--  <result column="ShiftCode" property="shiftcode" javaType="java.lang.String"/> -->
+       <!--  <result column="CityStartID" property="citystartid" javaType="java.lang.String"/> -->
+       <!--  <result column="OriginStartTime" property="originstarttime" javaType="java.lang.String"/> -->
+        <result column="STStartID" property="ststartid" javaType="java.lang.String"/>
+        <result column="STStartName" property="ststartname" javaType="java.lang.String"/>
+       <!--  <result column="CityArriveID" property="cityarriveid" javaType="java.lang.String"/> -->
+        <result column="STArriveID" property="starriveid" javaType="java.lang.String"/>
+        <result column="STArriveName" property="starrivename" javaType="java.lang.String"/>
+        <result column="StartTime" property="starttime" javaType="java.lang.String"/>
+        <result column="ArriveTime" property="arrivetime" javaType="java.lang.String"/>
+        <result column="TicketPrice" property="ticketprice" javaType="java.math.BigDecimal"/>
+        <result column="favprice" property="favprice" javaType="java.math.BigDecimal"/>
+        <result column="TransCompany" property="transcompany" javaType="java.lang.String"/>
+        <result column="TicketDate" property="ticketdate" javaType="java.lang.String"/>
+        <result column="MakeDate" property="makedate" javaType="java.lang.String"/>
+        <result column="isapprove" property="isapprove"/>
+        <result column="mileage" property="mileage"/>
+        <result column="tlsid" property="tlsid"/>
+        <result column="salequantity" property="salequantity"/>
+        <result column="couponsalequantity" property="couponsalequantity"/>
+        <result column="balancecouponquantity" property="balancecouponquantity"/>
+        <result column="balancequantity" property="balancequantity"/>
+        <result column="allquantity" property="allquantity"/>
+        <result column="couponquantity" property="couponquantity"/>
+        <result column="balancecouponquantity" property="balancecouponquantity"/>
+        <result column="shiftid" property="shiftid"/>
+    </resultMap>
+    <resultMap type="TicketLine" id="result_map2" extends="result_map">
+        <association property="ticketStore" columnPrefix="ts_"
+                     resultMap="com.hengyu.ticket.dao.TicketStoreDao.result_map"/>
+    </resultMap>
 </mapper>

@@ -261,6 +261,7 @@
 		where
 		Token=#{token}
 	</select>
+
 	<sql id="admin_power_lines">
 		select `id` from line_manage
 		where tcid in(
@@ -337,7 +338,7 @@
 		<result column="IsChange" property="ischange" javaType="java.lang.Integer" />
 		<result column="IsChange" property="ischange" javaType="java.lang.Integer" />
 		<result column="IsAutoBindLine" property="isautobindline" javaType="java.lang.String" />
-		<association property="role" column="RoleID" resultMap="com.hengyu.ticket.dao.RoleDao.result_map"></association>
+        <association property="role" resultMap="com.hengyu.ticket.dao.RoleDao.result_map"></association>
 	</resultMap>
 
 </mapper>

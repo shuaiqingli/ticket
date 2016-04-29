@@ -68,6 +68,19 @@
 			</div>
 			<div class="row">
 				<div style="margin-left: 30px;">
+					<label>取票示意图<span style="color: gray;font-size: 12px;">仅支持格式JPG/JPEG/PNG/GIF/BMP,最大不超过5MB</span></label>
+					<input type="file" id="ticketaddrpicture">
+
+					<div id="ticketaddrpicturePreview" class="pull-left" style="margin-bottom: 10px;">
+						<c:if test="${not empty cityStation.ticketaddrpicture }">
+							<img style="height:150px;" src="${cityStation.ticketaddrpicture }">
+						</c:if>
+					</div>
+					<input type="hidden" name="ticketaddrpicture" value="${cityStation.ticketaddrpicture }">
+				</div>
+			</div>
+			<div class="row">
+				<div style="margin-left: 30px;">
 					<label>站点拼音</label>
 					<input type="text" name="stpinyin" value="${cityStation.stpinyin }" class="span3" readonly="readonly"/>
 				</div>
@@ -104,6 +117,36 @@
 </body>
 <script type="text/javascript">
 $(function(){
+	$("#ticketaddrpicture").uploadify({
+		height : 27,
+		width : 80,
+		buttonText : '选择图片',
+		swf : basePath + '/common/js/uploadify.swf',
+		uploader : basePath + '/user/imageFileUpload.do',
+		auto : true,
+		multi : false,
+		fileTypeExts : '*.jpg;*.jpeg;*.png;*.gif;*.bmp',
+		fileTypeDesc : '仅支持格式JPG/JPEG/PNG/GIF/BMP,最大不超过5MB',
+		fileSizeLimit : '5MB',
+		uploadLimit : 1,
+		onUploadSuccess : function(file,data,response){
+			var uploadLimit = $("#ticketaddrpicture").data('uploadify').settings.uploadLimit;
+			$('#ticketaddrpicture').uploadify('settings','uploadLimit', ++uploadLimit);
+			if(response==true){
+				if(typeof(data) === 'string'){
+					$('#ticketaddrpicturePreview').html('<img style="height:150px;" src="'+data+'">');
+					$('input[name="ticketaddrpicture"]').val(data);
+					return;
+				}
+			}
+			layer.msg('上传失败');
+		},
+		onUploadError : function(file,data,response){
+			var uploadLimit = $("#ticketaddrpicture").data('uploadify').settings.uploadLimit;
+			$('#ticketaddrpicture').uploadify('settings','uploadLimit', ++uploadLimit);
+			layer.msg('上传失败');
+		}
+	});
 	$("form").Validform({
 		tiptype:4, 
 		postonce:true,

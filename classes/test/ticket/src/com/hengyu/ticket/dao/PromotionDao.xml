@@ -2,22 +2,22 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.hengyu.ticket.dao.PromotionDao">
-  <insert id="save" parameterType="Promotion">
-	insert
-	into
-		promotion
-		(<include refid="columns"/>)
-	values
-		(<include refid="propertys"/>)
-  </insert>
-  <delete id="delete" parameterType="java.lang.Integer">
+    <insert id="save" parameterType="Promotion">
+        insert
+        into
+        promotion
+        (<include refid="columns"/>)
+        values
+        (<include refid="propertys"/>)
+    </insert>
+    <delete id="delete" parameterType="java.lang.Integer">
 	delete
 	from
 		promotion
 	where
 		ID=#{id}
   </delete>
-  <update id="update" parameterType="Promotion">
+    <update id="update" parameterType="Promotion">
 	update
 		promotion
 	set
@@ -33,11 +33,20 @@
 		`IsEnable`=#{isenable},
 		`IsEnableName`=#{isenablename},
 		`PromotionLine`=#{promotionline},
+		`isdefault`=#{isdefault},
 		`IsDel`=#{isdel}
 	where
 		ID=#{id}
   </update>
-  <select id="find" parameterType="java.lang.String" resultMap="result_map">
+    <update id="resetDefault">
+	update
+		promotion
+	set
+		`isdefault`= 0
+	where
+		LMID=#{lmid}
+  </update>
+    <select id="find" parameterType="java.lang.String" resultMap="result_map2">
 	select
 		*
 	from
@@ -45,48 +54,55 @@
 	where
 		ID=#{id}
   </select>
-  <select id="findList" parameterType="Page" resultMap="result_map2">
-		select
-		*
-		from
-		promotion
-		<include refid="findList_where"></include>
-		order by
-		MakeDate
-		desc
-		limit
-		#{startOfPage},#{pageSize}
-	</select>
-	<select id="totalCount" parameterType="Page" resultType="long">
-		select
-		count(1)
-		from
-		promotion
-		<include refid="findList_where"></include>
-	</select>
-	
-	
-	<select id="checketPromotionExists" parameterType="Promotion" resultMap="result_map">
-		select 
-			* 
-		from 
-			promotion
-		where  
-			lmid = #{lmid}
-		and
-			isdel <![CDATA[<>]]> 1
-		and(
-			#{begindate} between `BeginDate` and EndDate
-		or
-			#{enddate} between `BeginDate` and EndDate
-		)
-		<if test="id!=null">
-			and id not in(#{id})
-		</if>
-		limit 0,1
-	</select>
-	
-	<select id="findByTicketStore" resultMap="result_map2" parameterType="TicketStore">
+    <select id="findList" parameterType="Page" resultMap="result_map2">
+        select
+        *
+        from
+        promotion
+        <include refid="findList_where"></include>
+        order by
+        MakeDate
+        desc
+        limit
+        #{startOfPage},#{pageSize}
+    </select>
+
+    <select id="findByLMID" resultMap="result_map2">
+        select *
+        from promotion
+        where lmid = #{lmid} and( isdel = 0 or isdel is null )
+        order by isdefault,MakeDate desc
+    </select>
+    <select id="totalCount" parameterType="Page" resultType="long">
+        select
+        count(1)
+        from
+        promotion
+        <include refid="findList_where"></include>
+    </select>
+
+
+    <select id="checketPromotionExists" parameterType="Promotion" resultMap="result_map">
+        select
+        *
+        from
+        promotion
+        where
+        lmid = #{lmid}
+        and
+        isdel <![CDATA[<>]]> 1
+        and(
+        #{begindate} between `BeginDate` and EndDate
+        or
+        #{enddate} between `BeginDate` and EndDate
+        )
+        <if test="id!=null">
+            and id not in(#{id})
+        </if>
+        limit 0,1
+    </select>
+
+    <select id="findByTicketStore" resultMap="result_map2" parameterType="TicketStore">
 		select 
 			pt.* 
 		from 
@@ -100,19 +116,19 @@
 		and 
 			isdel <![CDATA[<>]]> 1
 	</select>
-	
-	<sql id="findList_where">
-		<where>
-			lmid = #{param.lmid}
-			and(
-				isdel = 0 or isdel is null
-			)
-			<if test="param.promotionname != null">
-				and `promotionname` like '%${param.promotionname}%'
-			</if>
-		</where>
-	</sql>
-  <sql id="columns">
+
+    <sql id="findList_where">
+        <where>
+            lmid = #{param.lmid}
+            and(
+            isdel = 0 or isdel is null
+            )
+            <if test="param.promotionname != null">
+                and `promotionname` like '%${param.promotionname}%'
+            </if>
+        </where>
+    </sql>
+    <sql id="columns">
   	`ID`,
  	`PromotionName`,
  	`lmid`,
@@ -126,9 +142,10 @@
 	`IsEnable`,
 	`IsEnableName`,
 	`PromotionLine`,
+	`isdefault`,
 	`IsDel`
   </sql>
-  <sql id="propertys">
+    <sql id="propertys">
   	#{id},
   	#{promotionname},
   	#{lmid},
@@ -142,27 +159,29 @@
 	#{isenable},
 	#{isenablename},
 	#{promotionline},
+	#{isdefault},
 	#{isdel}
   </sql>
-  <resultMap id="result_map" type="Promotion">
-    <id column="ID" property="id" javaType="java.lang.String"/>
-    <result column="PromotionName" property="promotionname" javaType="java.lang.String"/>
-    <result column="BeginDate" property="begindate" javaType="java.lang.String"/>
-    <result column="EndDate" property="enddate" javaType="java.lang.String"/>
-    <result column="Weekdays" property="weekdays"/>
-    <result column="ConsAmount" property="consamount" javaType="java.lang.Double"/>
-    <result column="MakeID" property="makeid" javaType="java.lang.String"/>
-    <result column="MakeName" property="makename" javaType="java.lang.String"/>
-    <result column="MakeDate" property="makedate" javaType="java.lang.String"/>
-    <result column="IsEnable" property="isenable" javaType="java.lang.Integer"/>
-    <result column="IsEnableName" property="isenablename" javaType="java.lang.String"/>
-    <result column="PromotionLine" property="promotionline" javaType="java.lang.Integer"/>
-    <result column="lmid" property="lmid" javaType="java.lang.Integer"/>
-    <result column="IsDel" property="isdel" javaType="java.lang.Integer"/>
-  </resultMap>
-  
-  <resultMap type="Promotion" id="result_map2" extends="result_map">
-  		<collection column="id" property="times" select="com.hengyu.ticket.dao.PromotionTimeDao.getPromotionTimeByPID"/>
-  </resultMap>
-  
+    <resultMap id="result_map" type="Promotion">
+        <id column="ID" property="id" javaType="java.lang.String"/>
+        <result column="PromotionName" property="promotionname" javaType="java.lang.String"/>
+        <result column="BeginDate" property="begindate" javaType="java.lang.String"/>
+        <result column="EndDate" property="enddate" javaType="java.lang.String"/>
+        <result column="Weekdays" property="weekdays"/>
+        <result column="ConsAmount" property="consamount" javaType="java.lang.Double"/>
+        <result column="MakeID" property="makeid" javaType="java.lang.String"/>
+        <result column="MakeName" property="makename" javaType="java.lang.String"/>
+        <result column="MakeDate" property="makedate" javaType="java.lang.String"/>
+        <result column="IsEnable" property="isenable" javaType="java.lang.Integer"/>
+        <result column="IsEnableName" property="isenablename" javaType="java.lang.String"/>
+        <result column="PromotionLine" property="promotionline" javaType="java.lang.Integer"/>
+        <result column="lmid" property="lmid" javaType="java.lang.Integer"/>
+        <result column="IsDel" property="isdel" javaType="java.lang.Integer"/>
+        <result column="isdefault" property="isdefault" javaType="java.lang.Integer"/>
+    </resultMap>
+
+    <resultMap type="Promotion" id="result_map2" extends="result_map">
+        <collection column="id" property="times" select="com.hengyu.ticket.dao.PromotionTimeDao.getPromotionTimeByPID"/>
+    </resultMap>
+
 </mapper>

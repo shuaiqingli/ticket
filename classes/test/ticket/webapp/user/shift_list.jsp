@@ -44,13 +44,24 @@
 				<select style="width: 140px;" name="starriveid" class="endStationSelect">
 					<option value="">--- 到达站点 ---</option>
 				</select>
-                    <span>班次日期：</span><input name="date" placeholder="班次日期" size="16" type="text" value="${page.param.date }" readonly="readonly" class="date _date"/>
-                    <span>发班时间：</span><input name="starttime" placeholder="发班时间" size="16" type="text" value="${page.param.starttime }" readonly="readonly" class="starttime"/>
-					<input type="text" name="shiftcode" value="${page.param.shiftcode }"
-						placeholder="班次号/线路号"  style="height:30px;"> 
+                    <span>开始日期：</span>
+                    <input name="begindate" style="width:100px;" placeholder="开始日期" size="16" type="text" value="${page.param.begindate }" readonly="readonly" class="date _date"/>
+                    <span>结束日期：</span>
+                    <input name="enddate" style="width:100px;" placeholder="结束日期" size="16" type="text" value="${page.param.enddate }" readonly="readonly" class="date _date"/>
+                    <span>发班时间：</span>
+                    <input style="width:100px;" name="starttime" placeholder="发班时间" size="16" type="text" value="${page.param.starttime }" readonly="readonly" class="starttime"/>
+					<input type="text"  name="shiftcode" value="${page.param.shiftcode }"
+						placeholder="班次号/线路号/站务名称"  style="height:30px;">
 					<a class="btn"
 						style="padding:5px 12px;margin:-8px 0 0 10px;"
-						href="javascript:void(0)" onclick="$(this).parents('form')[0].submit();">搜索</a>
+						href="javascript:void(0)" onclick="$('.export').val(0);$(this).parents('form')[0].submit();">搜索</a>
+					<a class="btn"
+						style="padding:5px 12px;margin:-8px 0 0 10px;"
+						href="javascript:void(0)" onclick="$('.export').val(1);$(this).parents('form')[0].submit();">导出</a>
+					<a class="btn"
+						style="padding:5px 12px;margin:-8px 0 0 10px;"
+						href="javascript:void(0)" onclick="$(this).parents('form').find('[type=text]').val('');">清空</a>
+                    <input type="hidden" value="0" class="export" name="export"/>
 				</div>
 			</div>
 			<br/>
@@ -63,7 +74,9 @@
 						<th>终点站</th>
 						<th>发车时间</th>
 						<th>发车日期</th>
-						<th>是否已发车</th>
+						<th>站务名称</th>
+						<th>发车状态</th>
+						<th>是否取消</th>
 						<th>车牌</th>
 						<th>操作</th>
 					</tr>
@@ -77,12 +90,17 @@
 							<td>${o.starrivename}</td>
 							<td class="time">${o.punctualstart}</td>
 							<td>${o.ridedate}</td>
+							<td>${o.makename}</td>
 							<td class="status" isstart="${o.isstart }">${o.isstart == 0 ? '未发车': o.isstart==1 ? '已发出':'已取消'}</td>
+							<td class="status" iscancel="${o.iscancel }"> ${o.iscancel == 0 ? '正常': o.iscancel==1 ? '已取消':''}</td>
 							<td>${o.platenum}</td>
 							<td>
 								<a class="btn btn_detail" href="javascript:;;" id="${o.id}">
 									详情
 								</a> 
+								<%--<a class="btn ${o.iscancel==0?'disabled':''} " href="javascript:;;" id="${o.id}" onclick=" <c:if test="${o.iscancel==1}">update('${o.shiftid}','${o.id}',0)</c:if>  ">--%>
+									<%--恢复--%>
+								<%--</a>--%>
 							</td>
 						</tr>
 					</c:forEach>
@@ -130,6 +148,20 @@
 </body>
 <script type="text/javascript">
 var $date = "${page.param.date}";
+
+function update(shiftid,id,iscancel){
+    $.ajax({
+        type: "POST",
+        dataType:"JSON",
+        url: basePath+"/user/updateShiftStartIsCancel",
+        data: {id:id,iscancel:iscancel,shiftid:shiftid},
+        success: function(json){
+            console.debug(json);
+            location.reload();
+        }
+    });
+}
+
 //获取城市列表
 function getStationList(parentid,parent,fn){
 	var data = {parentid:parentid,ishot:1};
@@ -176,18 +208,18 @@ $(function(){
 	
 	//选择城市
 	$(".beginCitys").change(function(){
-		var parentID = $(this).val();
-		if(parentID==""){
+		var parentid = $(this).val();
+		if(parentid==""){
 			return;
 		}
-		fn_getStationList($('.beginStationSelect'), parentID, $(".beginStations").val(),0);
+		fn_getStationList($('.beginStationSelect'), parentid, $(".beginStations").val(),0);
 	});
 	$(".endCitys").change(function(){
-		var parentID = $(this).val();
-		if(parentID==""){
+		var parentid = $(this).val();
+		if(parentid==""){
 			return;
 		}
-		fn_getStationList($('.endStationSelect'), parentID, $(".endStations").val(),1);
+		fn_getStationList($('.endStationSelect'), parentid, $(".endStations").val(),1);
 	});
 	
 	

@@ -154,6 +154,7 @@ function loadShiftStartData() {
     var ticketdate = $('#dateList').find('h3[sel="1"]').attr('date');
     var starttime = $('#timeList').find('td[sel="1"]').attr('startTime');
     var arrivetime = $('#timeList').find('td[sel="1"]').attr('endTime');
+    var linename = $('[name="linename"]').val();
     if (citystartid == cityarriveid) {
         layer.msg('出发城市与到达城市不能相同');
         return false;
@@ -168,7 +169,8 @@ function loadShiftStartData() {
             starriveid: starriveid,
             ticketdate: ticketdate,
             starttime: starttime,
-            arrivetime: arrivetime
+            arrivetime: arrivetime,
+            linename: linename
         },
         dataType: "json",
         success: function (data) {
@@ -184,7 +186,7 @@ function loadShiftStartData() {
                 recordItem.find('.lockquantity').text(data[i].lockquantity);
                 recordItem.find('.saledquantity').text(data[i].allquantity - data[i].balancequantity - data[i].lockquantity);
                 recordItem.find('.saledquantity').parent('a').attr('href',basePath+'/user/saleorderlist?rideDate='+ticketdate+'&mobile='+data[i].shiftcode);
-                recordItem.find('.prepayquantity').text(data[i].lockedseatnolist.length);
+                /*recordItem.find('.prepayquantity').text(data[i].lockedseatnolist.length);*/
                 recordItem.find('.ticketprice').text(data[i].ticketprice);
                 if(typeof(data[i].showcontent) == 'string' && data[i].showcontent.length > 0){
                     var showcontent = data[i].showcontent;

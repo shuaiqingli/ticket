@@ -93,14 +93,14 @@ $(function(){
 			detail = JSON.parse(detail);
 			var total = parseFloat($.cookie('total'));
 			var num = parseInt($.cookie('ticket_num'));
-			var total = total/num;
+//			var total = total/num;
 			var low = $(this).data('json').lowlimit;
 			if(total>=low){
 // 				toast.show('可以使用优惠劵！')
 				$.cookie('coupon',JSON.stringify($(this).data('json')));
 				send('order_infomation.html');
 			}else{
-				toast.show('消费均价满'+low+'才能使用该优惠劵')
+				toast.show('消费满'+low+'才能使用该优惠劵')
 			}
 		}
 	});

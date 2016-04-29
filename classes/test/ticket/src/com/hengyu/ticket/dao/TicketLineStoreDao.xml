@@ -71,9 +71,9 @@
 	update
 		ticket_line_store
 	set
-		`balancequantity`= ifnull(balancequantity,0) - #{quantity},
-		 balancecouponquantity=ifnull(balancecouponquantity,0) - #{discountquantity}
-	where ifnull(balancequantity,0) >=  #{quantity} and ifnull(balancecouponquantity,0) >=  #{discountquantity}
+		`balancequantity`= ifnull(balancequantity,0) - ifnull(#{quantity},0),
+		 balancecouponquantity=ifnull(balancecouponquantity,0) - ifnull(#{discountquantity},0)
+	where ifnull(balancequantity,0) >=  #{quantity} and ifnull(balancecouponquantity,0) >=  ifnull(#{discountquantity},0)
 	and lmid = #{lmid} and ShiftCode = #{shiftNum} and TicketDate = #{rideDate} and currstationid = #{sTStartID}
   </update>
   
@@ -81,8 +81,8 @@
 	update
 		ticket_line_store
 	set
-		`balancequantity` = ifnull(balancequantity,0) + #{quantity},
-		 balancecouponquantity = ifnull(balancecouponquantity,0) + #{discountquantity}
+		`balancequantity` = ifnull(balancequantity,0) + ifnull(#{quantity},0),
+		 balancecouponquantity = ifnull(balancecouponquantity,0) + ifnull(#{discountquantity},0)
 	where lmid = #{lmid} and ShiftCode = #{shiftNum} and TicketDate = #{rideDate} and currstationid = #{sTStartID} 
 	and AllQuantity >= ifnull(balancequantity,0) + #{quantity}
   </update>

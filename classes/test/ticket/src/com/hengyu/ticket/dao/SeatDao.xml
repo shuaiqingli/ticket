@@ -2,150 +2,143 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.hengyu.ticket.dao.SeatDao">
-	<update id="freezeSeat">
-		update seat set IsSale=2 where SeatNO=#{seatno} and LMID=#{lmid} and ShiftCode=#{shiftcode} and RideDate=#{ridedate} and IsSale=0
-	</update>
-	<update id="unfreezeSeat">
-		update seat set IsSale=0 where SeatNO=#{seatno} and LMID=#{lmid} and ShiftCode=#{shiftcode} and RideDate=#{ridedate} and IsSale=2
-	</update>
-	<select id="findSeat" resultMap="result_map">
-		select * from seat where SeatNO=#{seatno} and LMID=#{lmid} and ShiftCode=#{shiftcode} and RideDate=#{ridedate} limit 0,1
-	</select>
-	<update id="lockSeat">
-		update seat set IsSale=1 where SeatNO=#{seatno} and LMID=#{lmid} and ShiftCode=#{shiftcode} and RideDate=#{ridedate} and IsSale=0
-	</update>
-	<update id="lockSeatFromFreeze">
-		update seat set IsSale=1 where SeatNO=#{seatno} and LMID=#{lmid} and ShiftCode=#{shiftcode} and RideDate=#{ridedate} and IsSale=2
-	</update>
+    <update id="freezeSeat">
+        update seat set IsSale=2 where SeatNO=#{seatno} and ShiftID=#{shiftid} and IsSale=0
+    </update>
+    <update id="unfreezeSeat">
+        update seat set IsSale=0 where SeatNO=#{seatno} and ShiftID=#{shiftid} and IsSale=2
+    </update>
+    <select id="findSeat" resultMap="result_map">
+        select * from seat where SeatNO=#{seatno} and LMID=#{lmid} and ShiftCode=#{shiftcode} and RideDate=#{ridedate} limit 0,1
+    </select>
+    <update id="lockSeat">
+        update seat set IsSale=1 where SeatNO=#{seatno} and LMID=#{lmid} and ShiftCode=#{shiftcode} and RideDate=#{ridedate} and IsSale=0
+    </update>
+    <update id="lockSeatFromFreeze">
+        update seat set IsSale=1 where SeatNO=#{seatno} and LMID=#{lmid} and ShiftCode=#{shiftcode} and RideDate=#{ridedate} and IsSale=2
+    </update>
 
-  <insert id="save" parameterType="Seat">
-	insert
-	into
-		seat
-		(<include refid="columns"/>)
-	values
-		(<include refid="propertys"/>)
-  </insert>
-  <insert id="batchSave" parameterType="list">
-	insert
-	into
-		seat
-		(<include refid="columns"/>)
-	values
-		<foreach item="i" collection="list" index="index" separator=",">
+    <insert id="save" parameterType="Seat">
+        insert
+        into
+        seat
+        (<include refid="columns"/>)
+        values
+        (<include refid="propertys"/>)
+    </insert>
+    <insert id="batchSave" parameterType="list">
+        insert
+        into
+        seat
+        (<include refid="columns"/>)
+        values
+        <foreach item="i" collection="list" index="index" separator=",">
             (
             <include refid="batch_propertys"/>
             )
         </foreach>
-  </insert>
-  
-  <update id="update" parameterType="Seat">
-	update
-		seat
-	set
-		`SeatNO`=#{seatno},
-		`LMID`=#{lmid},
-		`ShiftCode`=#{shiftcode},
-		`RideDate`=#{ridedate},
-		`IsSale`=#{issale}
-	where
-		ID=#{id}
-  </update>
-  
-   <delete id="delNotApproveSeat" parameterType="TicketLine">
+    </insert>
+
+    <update id="update" parameterType="Seat">
+        update
+        seat
+        set
+        `SeatNO`=#{seatno},
+        `LMID`=#{lmid},
+        `ShiftCode`=#{shiftcode},
+        `RideDate`=#{ridedate},
+        `IsSale`=#{issale}
+        where
+        ID=#{id} and issale = #{oldissale}
+    </update>
+
+    <delete id="delNotApproveSeat" parameterType="TicketLine">
         DELETE FROM
-            seat
+        seat
         WHERE
-            lmid = #{lmid}
-            AND
-            ridedate >= #{ticketdate}
+        lmid = #{lmid}
+        AND
+        ridedate >= #{ticketdate}
     </delete>
-  
-  <update id="updateUseSeat" parameterType="Seat">
-	update
-		seat
-	set
-		`IsSale`=#{issale}
-	where
-		ID=#{id}
-  </update>
-  <select id="find" parameterType="java.lang.Integer" resultMap="result_map">
-	select
-		*
-	from
-		seat
-	where
-		ID=#{id}
-  </select>
-  <select id="findByLmidDateShiftCode" resultMap="result_map">
-	select * from seat where lmid=#{lmid} and shiftcode=#{shiftcode} and ridedate=#{ridedate} order by SeatNO
-  </select>
-  <select id="findUniqueNotSaleSeat" resultMap="result_map">
-	select * from seat where lmid=#{lmid} and shiftcode=#{shiftcode} and ridedate=#{ridedate} and issale = 0 group by SeatNo  limit 0,1
-  </select>
-  <select id="findTowNotSaleSeat" resultMap="result_map2">
-	select 
-		sb.id as sb_id,
-		sb.`SeatNO` as sb_SeatNO,
-		sb.`LMID`  as sb_LMID,
-		sb.`ShiftCode` as sb_ShiftCode,
-		sb.`RideDate` as sb_RideDate,
-		sb.`IsSale` as sb_IsSale,
-		sa.id,
-		sa.`SeatNO`,
-		sa.`LMID`,
-		sa.`ShiftCode`,
-		sa.`RideDate`,
-		sa.`IsSale`
-	from seat as sa join seat as sb on sa.id+1=sb.id 
-	where sa.lmid=#{lmid} and sa.shiftcode=#{shiftcode} and sa.ridedate=#{ridedate} 
-	and sa.IsSale = 0 and sb.IsSale=0 and sa.SeatNO%2 <![CDATA[<>]]> 0
-	group by sb.SeatNO,sa.SeatNo
-	limit 0,1
-  </select>
-  <select id="checkExistsByLmidDateShiftCode" resultType="long">
-	select count(1) from seat  where lmid=#{lmid} and shiftcode=#{shiftcode} and ridedate=#{ridedate}
-  </select>
-  <update id="ReleaseSeat" parameterType="map">
-	update
-		seat
-	set
-		`IsSale`=#{issale}
-	where
-		ID=#{id}
-  </update>
-  <sql id="columns">
-	`SeatNO`,
-	`LMID`,
-	`ShiftCode`,
-	`RideDate`,
-	`IsSale`
-  </sql>
-  <sql id="propertys">
-	#{seatno},
-	#{lmid},
-	#{shiftcode},
-	#{ridedate},
-	#{issale}
-  </sql>
-  <sql id="batch_propertys">
-	#{i.seatno},
-	#{i.lmid},
-	#{i.shiftcode},
-	#{i.ridedate},
-	#{i.issale}
-  </sql>
-  <resultMap id="result_map" type="Seat">
-    <id column="ID" property="id" javaType="java.lang.Integer"/>
-    <result column="SeatNO" property="seatno" javaType="java.lang.Integer"/>
-    <result column="LMID" property="lmid" javaType="java.lang.Integer"/>
-    <result column="ShiftCode" property="shiftcode" javaType="java.lang.String"/>
-    <result column="RideDate" property="ridedate" javaType="java.lang.String"/>
-    <result column="IsSale" property="issale" javaType="java.lang.Integer"/>
-  </resultMap>
-  
-  <resultMap type="Seat" id="result_map2" extends="result_map">
-  	<association columnPrefix="sb_" property="seattow" resultMap="result_map"></association>
-  </resultMap>
-  
+
+    <update id="updateUseSeat" parameterType="Seat">
+        update
+        seat
+        set
+        `IsSale`=#{issale}
+        where
+        ID=#{id} and issale = #{oldissale}
+    </update>
+    <select id="find" parameterType="java.lang.Integer" resultMap="result_map">
+        select
+        *
+        from
+        seat
+        where
+        ID=#{id}
+    </select>
+    <select id="findByLmidDateShiftCode" resultMap="result_map">
+        select * from seat where lmid=#{lmid} and shiftcode=#{shiftcode} and ridedate=#{ridedate} order by SeatNO
+    </select>
+    <select id="findByShiftID" resultMap="result_map">
+        select * from seat where ShiftID=#{shiftid} order by SeatNO
+    </select>
+    <select id="findUniqueNotSaleSeat" resultMap="result_map">
+        select * from seat where ShiftID=#{shiftid} and issale = 0
+        group by SeatNo order by seatno  limit 0,1
+    </select>
+    <select id="findTowNotSaleSeat" resultMap="result_map2">
+        select
+        sb.id as sb_id, sb.`SeatNO` as sb_SeatNO, sb.`IsSale` as sb_IsSale,
+        sa.id, sa.`SeatNO`, sa.`IsSale`
+        from seat as sa join seat as sb on sa.id+1=sb.id
+        where sa.ShiftID=#{shiftid}
+        and sa.IsSale = 0 and sb.IsSale=0 and sa.SeatNO%2 <![CDATA[<>]]> 0
+        group by sb.SeatNO,sa.SeatNo
+        order by sa.SeatNO,sb.SeatNO
+        limit 0,1
+    </select>
+    <select id="checkExistsByLmidDateShiftCode" resultType="long">
+        select count(1) from seat  where lmid=#{lmid} and shiftcode=#{shiftcode} and ridedate=#{ridedate}
+    </select>
+    <select id="checkExistsByShiftID" resultType="long">
+        select count(1) from seat  where ShiftID=#{shiftid}
+    </select>
+    <update id="ReleaseSeat" parameterType="map">
+        update
+        seat
+        set
+        `IsSale`=#{issale}
+        where
+        ID=#{id}
+    </update>
+    <sql id="columns">
+        `SeatNO`,
+        ShiftID,
+        `IsSale`
+    </sql>
+    <sql id="propertys">
+        #{seatno},
+        #{shiftid},
+        #{issale}
+    </sql>
+    <sql id="batch_propertys">
+        #{i.seatno},
+        #{i.shiftid},
+        #{i.issale}
+    </sql>
+    <resultMap id="result_map" type="Seat">
+        <id column="ID" property="id" javaType="java.lang.Integer"/>
+        <result column="SeatNO" property="seatno" javaType="java.lang.Integer"/>
+        <result column="LMID" property="lmid" javaType="java.lang.Integer"/>
+        <result column="ShiftCode" property="shiftcode" javaType="java.lang.String"/>
+        <result column="RideDate" property="ridedate" javaType="java.lang.String"/>
+        <result column="IsSale" property="issale" javaType="java.lang.Integer"/>
+        <result column="shiftid" property="shiftid" javaType="java.lang.Long"/>
+    </resultMap>
+
+    <resultMap type="Seat" id="result_map2" extends="result_map">
+        <association columnPrefix="sb_" property="seattow" resultMap="result_map"></association>
+    </resultMap>
+
 </mapper>

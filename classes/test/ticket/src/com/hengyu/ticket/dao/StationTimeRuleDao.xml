@@ -63,6 +63,10 @@
 	where
 		ID=#{id}
     </update>
+    
+    <select id="checkUpdate" parameterType="int" resultType="int">
+        select ifnull(count(1),0) from shift where current_date() >= ridedate and lrid = #{id}
+    </select>
 
     <update id="resetDefaultRule">
         update station_time_rule set IsDefault = 0 where lmid = #{lmid}
@@ -79,17 +83,27 @@
 
     <select id="findByLMID" parameterType="java.lang.Integer" resultMap="result_map2">
         select
-            *
-        from
-            station_time_rule
+            st.*,sum(ts.isrelease) as status
+        from station_time_rule as st
+        left join shift as s on s.lmid = st.lmid and st.id = s.lrid
+        left join ticket_store as ts on s.id = ts.shiftid
         where
-            LMID=#{lmid}
+            st.LMID=#{lmid}
         and groupid is null
+        group by st.id
         order by isdefault desc
     </select>
 
     <select id="findByGroupID" resultType="com.hengyu.ticket.entity.StationTimeRule" resultMap="result_map3">
         SELECT * FROM station_time_rule WHERE groupid = #{groupid}
+    </select>
+    
+    
+    <select id="getDistinctStationByGroupID" resultMap="com.hengyu.ticket.dao.LineManageStationDao.result_map">
+        SELECT DISTINCT sort,lmid,stid,stname from line_manage_station where strid in (
+          SELECT id from station_time_rule where groupid = #{groupid}
+        )
+        ORDER BY sort
     </select>
 
     <sql id="columns">
@@ -116,11 +130,11 @@
         <result column="BeginTime" property="begintime"/>
         <result column="EndTime" property="endtime"/>
         <result column="IsDefault" property="isdefault" javaType="java.lang.Integer"/>
+        <result column="status" property="status" javaType="java.lang.Integer"/>
     </resultMap>
 
     <resultMap id="result_map2" type="StationTimeRule" extends="result_map">
-        <collection property="rules" select="findByGroupID" column="id">
-        </collection>
+        <collection property="rules" select="findByGroupID" column="id"></collection>
     </resultMap>
 
     <resultMap id="result_map3" type="StationTimeRule" extends="result_map">

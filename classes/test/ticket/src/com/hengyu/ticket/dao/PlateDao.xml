@@ -94,6 +94,9 @@
         WHERE
             PlateNum LIKE '%${keywords}%'
     </select>
+    <select id="findByPlateNum" resultMap="result_map">
+        SELECT * from plate where PlateNum=#{platenum}
+    </select>
     <sql id="columns">
         `PlateNum`,
         `carmodelid`,

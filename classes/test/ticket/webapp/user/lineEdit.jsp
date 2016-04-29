@@ -30,12 +30,12 @@
         }
 
         /*.point {*/
-            /*width: 10px;*/
-            /*height: 10px;*/
-            /*border: 4px solid #555;*/
-            /*border-radius: 100%;*/
-            /*float: left;*/
-            /*position: relative;*/
+        /*width: 10px;*/
+        /*height: 10px;*/
+        /*border: 4px solid #555;*/
+        /*border-radius: 100%;*/
+        /*float: left;*/
+        /*position: relative;*/
 
         /*}*/
 
@@ -71,6 +71,8 @@
             <li><a href="#plateList" data-toggle="tab">车牌列表</a></li>
             <li><a href="#lineRuleList" data-toggle="tab">线路规则</a></li>
             <li><a href="#scheduleRuleList" data-toggle="tab">排班规则</a></li>
+            <li><a href="#saleRuleList" data-toggle="tab">售票规则</a></li>
+            <li><a href="#promotionRuleList" data-toggle="tab">调价规则</a></li>
         </c:if>
     </ul>
     <div class="tab-content">
@@ -124,7 +126,9 @@
                 <div class="row">
                     <div style="margin-left: 30px;">
                         <label>始发城市</label>
-                        <select class="span2 begincitys" datatype="*" nullmsg="始发城市不能为空"   <c:if test="${empty lm.id}">name="citystartid"</c:if>  <c:if test="${not empty lm.id}">disabled</c:if>    >
+                        <select class="span2 begincitys" datatype="*" nullmsg="始发城市不能为空"
+                                <c:if test="${empty lm.id}">name="citystartid"</c:if>
+                                <c:if test="${not empty lm.id}">disabled</c:if>    >
                             <option value="">--选择城市--</option>
                             <c:forEach var="city" items="${citys}">
                                 <option value="${city.id }"
@@ -136,7 +140,9 @@
                 <div class="row">
                     <div style="margin-left: 30px;">
                         <label>到达城市</label>
-                        <select class="span2 endcitys" datatype="*" nullmsg="到达城市不能为空"  <c:if test="${empty lm.id}">name="cityarriveid"</c:if>   <c:if test="${not empty lm.id}">disabled</c:if>  >
+                        <select class="span2 endcitys" datatype="*" nullmsg="到达城市不能为空"
+                                <c:if test="${empty lm.id}">name="cityarriveid"</c:if>
+                                <c:if test="${not empty lm.id}">disabled</c:if>  >
                             <option value="">--选择城市--</option>
                             <c:forEach var="city" items="${citys}">
                                 <option value="${city.id }"
@@ -149,12 +155,44 @@
                     <div style="margin-left: 30px;">
                         <label>余票告警
                         </label>
-                        <input type="text" name="balanceticketwarn" datatype="n" value="${empty lm.balanceticketwarn ? 0:lm.balanceticketwarn}" maxlength="32" class="span3 ">
+                        <input type="text" name="balanceticketwarn" datatype="n"
+                               value="${empty lm.balanceticketwarn ? 0:lm.balanceticketwarn}" maxlength="32"
+                               class="span3 ">
                     </div>
                 </div>
                 <div class="row">
                     <div style="margin-left: 30px;">
-                        <label>备注
+                        <label>
+                            是否可以退票
+                        </label>
+                        <input name="refundstatus" value="0" ${empty lm.id or lm.refundstatus==0?'checked':''} maxlength="50" type="radio">是
+                        &nbsp;&nbsp;&nbsp;
+                        <input name="refundstatus" value="1" ${lm.refundstatus==1?'checked':''}  maxlength="50" type="radio">否
+                    </div>
+                </div>
+                <br/>
+                <div class="row">
+                    <div style="margin-left: 30px;">
+                        <label>
+                            不能退票备注
+                        </label>
+                        <input name="refundremark" value="${lm.refundremark}" maxlength="50" class="span3 " type="text">
+                    </div>
+                </div>
+                <div class="row">
+                    <div style="margin-left: 30px;">
+                        <label>
+                            是否可以使用代金券
+                        </label>
+                        <input name="couponflag" value="1" ${empty lm.couponflag or lm.couponflag==1?'checked':''} maxlength="50" type="radio">是
+                        &nbsp;&nbsp;&nbsp;
+                        <input name="couponflag" value="2" ${lm.couponflag==2?'checked':''}  maxlength="50" type="radio">否
+                    </div>
+                </div>
+                <br/>
+                <div class="row">
+                    <div style="margin-left: 30px;">
+                        <label>车票详情页备注
                         </label>
                         <input type="text" name="memo" value="${lm.memo }" maxlength="32" class="span3 ">
                     </div>
@@ -203,7 +241,6 @@
 
             </form>
         </div>
-
 
 
         <!-- 司机列表 -->
@@ -265,7 +302,6 @@
         </div>
 
 
-
         <!-- 车牌列表 -->
         <div class="tab-pane" id="plateList">
             <div class="row">
@@ -312,7 +348,8 @@
         <div class="tab-pane" id="lineRuleList">
             <div class="row">
                 <div class="btn-group pull-left" style="margin:10px 20px 10px 40px; ">
-                    <a class="btn" href="javascript:void(0)" onclick="location.href = '${basePath}/user/stationTimeRule?isnew=1&lmid=${lm.id}'">
+                    <a class="btn" href="javascript:void(0)"
+                       onclick="location.href = '${basePath}/user/stationTimeRule?isnew=1&lmid=${lm.id}'">
                         <i class="icon-plus-sign"></i>新增线路规则
                     </a>
                 </div>
@@ -328,65 +365,69 @@
                         </tr>
                         </thead>
                         <tbody>
-                            <c:forEach var="o" items="${rules}">
-                                <tr class="odd">
-                                    <td style="color:green;">
+                        <c:forEach var="o" items="${rules}">
+                            <tr class="odd">
+                                <td style="color:green;">
                                         ${o.rulename}
-                                        <c:if test="${o.isdefault==1}">
-                                            （默认规则）
-                                        </c:if>
-                                    </td>
-                                    <td>-</td>
-                                    <td>
-                                        <div class="btn-group pull-right">
-                                            <a class="btn" href="<%=basePath%>/user/stationTimeRule?id=${o.id}&lmid=${lm.id}">
-                                                编辑
-                                            </a>
-                                            <a class="btn" href="<%=basePath%>/user/copyStationTimeRule?id=${o.id}">
-                                                复制
-                                            </a>
-                                            <a onclick="layer.confirm('你确定要删除该规则吗?',{offset:'40%'},function(){
+                                    <c:if test="${o.isdefault==1}">
+                                        （默认规则）
+                                    </c:if>
+                                </td>
+                                <td style="color: red;">${o.status==0?'未发布':o.status>=1?'已发布':'未排班'}</td>
+                                <td>
+                                    <div class="btn-group pull-right">
+                                        <a class="btn"
+                                           href="<%=basePath%>/user/stationTimeRule?id=${o.id}&lmid=${lm.id}">
+                                            编辑
+                                        </a>
+                                        <a class="btn" href="<%=basePath%>/user/copyStationTimeRule?id=${o.id}">
+                                            复制
+                                        </a>
+                                        <a onclick="layer.confirm('你确定要删除该规则吗?',{offset:'40%'},function(){
                                                 location.href=basePath+'/user/delStationTimeRule?lmid=${lm.id}&id=${o.id}'
-                                            });"
-                                                    class="btn btn-danger" href="javascript:void(0)" id="${o.id}" groupid="${o.groupid}">
-                                               删除
-                                            </a>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <c:forEach var="rule" items="${o.rules}">
-                                    <tr>
-                                        <td>${rule.begintime} 至 ${rule.endtime}</td>
-                                        <td colspan="2" style="">
-                                            <c:forEach items="${rule.stations}" var="station" varStatus="status">
-                                                <c:if test="${status.index!=0 and (status.index)%4 ==0}">
+                                                });"
+                                           class="btn btn-danger" href="javascript:void(0)" id="${o.id}"
+                                           groupid="${o.groupid}">
+                                            删除
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                            <c:forEach var="rule" items="${o.rules}">
+                                <tr>
+                                    <td>${rule.begintime} 至 ${rule.endtime}</td>
+                                    <td colspan="2" style="">
+                                        <c:forEach items="${rule.stations}" var="station" varStatus="status">
+                                            <c:if test="${status.index!=0 and (status.index)%4 ==0}">
                                                 <div style="clear: both"></div>
                                             </c:if>
-                                                <span style="float: left;margin-bottom: 15px;margin-top: 3px;">${station.stname}</span>
-                                                <div style="position: relative;float: left;padding-top: 5px;">
-                                                    <c:if test="${status.index!=fn:length(rule.stations)-1}">
+                                            <span style="float: left;margin-bottom: 15px;margin-top: 3px;">${station.stname}</span>
+                                            <div style="position: relative;float: left;padding-top: 5px;">
+                                                <c:if test="${status.index!=fn:length(rule.stations)-1}">
                                                         <span style="position:absolute;top: -8px;left: 20%;color: #0c80fe;">
-                                                            ${rule.stations[status.index+1].requiretime}
+                                                                ${rule.stations[status.index+1].requiretime}
                                                         </span>
-                                                        <span class="point" style=""></span>
-                                                        <span class="line" style=""></span>
-                                                        <span class="point"></span>
-                                                    </c:if>
-                                                </div>
-                                            </c:forEach>
-                                        </td>
-                                    </tr>
-                                </c:forEach>
+                                                    <span class="point" style=""></span>
+                                                    <span class="line" style=""></span>
+                                                    <span class="point"></span>
+                                                </c:if>
+                                            </div>
+                                        </c:forEach>
+                                    </td>
+                                </tr>
                             </c:forEach>
+                        </c:forEach>
                         </tbody>
                     </table>
                 </div>
             </div>
         </div>
+
+
         <div class="tab-pane" id="scheduleRuleList">
             <div class="row">
                 <div class="btn-group pull-left" style="margin:10px 20px 10px 40px; ">
-                    <a class="btn" href="javascript:void(0)" onclick="location.href = '${basePath}/user/stationTimeRule?isnew=1&lmid=${lm.id}'">
+                    <a class="btn newScheduleRule" href="javascript:void(0)">
                         <i class="icon-plus-sign"></i>新增排班规则
                     </a>
                 </div>
@@ -402,29 +443,100 @@
                         </tr>
                         </thead>
                         <tbody>
-                            <c:forEach var="o" items="${rules}">
-                                <tr class="odd">
-                                    <td style="color:green;">
-                                        ${o.rulename}
-                                        <c:if test="${o.isdefault==1}">
-                                            （默认规则）
+                        <c:forEach var="schedule" items="${schedules}" varStatus="status">
+                            <tr class="odd">
+                                <td style="color:green;">
+                                        ${schedule.scheduname}
+                                    <c:if test="${schedule.isdefault==1}">
+                                        （默认规则）
+                                    </c:if>
+                                </td>
+                                <td style="color:green;">
+                                    <c:if test="${fn:length(schedule.schedules)>0}">
+                                        始发时间：${schedule.schedules[0].starttime} &nbsp;&nbsp;${fn:length(schedule.schedules)}班
+                                    </c:if>
+                                </td>
+                                <td>
+                                    <div class="btn-group pull-right">
+                                        <a class="btn"
+                                           href="javascript:void(0)" onclick="editScheduleRule(basePath+'/user/lineScheduleRule?id=${schedule.id}&lineid='+$lineid)">
+                                            编辑
+                                        </a>
+                                        <a class="btn" href="<%=basePath%>/user/copyLineSchedule.do?id=${schedule.id}&lineid=${lm.lineid}">
+                                            复制
+                                        </a>
+                                        <a onclick="layer.confirm('你确定要删除该规则吗?',{offset:'40%'},function(){ location.href=basePath+'/user/delschedule.do?id=${schedule.id}&lmid=${lm.id}' });"
+                                           class="btn btn-danger" href="javascript:void(0)" id="${schedule.id}"
+                                           groupid="${o.groupid}">
+                                            删除
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                            <c:forEach var="scheduleDetail" items="${schedule.schedules}" >
+                                <tr class="schedules schedules${status.index}" index="${status.index}" style="display: none;">
+                                    <td></td>
+                                    <td>${scheduleDetail.starttime}</td>
+                                    <td>${scheduleDetail.shiftcode}</td>
+                                </tr>
+                            </c:forEach>
+                        </c:forEach>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- 售票规则 -->
+        <div class="tab-pane" id="saleRuleList">
+            <div class="row">
+                <div class="btn-group pull-left" style="margin:10px 20px 10px 40px; ">
+                    <a class="btn newSaleRule" href="javascript:void(0)" onclick="">
+                        <i class="icon-plus-sign"></i>新增售票规则
+                    </a>
+                </div>
+            </div>
+            <div class="row">
+                <div class="span12">
+                    <table class="table table-striped dataTable">
+                        <thead>
+                        <tr>
+                            <th>规则名称</th>
+                            <th>总票数（张）</th>
+                            <th>锁票数（张）</th>
+                            <th>线路规则</th>
+                            <th class="pull-right">操作</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                            <c:forEach items="${tplRule}" var="tp">
+                                <tr>
+                                    <td>
+                                        ${tp.tplname}${tp.isdefault==1?'（默认规则）':''}
+                                        <c:if test="${fn:length(tp.differStations)!=0}">
+                                            <div style="font-size: 12px;padding-top: 5px;">
+                                                <span>缺少站点：</span>
+                                                <c:forEach items="${tp.differStations}" var="station" varStatus="status">
+                                                   <span style="color: red;">${station.stname}</span>
+                                                    ${status.index!=fn:length(tp.differStations)-1?'、':''}
+                                                </c:forEach>
+                                            </div>
                                         </c:if>
                                     </td>
-                                    <td>-</td>
+                                    <td>${tp.ticketquantity}</td>
+                                    <td>${tp.lockquantity}</td>
+                                    <td>${tp.strname}</td>
                                     <td>
                                         <div class="btn-group pull-right">
-                                            <a class="btn" href="<%=basePath%>/user/stationTimeRule?id=${o.id}&lmid=${lm.id}">
+                                            <a class="btn"
+                                               href="javascript:void(0)" onclick=" newSaleRule(basePath+'/user/lineSaleRule?id=${tp.id}&lmid='+lmid);">
                                                 编辑
                                             </a>
-                                            <a class="btn" href="<%=basePath%>/user/copyStationTimeRule?id=${o.id}">
+                                            <a class="btn" href="<%=basePath%>/user/copyLineSaleRule?id=${tp.id}">
                                                 复制
                                             </a>
-                                            <a onclick="layer.confirm('你确定要删除该规则吗?',{offset:'40%'},function(){
-                                                location.href=basePath+'/user/delStationTimeRule?lmid=${lm.id}&id=${o.id}'
-                                            });"
-                                                    class="btn btn-danger" href="javascript:void(0)" id="${o.id}" groupid="${o.groupid}">
-                                               删除
-                                            </a>
+                                            <a onclick="layer.confirm('你确定要删除该规则吗?',{offset:'40%'},function(){ location.href=basePath+'/user/delSaleRule?id=${tp.id}&lmid=${lm.id}' });" class="btn btn-danger" href="javascript:void(0)"> 删除 </a>
                                         </div>
                                     </td>
                                 </tr>
@@ -434,6 +546,71 @@
                 </div>
             </div>
         </div>
+
+        <!-- 调价规则 -->
+        <div class="tab-pane" id="promotionRuleList">
+            <div class="row">
+                <div class="btn-group pull-left" style="margin:10px 20px 10px 40px; ">
+                    <a class="btn" href="${basePath}/user/promotiontoadd.do?lmid=${lm.id}&type=1" onclick="">
+                        <i class="icon-plus-sign"></i>新增调价规则
+                    </a>
+                </div>
+            </div>
+            <div class="row">
+                <div class="span12">
+                    <table class="table table-striped" style="font-size: 14px;">
+                        <thead>
+                        <tr>
+                            <th>规则名称</th>
+                            <th>适用时间段</th>
+                            <th>调价幅度</th>
+                            <%--<th>优惠票百分比</th>--%>
+                            <%--<th>是否启用</th>--%>
+                            <th class="pull-right">操作&nbsp;</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <c:forEach items="${promotions}" var="p">
+                            <tr class="odd">
+                                <td>${p.promotionname }${p.isdefault==1?'(默认规则)':''}</td>
+                                <td>
+                                    <c:forEach var="time" items="${p.times}">
+                                        ${time.begintime}-${time.endtime}
+                                        <br/>
+                                    </c:forEach>
+                                </td>
+                                <td>
+                                    <c:forEach var="time" items="${p.times}">
+                                        ${time.reducesum}元
+                                        <br/>
+                                    </c:forEach>
+                                </td>
+                                <%--<td>--%>
+                                    <%--<c:forEach var="time" items="${p.times}">--%>
+                                        <%--${time.couponpercent}%--%>
+                                        <%--<br/>--%>
+                                    <%--</c:forEach>--%>
+                                <%--</td>--%>
+                                <%--<td>${p.isenablename}</td>--%>
+                                <td>
+                                    <div class="btn-group pull-right">
+                                        <a class="btn" href="<%=basePath%>/user/promotiontoedit.do?id=${p.id}&lmid=${lm.id}&type=1">
+                                            <i class="icon-pencil"></i> 编辑
+                                        </a>
+                                        <a class="btn btn-danger deleteLine" href="<%=basePath%>/user/promotiondel.do?id=${p.id}&lmid=${lm.id}&type=1">
+                                            <i class="icon-remove icon-white"></i> 删除
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        </c:forEach>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+
 
     </div>
 </div>
@@ -456,8 +633,9 @@
 </body>
 <script type="text/javascript" src="${basePath}/common/js/jquery.ui.min.js"></script>
 <script type="text/javascript">
-var $isallowupdate = "${lm.isallowupdate}";
-var $id = "${lm.id}";
+    var $isallowupdate = "${lm.isallowupdate}";
+    var $id = "${lm.id}";
+    var $lineid = "${lm.lineid}";
     $(".sel-line-list .check-btn").live("click", function () {
         var item = $(".show-line-list");
         var checks = $(this).attr("checks");

@@ -2,9 +2,26 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.hengyu.ticket.dao.SaleOrderTicketDao">
+	<select id="findSeatNOByRTID" parameterType="java.lang.String" resultType="java.lang.Integer">
+	select 
+		sot.SeatNO as seat_no
+	from 
+		sale_order_ticket as sot 
+	where 
+		checkcode in
+			(select checkcode from refund_ticket_detail where rtid=#{rtid})
+	</select>
+	<select id="findSeatNOAndSeatId" parameterType="java.lang.String" resultType="java.util.HashMap">
+		select 
+			sot.SeatNO as seat_no,
+			sot.SeatID as seat_id 
+		from 
+			sale_order_ticket as sot 
+		where 
+			CheckCode=#{checkCode}
+	</select>
 	<select id="findSeatNOListForLock" resultType="java.util.HashMap">
-		select SeatID,SeatNO from sale_order_ticket where LMID=#{lmid} and ShiftCode=#{shiftnum}
-		and RideDate=#{ridedate} and PayStatus=2
+		select SeatID,SeatNO from sale_order_ticket where ShiftID=#{shiftid} and PayStatus=2
 	</select>
 
 	<update id="cancelLockSaleOrderTicketByCheckCode">
@@ -113,10 +130,13 @@
 	</select>
 	<sql id="getTicketWhere">
 		<where>
+			1=1
 			<if test="id != null and id != '' ">
+			and
 				SOID=#{id}
 			</if>
 			<if test="ticketcode != null and ticketcode != '' ">
+			and
 				TicketCode=#{ticketcode}
 			</if>
 		</where>
@@ -266,16 +286,31 @@
 	</sql>
 	<select id="getSoldQuantity" resultType="long"
 		parameterType="map">
-		select
-		count(*)
-		from
-		sale_order_ticket
+		select 
+			 IFNULL(sum(so.Quantity),0) as quantity
+		from 
+			sale_order as so
 		where 
-		ShiftCode=#{shiftcode} and RideDate=#{ticketdate} and STStartID=#{stid} and Status=0
+			so.shiftid=#{shiftID}
+		and 
+			so.shiftcode=(select ShiftCode from shift where id=#{shiftID}) 
+		and 
+			so.RideDate=#{ticketdate}
+		and 
+			so.STStartID=#{stid}
+		<if test="lmid != null and lmid != '' ">
+		and
+			so.LMID=#{lmid}
+		</if>
+		and 
+			so.PayStatus=1
 	</select>
-	
 	<select id="findBySaleOrderId" resultMap="result_map">
 		select * from sale_order_ticket where soid = #{soid}
+	</select>
+	
+	<select id="findByCheckCode" resultMap="result_map">
+		select * from sale_order_ticket where CheckCode = #{checkCode}
 	</select>
 	
 	<sql id="columns">
@@ -304,6 +339,7 @@
 		isdiscount,
 		seatid,
 		lmid,
+		shiftid,
 		starrivename
 	</sql>
 	<sql id="propertys">
@@ -332,6 +368,7 @@
 		#{isdiscount},
 		#{seatid},
 		#{lmid},
+		#{shiftid},
 		#{starrivename}
 	</sql>
 	<resultMap id="result_map" type="SaleOrderTicket">
@@ -362,5 +399,6 @@
 		<result column="sdate" property="sdate"  />
 		<result column="sid" property="sid"  />
 		<result column="sname" property="sname"  />
+		<result column="shiftid" property="shiftid"  />
 	</resultMap>
 </mapper>

@@ -24,18 +24,23 @@
 	<select id="dataStatisticTicket" resultType="map">
 		select sum(todayticket) as todayticket,sum(yesterdayticket) as yesterdayticket,sum(sumticket) as sumticket from (
 			SELECT
-				SUM(if(RideDate = CURRENT_DATE() and (PayStatus=1) ,1,0)) todayticket,
-				SUM(if(RideDate =  DATE_SUB(CURRENT_DATE (),INTERVAL 7 DAY) ,1,0)) yesterdayticket,
+				SUM(if(t1.RideDate = CURRENT_DATE() and (t1.PayStatus=1) ,1,0)) todayticket,
+				SUM(if(t1.RideDate =  DATE_SUB(CURRENT_DATE (),INTERVAL 7 DAY) ,1,0)) yesterdayticket,
 				0 as sumticket
 			FROM
 				sale_order_ticket as t1
+			JOIN sale_order so on so.id = t1.soid
 			WHERE
-				t1.IsOnTrain = 1 and (RideDate = CURRENT_DATE() or RideDate = DATE_SUB(CURRENT_DATE (),INTERVAL 7 DAY)) 
+				t1.status = 0 and (t1.RideDate = CURRENT_DATE() or t1.RideDate = DATE_SUB(CURRENT_DATE (),INTERVAL 7 DAY))
+				and so.status = 1
 			UNION
 			SELECT
-				0,0,SUM(if(PayStatus=1,1,0))
+				0,0,SUM(if(t2.PayStatus=1,1,0))
 			FROM
-				sale_order_ticket as t2 where  t2.IsOnTrain = 1
+				sale_order_ticket as t2
+			JOIN sale_order so on so.id = t2.soid
+			where t2.status = 0
+			and so.status = 1
 		) as orders
 	</select>
 <!-- 	<select id="dataStatisticTicket" resultType="map"> -->

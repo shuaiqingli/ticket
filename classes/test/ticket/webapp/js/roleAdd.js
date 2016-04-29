@@ -33,8 +33,8 @@ function initRoleForm(){
 				var isck= $(v).prop('checked');
 				var isdel = $(this).parent().find(".isdel").eq(0);
 				var fmid = $(this).parent().find(".id").eq(0);
-				fmid.attr("name","rolePowers["+i+"].fMID");
-				isdel.attr("name","rolePowers["+i+"].isDel");
+				fmid.attr("name","rolepowers["+i+"].fMID");
+				isdel.attr("name","rolepowers["+i+"].isDel");
 				if(isck){
 					isdel.val(0);
 				}else{
@@ -63,6 +63,7 @@ function initRoleForm(){
 		},
 		callback:function(data){
 			console.debug(data);
+            // alert(data)
 			if(data>=1){
 				layer.msg('操作成功');
 				location.href = basePath+"/admin/rolelist.do"

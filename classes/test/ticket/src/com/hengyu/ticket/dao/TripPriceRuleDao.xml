@@ -2,29 +2,29 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.hengyu.ticket.dao.TripPriceRuleDao">
-  <insert id="save" parameterType="TripPriceRule" keyColumn="id" keyProperty="id" useGeneratedKeys="true">
-	insert
-	into
-		trip_price_rule
-		(<include refid="columns"/>)
-	values
-		(<include refid="propertys"/>)
-  </insert>
-  <delete id="deleteByTripPrice" parameterType="java.lang.Integer">
+    <insert id="save" parameterType="TripPriceRule" keyColumn="id" keyProperty="id" useGeneratedKeys="true">
+        insert
+        into
+        trip_price_rule
+        (<include refid="columns"/>)
+        values
+        (<include refid="propertys"/>)
+    </insert>
+    <delete id="deleteByTripPrice" parameterType="java.lang.Integer">
 	delete
 	from
 		trip_price_rule
 	where
 		tplid=#{tplid}
   </delete>
-  <delete id="delete" parameterType="java.lang.Integer">
+    <delete id="delete" parameterType="java.lang.Integer">
 	delete
 	from
 		trip_price_rule
 	where
 		id=#{id}
   </delete>
-  <update id="update" parameterType="TripPriceRule">
+    <update id="update" parameterType="TripPriceRule">
 	update
 		trip_price_rule
 	set
@@ -38,7 +38,7 @@
 	where
 		ID=#{id}
   </update>
-  <select id="find" parameterType="java.lang.Integer" resultMap="result_map">
+    <select id="find" parameterType="java.lang.Integer" resultMap="result_map">
 	select
 		*
 	from
@@ -46,7 +46,8 @@
 	where
 		ID=#{id}
   </select>
-  <select id="findByTripPrice" parameterType="java.lang.Integer" resultMap="result_map">
+
+    <select id="findByTripPrice" parameterType="java.lang.Integer" resultMap="result_map">
 	select
 		*
 	from
@@ -56,8 +57,8 @@
 	order by
 		Weekday
   </select>
-  
-  <sql id="columns">
+
+    <sql id="columns">
 	`tplid`,
 	`lockquantity`,
 	`startseat`,
@@ -66,7 +67,7 @@
 	`couponticketquantity`,
 	`isstart`
   </sql>
-  <sql id="propertys">
+    <sql id="propertys">
 	#{tplid},
 	#{lockquantity},
 	#{startseat},
@@ -75,15 +76,15 @@
 	#{couponticketquantity},
 	#{isstart}
   </sql>
-  <resultMap id="result_map" type="TripPriceRule">
-    <id column="ID" property="id" javaType="java.lang.Integer"/>
-    <result column="tplid" property="tplid" javaType="java.lang.Integer"/>
-    <result column="Weekday" property="weekday" javaType="java.lang.Integer"/>
-    <result column="TicketQuantity" property="ticketquantity" javaType="java.lang.Integer"/>
-    <result column="lockquantity" property="lockquantity" javaType="java.lang.Integer"/>
-    <result column="isstart" property="isstart" javaType="java.lang.Integer"/>
-    <result column="startseat" property="startseat" javaType="java.lang.Integer"/>
-    <result column="Couponticketquantity" property="couponticketquantity" javaType="java.lang.Integer"/>
-  </resultMap>
-  
+    <resultMap id="result_map" type="TripPriceRule">
+        <id column="ID" property="id" javaType="java.lang.Integer"/>
+        <result column="tplid" property="tplid" javaType="java.lang.Integer"/>
+        <result column="Weekday" property="weekday" javaType="java.lang.Integer"/>
+        <result column="TicketQuantity" property="ticketquantity" javaType="java.lang.Integer"/>
+        <result column="lockquantity" property="lockquantity" javaType="java.lang.Integer"/>
+        <result column="isstart" property="isstart" javaType="java.lang.Integer"/>
+        <result column="startseat" property="startseat" javaType="java.lang.Integer"/>
+        <result column="Couponticketquantity" property="couponticketquantity" javaType="java.lang.Integer"/>
+    </resultMap>
+
 </mapper>

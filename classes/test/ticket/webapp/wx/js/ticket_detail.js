@@ -1,17 +1,21 @@
 $(function(e){
 	$('body').hide();
-	$('.start_date').html($.cookie('start_date'));
+	$('.start_date').html(Client.get('start_date'));
 	detail = $.cookie('ticket_detail');
+    //console.debug(detail);
 	if($.cookie('ticket_num')){
 		$('.ticket_num').val($.cookie('ticket_num'));
 		$('.total_ticket').text($.cookie('ticket_num'));
 	}
-	
-	
+
+
+
+
+
 //	if(detail.){
 //		
 //	}
-	
+
 //	var begin = JSON.parse($.cookie('begin_city'))
 //	var end = JSON.parse($.cookie('end_city'))
 //	
@@ -21,21 +25,21 @@ $(function(e){
 //
 //		}
 //	});
-	if(islogin()==false){
-		$('.coupon_desc').text('(未登录)');
-	}else{
-		post("web/api/customer/coupons",function(json){
-			try {
-				if (json.datas.length != 0) {
-					$('.coupon_desc').show();
-				}else{
-					$('.coupon_desc').hide();
-				}
-			} catch (e) {
-				$('.coupon_desc').hide();
-			}
-		})
-	}
+//	if(islogin()==false){
+//		$('.coupon_desc').text('(未登录)');
+//	}else{
+//		post("web/api/customer/coupons",function(json){
+//			try {
+//				if (json.datas.length != 0) {
+//					$('.coupon_desc').show();
+//				}else{
+//					$('.coupon_desc').hide();
+//				}
+//			} catch (e) {
+//				$('.coupon_desc').hide();
+//			}
+//		})
+//	}
 
 	if(detail!=null){
 		detail = JSON.parse(detail);
@@ -49,7 +53,9 @@ $(function(e){
 		jeach(detail, function(k,v){
 			return true;
 		});
-		
+		if(detail.favprice >= detail.ticketprice && detail.stationcouponquantity>=1 && detail.balancecouponquantity>=1){
+			$('.coupon_ticket').eq(1).hide();
+		}
 		$.cookie('stid',detail.ststartid,{path:'/'});
 		totalPrice();
 		$('body').show();
@@ -62,8 +68,17 @@ $(function(e){
 		});
 		$('body').show();
 	}
-	
+
+    api.getLineRefundRemark(detail.lmid, function (json) {
+        if(json.refundstatus==1){
+            $('.refendremark').text(json.refundremark||'该票不可改退').show();
+        }else{
+            $('.refendremark').hide();
+        }
+    })
+
 	$('.order_ticket').click(function(){
+		$.cookie('location_href',location.href);
 		$.cookie('ticket_num',$('.ticket_num').val());
 		//islogin(function(result){
 		//	if(result){
@@ -73,17 +88,16 @@ $(function(e){
 		//		send('login.html');
 		//	}
 		//});
-		if(islogin()==false){
-			$.cookie('location_href',location.href);
-			send('login.html');
-			return;
-		}
+		//if(islogin()==false){
+		//	send('login.html');
+		//	return;
+		//}
 		send('order_infomation.html');
 	});
 	var start_st = $(".ststartname").text();
-   	var end_st = $(".starrivename").text();
-   	var start_date = $(".start_date").text();
-   	var starttime = $(".starttime").text();
+	var end_st = $(".starrivename").text();
+	var start_date = $(".start_date").text();
+	var starttime = $(".starttime").text();
 	var price = $(".favprice").text();
 	var lines = $(".linename").text();
 	var items = lines.split("-");
@@ -123,7 +137,7 @@ $(function(e){
 	}else{
 		$('#minus').attr('class','minus');
 	}
-   	if($.trim($('.coupon_ticket').css('display'))==='none'){
+	if($.trim($('.coupon_ticket').css('display'))==='none'){
 		$('.ticket_price').css('margin','0px 0px');
 	}
 	$(".buy_ticket a[id='plus']").bind('click',function(){
@@ -148,9 +162,9 @@ $(function(e){
 			$("#ti_num").val(total_num);
 			$('#plus').attr('class','plus_a');
 			/* $('#mainDiv').show(100);
-			setTimeout(function(){
-				$('#mainDiv').hide("normal");
-			},800); */
+			 setTimeout(function(){
+			 $('#mainDiv').hide("normal");
+			 },800); */
 			totalPrice();
 			return;
 		}
@@ -175,12 +189,12 @@ $(function(e){
 		}
 		totalPrice();
 	});
-	
-	 $('.st_address').click(function(){
-		 var params = "?stationid="+detail.ststartid+'&stationid='+detail.starriveid;
-		 send('line_address.html'+params);
+
+	$('.st_address').click(function(){
+		var params = "?stationid="+detail.ststartid+'&stationid='+detail.starriveid;
+		send('line_address.html'+params);
 	});
-	
+
 });
 
 
@@ -201,17 +215,17 @@ function totalPrice(){
 			cnum = num;
 		}
 		tnum = num-cnum;
-		
+
 		var totalprice = tnum*(detail.ticketprice||0);
 		totalprice += cnum*(detail.favprice||0);
-		
+
 		$('.total_price').text(totalprice.toFixed(1));
-		
+
 		$.cookie('cnum',cnum);
 		$.cookie('tnum',tnum);
 		$.cookie('total',totalprice.toFixed(1));
 //		console.debug(totalprice);
-		
+
 //		console.debug(cnum);
 //		console.debug(tnum);
 //		console.debug('***********************');

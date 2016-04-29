@@ -63,7 +63,7 @@
     </select>
     
     <select id="findByLineScheduleID" parameterType="int" resultMap="result_map">
-        SELECT  * FROM line_schedule_detail WHERE lsuid = #{lsid}
+        SELECT  * FROM line_schedu_detail WHERE lsuid = #{lsid} order by shiftcode
     </select>
 
 

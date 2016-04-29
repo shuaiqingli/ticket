@@ -40,10 +40,10 @@
 					</select>
                     <span>开始时间：</span><input style="width: 120px;" name="begindate" placeholder="开始时间" size="16" type="text" value="${page.param.begindate }" readonly="readonly" class="date _date"/>
                     <span>结束时间：</span><input style="width: 120px;" name="enddate" placeholder="结束时间" size="16" type="text" value="${page.param.enddate }" readonly="readonly" class="date _date"/>
-                    <span>出行日期：</span><input style="width: 120px;" name="rideDate" placeholder="出行日期" size="16" type="text" value="${page.param.rideDate }" readonly="readonly" class="date _date"/>
+                    <span>出行日期：</span><input style="width: 120px;" name="ridedate" placeholder="出行日期" size="16" type="text" value="${page.param.ridedate }" readonly="readonly" class="date _date"/>
 					<input type="hidden" value="0" name="export"/>
 					<input type="text" name="mobile" value="${page.param.mobile }"
-						placeholder="订单号/身份证/手机号码/班次号/线路号"  style="height:30px;">
+						placeholder="订单号/身份证/手机号码/班次号/线路号/出发站点"  style="height:30px;width: 350px;">
 					<a class="btn"
 						style="padding:5px 12px;margin:-8px 0 0 10px;"
 						href="javascript:void(0)" onclick="$('[name=export]').val(0);$(this).parents('form')[0].submit();">搜索</a>
@@ -69,6 +69,8 @@
 						<th>取票人</th>
 						<th>手机号码</th>
 						<th>数量</th>
+						<%--<th>退票数量</th>--%>
+						<%--<th>订单次数</th>--%>
 						<th>总价格</th>
 						<th>下单日期</th>
 						<th>状态</th>
@@ -79,20 +81,22 @@
 					<c:forEach items="${page.data }" var="o">
 						<tr class="odd">
 							<td>${o.id }</td>
-							<td>${o.lineName }</td>
+							<td>${o.linename }</td>
 							<td>
-							${o.shiftNum}</td>
-							<td>${o.sTStartName }</td>
-							<td>${o.sTArriveName }</td>
-							<td>${o.rideDate }</td>
-							<td>${o.LName }</td>
-							<td><a href="<%=basePath%>/admin/customerList.do?cname=${o.LMobile}">${o.LMobile }</a></td>
+							${o.shiftcode}</td>
+							<td>${o.ststartname }</td>
+							<td>${o.starrivename }</td>
+							<td>${o.ridedate }</td>
+							<td>${o.lname }</td>
+							<td><a href="<%=basePath%>/admin/customerList.do?cname=${o.lmobile}">${o.lmobile }</a></td>
 							<td>${o.quantity }</td>
-							<td>${o.totalSum }</td>
+							<%--<td>${o.refundcount }</td>--%>
+							<%--<td>${o.status ==1 ? o.ordercount:'' }</td>--%>
+							<td>${o.totalsum }</td>
 							<td>
-								${o.makeDate }(提前${o.daysForAdvance}天)
+								${o.makedate }(提前${o.daysForAdvance}天)
 							</td>
-							<td>${o.statusName }</td>
+							<td>${o.statusname }</td>
 							<td>
 								<div class="btn-group pull-left">
 									<a class="btn" href="${basePath}/user/saleorderdetail?id=${o.id}">
